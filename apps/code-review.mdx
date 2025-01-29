@@ -106,8 +106,9 @@ You can also customize the bot's behavior by selecting certain criterion for the
 
 ### Per-repo config and patterns repos with `greptile.json`
 
-You can have custom settings for any repo by adding a `greptile.json` file to the root of the repo. 
+You can have custom settings for any repo by adding a `greptile.json` file to the root of the repo in your default branch. 
 You can grab your global settings in the correct format [here](https://app.greptile.com/login) by clicking on the `copy` or `download` icons on the top right of the Settings panel. 
+Note: The `ignorePatterns` field follows `.gitinore` [syntax](https://git-scm.com/docs/gitignore).
 
 ```json greptile.json
 {
@@ -122,7 +123,7 @@ You can grab your global settings in the correct format [here](https://app.grept
   ],
   "instructions": "Ensure style_guide.md is enforced.",
   "ignoreKeywords": "rename\nlinter\nprettier\ngreptile-ignor",
-  "ignorePatterns": "node_modules",
+  "ignorePatterns": "testing/**/*.py",
   "patternRepositories": ["acme/backend"],
   "triggerOnUpdates": true,
   "shouldUpdateDescription": false,
