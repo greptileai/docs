@@ -33,3 +33,31 @@ You can trigger Greptile to review a PR manually by commenting `@greptileai` on 
 <Note>
 GitHub does not allow users to tag bots, so as you comment `@greptileai` it may not show you the bot in the dropdown suggestions..
 </Note>
+
+### Trigger via Github Action
+
+If you only want Greptile to review your PRs after certain actions were successful, e.g. because a Greptile review does not make sense if linter actions are failing anyway and test were not passing, then you can use the comment approach from above. Here's a sample github action pipeline:
+
+```
+name: Continuous Testing
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # do your thing here
+  Greptile:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: mshick/add-pr-comment@v2
+        with:
+          message: "@greptileai Can you please review this PR?"
+    needs: test 
+```
