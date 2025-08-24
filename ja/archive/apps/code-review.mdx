@@ -1,0 +1,148 @@
+---
+title: コードレビューボット
+description: "Greptile はコードベースのコンテキストに基づくコメントでプル／マージリクエストをレビューします"
+keywords: 'AI コードレビュー, 自動 PR レビュー, コード解析, GitHub 連携, GitLab 連携, コードベースのコンテキスト'
+metaTitle: 'Greptile AI コードレビューボット: 自動 PR 分析とフィードバック'
+metaDescription: Greptile の AI 搭載ボットでコードレビューを強化。プルリクエストにコンテキスト対応のコメントとコードベース特有のフィードバックを提供します。'
+---
+
+<Note>GitHub と GitLab の両方に対応</Note>
+
+Greptile のコードレビューボットは次の 2 つを行います:
+<Steps>
+<Step>
+[こちら](https://app.greptile.com/login)をクリックしてボットをインストール
+</Step>
+<Step>
+新しい PR をレビューしてほしいリポジトリを選択します。
+</Step>
+<Step>
+Greptile がプル／マージリクエストの変更点を要約します
+
+<Frame>
+  <img src="/images/cr-bot/summary.png" alt="Greptile AI コードレビュー要約の例" />
+  <figcaption>Greptile AI コードレビュー要約の例</figcaption>
+</Frame>
+</Step>
+<Step>
+Greptile は特定のファイル変更にコメントし、潜在的な問題や変更による予期しない影響を指摘・提案します。
+
+<Frame>
+  <img src="/images/cr-bot/cr-comment.png" alt="Greptile AI コードレビューコメントの例" />
+  <figcaption>Greptile AI コードレビューコメントの例</figcaption>
+</Frame>
+</Step>
+</Steps>
+
+### なぜ有用か？
+
+Greptile のコードレビューボットは次のようなコメントを書きます:
+
+- 変更点をコードベースの文脈とともに要約し、人間のレビュアーが変更を理解・把握しやすくします。
+- 文脈を踏まえて、変更が広範なコードベースに与える影響を議論できます。
+- 変更によって生じうるパフォーマンス、セキュリティ、コンプライアンス上の問題を特定できます。
+- 変更に関連する既存の類似コードや抽象化を参照し、重複を防ぎます。
+- あなたのカスタムスタイルガイドや規定のパターンを順守します。
+
+つまり、
+1. PR のレビューやレビュー待ちに費やす時間が減り、コードを書く時間が増えます。
+2. 人間が見落としがちなバグをより多く検出できます。
+3. 人間のレビュアーは変更の「全体像」や「戦略的」側面に集中でき、ボットは「戦術的」側面に集中できます。
+
+
+<Card href="https://github.com/twentyhq/twenty/pull/5718">
+  `twentyhq/twenty` のサンプル PR レビューを見るにはこちらをクリック ->
+</Card>
+
+
+### インストール
+
+PR レビューボットのインストールは[こちら](https://app.greptile.com/login)をクリックしてください。
+
+### トリガー
+
+デフォルトでは、Greptile は新しい PR が最初にオープンされたとき、またはユーザーが PR に `@greptileai` とコメントしたときにレビューを実行します。特定のトリガーで PR をレビューするように設定することもできます。
+- 特定のラベルが付いた新規 PR のみをトリガー。
+- PR ブランチにプッシュされた新規コミットごとにトリガー。
+- 特定のラベルが付いている、またはタイトルや説明に特定のキーワードを含む PR はトリガーしない。
+
+<Frame>
+  <img src="/images/cr-bot/manual-trigger.gif" alt="Greptile AI コードレビュートリガーの例" />
+  <figcaption>Greptile AI コードレビュートリガーの例</figcaption>
+</Frame>
+
+### 会話
+
+Greptile のコメントに `@greptileai <your question>` の形式で返信することで、修正提案を求めたり、追質問を行ったりできます。
+
+<Frame>
+  <img src="/images/cr-bot/qna.gif" alt="Greptile AI コードレビューでの会話の例" />
+  <figcaption>Greptile AI コードレビューでの会話の例</figcaption>
+</Frame>
+
+### 強化学習
+
+あなたがコメントに `👍` または `👎` でリアクションすると、そのフィードバックから Greptile は学習します。 
+<Frame>
+  <img src="/images/cr-bot/downvote.gif" alt="Greptile AI コードレビューのリアクション例" />
+  <figcaption>Greptile AI コードレビューのリアクション例</figcaption>
+</Frame>
+
+### カスタマイズ
+
+ボットに従わせる「特別な指示」を与えることで、動作をカスタマイズできます。例: 「PR の変更によるコンプライアンスへの影響に関するセクションを含めてください」。
+
+<Frame>
+  <img src="/images/cr-bot/sysprompt.gif" alt="Greptile AI コードレビューのカスタマイズ例" />
+  <figcaption>Greptile AI コードレビューのカスタマイズ例</figcaption>
+</Frame>
+
+また、構文上の問題やスタイルガイド違反など、各 diff を評価するための特定の基準を選択して、ボットの動作をカスタマイズすることもできます。
+
+<Frame>
+  <img src="/images/cr-bot/labels.gif" alt="Example of Greptile AI code review criterion" />
+  <figcaption>Greptile AI のコードレビュー基準の例</figcaption>
+</Frame>
+
+### `greptile.json` を用いたリポジトリ単位の設定とパターンリポジトリ（patternRepositories）
+
+デフォルトブランチのリポジトリルートに `greptile.json` ファイルを追加すると、各リポジトリごとにカスタム設定を適用できます。
+Settings パネル右上の `copy` または `download` アイコンをクリックすると、[こちら](https://app.greptile.com/login)から正しい形式のグローバル設定を取得できます。
+注: `ignorePatterns` フィールドは `.gitignore` の[構文](https://git-scm.com/docs/gitignore)に準拠します。
+
+```json greptile.json
+{
+  "labels": [
+    "feature",
+    "bug"
+  ],
+  "comment": "Disclaimer: This is AI-generated.",
+  "commentTypes": [
+    "logic",
+    "syntax"
+  ],
+  "instructions": "Ensure style_guide.md is enforced.",
+  "ignoreKeywords": "rename\nlinter\nprettier\ngreptile-ignor",
+  "ignorePatterns": "testing/**/*.py\n*.md\n*.txt\n*.json",
+  "patternRepositories": ["acme/backend"],
+  "triggerOnUpdates": true,
+  "shouldUpdateDescription": false,
+  "disabledLabels": [
+    "docs"
+  ],
+  "includeAuthors": [
+    "dakshgup",
+    "schoi"
+  ],
+  "excludeAuthors": [
+    "cool-dev"
+  ]
+}
+```
+
+**パターンリポジトリ（Patterns repos）**
+
+`greptile.json` では、レビュー対象に関連するリポジトリを `patternsRepo` フィールドで指定し、レビューに有用なコンテキストを追加できます。
+例として、バックエンドリポジトリの `greptile.json` にフロントエンドリポジトリを指定しておくと、ボットはバックエンドコードをレビューする際にフロントエンドのコードも参照できます。
+
+詳細は [greptile.com/code-review-bot](https://www.greptile.com/code-review-bot) を参照してください。

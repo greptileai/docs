@@ -1,0 +1,90 @@
+---
+title: Getting Started
+description: 'Greptile ができることの概要'
+keywords: 'AI コードレビュー, コードベース分析, 自然言語クエリ, GitHub 連携, Slack 連携, PR レビューボット'
+metaTitle: 'Greptile Docs: コード分析とレビューのための AI エキスパート'
+metaDescription: 'Greptile でコード分析とレビューに AI を活用。自然言語クエリと各種連携を通じて、あなたのコードベースに関する専門的なインサイトを得ましょう。'
+---
+
+
+<Note>GitHub、GitLab、GitHub Enterprise Server に対応（GHES へのアクセスは hello@greptile.com までご連絡ください）</Note>
+
+Greptile のコードレビュー ボットは次の3つを行います:
+<Steps>
+<Step title="Summarizes Changes">
+Greptile は Pull/Merge リクエストの変更点を要約します
+
+<Frame>
+  <img src="/images/cr-bot/summary.png" alt="Example of Greptile AI code review summary" />
+  <figcaption>Greptile の AI コードレビュー要約の例</figcaption>
+</Frame>
+</Step>
+<Step title="Comments on Issues">
+Greptile は特定のファイル変更にコメントし、潜在的な問題や変更による予期せぬ影響を指摘します。
+
+<Frame>
+  <img src="/images/cr-bot/cr-comment.png" alt="Example of Greptile AI code review comments" />
+  <figcaption>Greptile の AI コードレビューコメントの例</figcaption>
+</Frame>
+</Step>
+<Step title="Suggests Fixes">
+Greptile は問題や変更による予期せぬ影響に対する修正案を提案します。
+<Frame>
+  <img src="/images/cr-bot/cr-suggestion.png" alt="Example of Greptile AI code review suggestions" />
+  <figcaption>Greptile の AI コードレビュー提案の例</figcaption>
+</Frame>
+</Step>
+</Steps>
+
+### Greptile は何にコメントしますか？
+
+Greptile は多様なバグ、アンチパターン、スタイル違反に標準で対応し、カスタムルールの適用も構成できます。 
+
+Greptile はスタックに依存しない AI 駆動のリンターと考えられます。
+
+<Card title="Logic" icon="lightbulb" horizontal> 
+    変更の意図を推測し、関連ファイルやインポートなどを走査して論理的な誤りを可視化します。
+</Card>
+
+<Card title="Style" icon="code" horizontal> 
+    スタック固有のベストプラクティスに加え、あなたのカスタムスタイルガイドやパターンを遵守させます。
+</Card>
+
+<Card title="Performance" icon="gauge-high" horizontal>
+    変更がコードベースに与える影響を分析し、潜在的なパフォーマンス問題を特定します。
+</Card>
+
+<Card title="Security" icon="shield" horizontal>
+    変更がコードベースに与える影響を分析し、潜在的なセキュリティ問題を特定します。
+</Card>
+
+<Card title="Compliance" icon="list-check" horizontal>
+    カスタムのコンプライアンスポリシーや規制の遵守を強制します。
+</Card>
+
+<Card title="Code Repetition" icon="copy" horizontal>
+    コードベースを走査して類似コードを見つけ、潜在的な重複を特定します。
+</Card>
+
+
+### なぜ有用なのですか？
+
+Greptile のコードレビュー ボットは次のようなコメントを書きます:
+
+- 文脈を理解し、変更が広範なコードベースに与える影響を議論できます。
+- 変更によって生じうるパフォーマンス、セキュリティ、コンプライアンス上の問題を特定できます。
+- 重複を防ぐため、変更に関連する既存の類似コードや抽象化を参照します。
+- あなたのカスタムスタイルガイドと規定パターンの遵守を徹底します。
+
+つまり:
+1. PR のレビューやレビュー待ちに費やす時間が減り、コードを書く時間が増えます。
+2. 人間が見落としがちなバグをより多く検出します。
+3. 人間のレビュアーは変更の「全体像」や「戦略的」側面に集中でき、ボットは「戦術的」側面に集中できます。
+
+
+<Card href="https://github.com/twentyhq/twenty/pull/5718">
+  `twentyhq/twenty` のサンプル PR レビューを見るにはこちらをクリック ->
+</Card>
+
+
+

@@ -1,0 +1,34 @@
+---
+title: どの PR をレビュー対象にするかを設定する
+description: 'Greptile は、特定のラベル、作者などを含める／除外するように設定できます。'
+keywords: 'AI コードレビュー, コードベース分析, 自然言語クエリ, GitHub 連携, Slack 連携, PR レビューボット'
+metaTitle: 'Greptile Docs: 特定の PR で Greptile をトリガーする'
+metaDescription: 'Greptile は、特定のラベルや作者を含める／除外するように設定できます。'
+---
+
+デフォルトでは、Greptile は新規に開かれた **すべての PR** をレビューします。ユーザーが PR に `@greptileai` とコメントした場合もレビューを行います。特定のトリガーで PR をレビューするように設定することもできます。
+
+### フィルター
+
+Greptile を、特定のフィルターに一致する PR のみレビューするように設定できます。フィルターは [ダッシュボード](https://app.greptile.com/review) または [`greptile.json` ファイル](/ja/code-review-bot/greptile-json)で設定できます。
+
+| Filter By | Description                           |
+| --------- | ------------------------------------- |
+| `labels`  | 特定のラベルを持つ PR を含める／除外する |
+| `branches` | 特定のブランチへの／からの PR を含める／除外する |
+| `author` | PR の作成者に基づいて含める／除外する |
+| `keywords` | タイトル、説明、または直近のコミットメッセージに特定のキーワードを含む PR を含める／除外する |
+
+### 手動でトリガーする
+
+PR に `@greptileai` とコメントすることで、Greptile に手動でレビューをトリガーできます。
+
+<Frame>
+  <img src="/images/cr-bot/manual-trigger.gif" alt="Greptile AI コードレビューのトリガー例" />
+
+  <figcaption>Greptile AI コードレビューのトリガー例</figcaption>
+</Frame>
+
+<Note>
+  GitHub はユーザーがボットをメンションすることを許可していないため、`@greptileai` とコメントしても、ドロップダウンの候補にボットが表示されない場合があります。
+</Note>

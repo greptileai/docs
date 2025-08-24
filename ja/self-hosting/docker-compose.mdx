@@ -1,0 +1,336 @@
+---
+title: Docker Compose でのデプロイ
+description: "Docker Compose を使って Greptile をデプロイ — 推奨方法"
+---
+
+これは、ほとんどのセルフホスト型 Greptile のユースケースにおける推奨されるデプロイ方法です。Docker Compose は、Greptile の全サービスをデプロイするためのシンプルで柔軟かつ信頼性の高い手段を提供します。
+
+## アーキテクチャ
+
+<Frame>
+  <img src="https://github.com/greptileai/akupara/raw/main/OnPremEC2.jpg" alt="Docker Compose アーキテクチャ図" />
+</Frame>
+
+Docker Compose のデプロイには以下が含まれます：
+- **Greptile API Server**：コアアプリケーションサービス
+- **PostgreSQL Database**：埋め込みベクトル用の pgvector を備えた主要なデータストア
+- **Redis Cache**：セッションおよび一時データのキャッシュ
+- **Nginx Proxy**：リバースプロキシおよび SSL ターミネーション
+- **Supporting Services**：ヘルスチェック、監視、ユーティリティ
+
+## 前提条件
+
+### システム要件
+- **オペレーティングシステム**: Linux（Ubuntu 20.04+ または CentOS 8+ を推奨）
+- **CPU**: 最低 4 コア、8 コア以上を推奨
+- **メモリ**: 最低 8GB RAM、16GB 以上を推奨
+- **ストレージ**: 100GB 以上の空きディスク容量
+- **ネットワーク**: ポート 80、443、ならびに必要なカスタムポートの開放
+
+### ソフトウェア要件
+- **Docker**: バージョン 20.10 以降
+- **Docker Compose**: バージョン 2.0 以降
+- **Git**: リポジトリのクローン用
+- **SSL 証明書**: HTTPS 用の有効な証明書
+
+### 依存関係
+- **PostgreSQL データベース**: AWS RDS またはセルフホスト
+- **Redis キャッシュ**: AWS ElastiCache またはセルフホスト
+- **LLM プロバイダー**: OpenAI API、Anthropic、AWS Bedrock、または互換 API
+
+## インストール手順
+
+### 1. リポジトリをダウンロード
+
+```bash
+# akupara リポジトリをクローン
+git clone https://github.com/greptileai/akupara.git
+cd akupara
+
+# もしくは最新リリースをダウンロード
+wget https://github.com/greptileai/akupara/archive/refs/tags/v0.1.3.tar.gz
+tar -xzf v0.1.3.tar.gz
+cd akupara-0.1.3
+```
+
+### 2. Docker ディレクトリへ移動
+
+```bash
+cd docker
+```
+
+### 3. 環境変数を設定
+
+サンプルの環境ファイルをコピーしてから設定します:
+
+```bash
+cp .env.example .env
+```
+
+`.env` ファイルを開き、以下を自分の設定に編集します:
+
+```bash
+# Database Configuration
+POSTGRES_HOST=your-postgres-host
+POSTGRES_PORT=5432
+POSTGRES_DB=greptile
+POSTGRES_USER=greptile_user
+POSTGRES_PASSWORD=your-secure-password
+
+# Redis Configuration
+REDIS_HOST=your-redis-host
+REDIS_PORT=6379
+REDIS_PASSWORD=your-redis-password
+
+# LLM Configuration
+OPENAI_API_KEY=your-openai-key
+ANTHROPIC_API_KEY=your-anthropic-key
+
+# Application Configuration
+GREPTILE_API_HOST=api.yourdomain.com
+GREPTILE_WEB_HOST=app.yourdomain.com
+SSL_CERT_PATH=/path/to/your/cert.pem
+SSL_KEY_PATH=/path/to/your/key.pem
+
+# GitHub Integration
+GITHUB_APP_ID=your-github-app-id
+GITHUB_APP_PRIVATE_KEY_PATH=/path/to/github-private-key.pem
+```
+
+### 4. SSL 証明書を設定
+
+SSL 証明書を適切なディレクトリに配置します:
+
+```bash
+mkdir -p ssl
+cp /path/to/your/certificate.pem ssl/
+cp /path/to/your/private-key.pem ssl/
+```
+
+### 5. Docker Compose でデプロイ
+
+```bash
+# すべてのサービスを起動
+docker-compose up -d
+
+# サービスの状態を確認
+docker-compose ps
+
+# ログを表示
+docker-compose logs -f
+```
+
+### 6. デプロイを検証
+
+すべてのサービスが稼働していることを確認します:
+
+```bash
+# アプリケーションのヘルスチェック
+curl https://api.yourdomain.com/health
+
+# データベース接続を確認
+docker-compose exec greptile-api greptile-cli db:status
+
+# サービスのログを表示
+docker-compose logs greptile-api
+docker-compose logs greptile-web
+```
+
+## 設定
+
+### データベースのセットアップ
+
+PostgreSQL データベースで pgvector 拡張機能が有効になっていることを確認してください:
+
+```sql
+-- PostgreSQL データベースに接続
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+### LLM プロバイダの設定
+
+`.env` ファイルで利用する LLM プロバイダを設定します:
+
+#### OpenAI の設定
+```bash
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your-api-key
+OPENAI_MODEL=gpt-4
+EMBEDDING_PROVIDER=openai
+OPENAI_EMBEDDING_MODEL=text-embedding-ada-002
+```
+
+#### Anthropic の設定
+```bash
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=your-api-key
+ANTHROPIC_MODEL=claude-3-sonnet-20240229
+```
+
+#### AWS Bedrock の設定
+```bash
+LLM_PROVIDER=bedrock
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=your-access-key
+AWS_SECRET_ACCESS_KEY=your-secret-key
+BEDROCK_MODEL_ID=anthropic.claude-3-sonnet-20240229-v1:0
+```
+
+### GitHub 連携
+
+GitHub App の連携を設定します:
+
+1. 組織で GitHub App を作成する
+2. プライベートキーを生成する
+3. `.env` ファイルでアプリの設定を行う
+
+```bash
+GITHUB_APP_ID=123456
+GITHUB_APP_PRIVATE_KEY_PATH=/app/ssl/github-private-key.pem
+GITHUB_WEBHOOK_SECRET=your-webhook-secret
+```
+
+## AWS インフラストラクチャ（任意）
+
+サポート用インフラストラクチャを AWS にデプロイする場合は、Terraform の構成を使用してください:
+
+```bash
+cd docker/terraform
+
+# Terraform を初期化
+terraform init
+
+# デプロイ計画を確認
+terraform plan
+
+# インフラストラクチャを適用
+terraform apply
+```
+
+これにより、以下が作成されます:
+- VPC とネットワーキングコンポーネント
+- Docker Compose 用の EC2 インスタンス
+- RDS PostgreSQL データベース
+- ElastiCache Redis クラスター
+- アプリケーションロードバランサー
+- セキュリティグループと IAM ロール
+
+## メンテナンス
+
+### Greptile の更新
+
+新しいバージョンに更新するには:
+
+```bash
+# 最新のイメージを取得
+docker-compose pull
+
+# サービスを再起動
+docker-compose down
+docker-compose up -d
+
+# 更新状況を確認
+docker-compose logs -f
+```
+
+### バックアップとリカバリ
+
+定期的なバックアップは不可欠です:
+
+```bash
+# データベースのバックアップ
+docker-compose exec postgres pg_dump -U greptile_user greptile > backup.sql
+
+# Redis のバックアップ（永続化を使用している場合）
+docker-compose exec redis redis-cli BGSAVE
+
+# アプリケーションデータのバックアップ
+docker-compose exec greptile-api greptile-cli backup:create
+```
+
+### 監視
+
+デプロイを監視する:
+
+```bash
+# サービスのヘルス
+docker-compose ps
+
+# リソース使用状況
+docker stats
+
+# アプリケーションログ
+docker-compose logs -f --tail=100
+
+# データベースの状態
+docker-compose exec postgres psql -U greptile_user -d greptile -c "\l"
+```
+
+## トラブルシューティング
+
+### よくある問題
+
+**サービスが起動しない**
+```bash
+# Docker デーモンを確認
+sudo systemctl status docker
+
+# Compose ファイルの構文を確認
+docker-compose config
+
+# 詳細ログを表示
+docker-compose logs service-name
+```
+
+**データベース接続エラー**
+```bash
+# データベースの接続性をテスト
+docker-compose exec greptile-api nc -zv postgres-host 5432
+
+# データベースのログを確認
+docker-compose logs postgres
+```
+
+**SSL 証明書の問題**
+```bash
+# 証明書ファイルを検証
+openssl x509 -in ssl/certificate.pem -text -noout
+
+# 証明書の有効期限を確認
+openssl x509 -in ssl/certificate.pem -noout -dates
+```
+
+### パフォーマンスチューニング
+
+環境に合わせて最適化してください:
+
+```yaml
+# docker-compose.override.yml
+version: '3.8'
+services:
+  greptile-api:
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+    environment:
+      - WORKER_PROCESSES=4
+      - MAX_CONNECTIONS=1000
+
+  postgres:
+    environment:
+      - POSTGRES_SHARED_BUFFERS=256MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+```
+
+## サポート
+
+デプロイに関する問題が発生した場合:
+1. [akupara リポジトリの issues](https://github.com/greptileai/akupara/issues) を確認する
+2. アプリケーションのログを確認する
+3. デプロイ構成を添えてサポートに連絡する
+
+<Note>
+`.env` ファイルは安全に保管し、機密の認証情報をバージョン管理にコミットしないでください。
+</Note> 

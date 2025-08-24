@@ -1,0 +1,196 @@
+---
+title: GitHub MCP でコメントを自動解決
+description: "GitHub MCP サーバーを使って、AI エディタ内で Greptile のコードレビューコメントを自動解決する"
+keywords: "GitHub MCP, Cursor, Windsurf, 自動解決, AI コードエディタ, プルリクエストコメント"
+metaTitle: "GitHub MCP サーバーで Greptile のコメントを自動解決"
+metaDescription: "Cursor や Windsurf で GitHub MCP サーバーを使い、Greptile のコードレビューコメントを自動解決する方法を解説"
+---
+
+<Note>Cursor、Windsurf、Claude Desktop などの MCP 互換 AI エディタで利用できます</Note>
+
+GitHub の MCP サーバーは、AI エディタが GitHub API と直接連携できるようにし、開発環境から離れずに Greptile のコードレビューコメントを自動解決できるようにします。
+
+## 前提条件
+
+- MCP をサポートする AI エディター（[Cursor](https://cursor.sh/)、[Windsurf](https://codeium.com/windsurf)、または [Claude Desktop](https://claude.ai/desktop)）
+- リポジトリ権限を持つ GitHub のパーソナルアクセストークン
+- [GitHub MCP Server](https://github.com/github/github-mcp-server) がインストールされていること
+
+## GitHub MCP サーバーのセットアップ
+
+### 1. MCP サーバーをインストール
+
+```bash
+# 最新リリースをダウンロード
+curl -L https://github.com/github/github-mcp-server/releases/latest/download/github-mcp-server-$(uname -s)-$(uname -m) -o github-mcp-server
+chmod +x github-mcp-server
+```
+
+### 2. エディターを設定
+
+<Tabs>
+<Tab title="Cursor">
+Cursor の設定（`~/.cursor/mcp_servers.json`）に以下を追加します：
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "./github-mcp-server",
+      "env": {
+        "GITHUB_TOKEN": "your_github_token_here"
+      }
+    }
+  }
+}
+```
+</Tab>
+
+<Tab title="Windsurf">
+Windsurf の MCP 設定に以下を追加します：
+
+```json
+{
+  "github": {
+    "command": "./github-mcp-server",
+    "env": {
+      "GITHUB_TOKEN": "your_github_token_here"
+    }
+  }
+}
+```
+</Tab>
+
+<Tab title="Claude Desktop">
+`~/Library/Application Support/Claude/claude_desktop_config.json` に以下を追加します：
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "./github-mcp-server",
+      "env": {
+        "GITHUB_TOKEN": "your_github_token_here"
+      }
+    }
+  }
+}
+```
+</Tab>
+</Tabs>
+
+## Greptile コメントの自動解決
+
+### 1. PR コメントを取得
+
+AI エディタを使って、プルリクエストのすべてのコメントを取得します：
+
+```
+@github Can you get all the comments from PR #123 in owner/repo-name? Focus on the ones from the Greptile bot.
+```
+
+MCP サーバーは、Greptile のコードレビュー ボットによるものを含め、すべての PR コメントを取得します。
+
+### 2. 分析して解決
+
+AI エディタにコメントの解決を依頼します：
+
+```
+Please analyze these Greptile comments and automatically resolve them by:
+1. Opening the relevant files
+2. Understanding the context of each comment
+3. Implementing the suggested fixes
+4. Ensuring the changes don't break existing functionality
+```
+
+### 3. 一括解決ワークフロー
+
+効率化のため、複数のコメントをまとめて処理できます：
+
+```
+Please process all Greptile comments in this PR:
+1. Group related comments by file
+2. Prioritize critical issues (security, bugs) over style issues
+3. Implement fixes in logical order
+4. Create a summary of all changes made
+```
+
+## 上級者向けの使い方
+
+### 選択的な解決
+
+特定種類のコメントだけを対象にします:
+
+```
+@github PR #123 からコメントを取得し、スタイル上の提案は無視して、セキュリティおよびパフォーマンス関連の Greptile コメントのみを解決する。
+```
+
+### 検証ワークフロー
+
+検証ステップを組み込みます:
+
+```
+各 Greptile コメントを解決したら:
+1. 関連するテストを実行し、リグレッションがないことを確認する
+2. 修正が根本原因に対処しているか確認する
+3. 変更がプロジェクトの規約に従っているか検証する
+4. 修正内容を説明するコミットメッセージを作成する
+```
+
+### カスタムパターン
+
+エディタにコードベースのパターンを学習させます:
+
+```
+Greptile のコメントを解決する前に、既存のコードベースを分析して次を把握する:
+- 命名規則
+- コード構成のパターン
+- テストのプラクティス
+- ドキュメントの標準
+
+そのうえで、すべての修正がこれらのパターンに沿うようにする。
+```
+
+## ベストプラクティス
+
+<Card title="コミット前にレビュー" icon="eye" horizontal>
+特に複雑なロジックの変更では、コミット前に必ず AI 生成の修正内容をレビューしてください。
+</Card>
+
+<Card title="十分なテスト" icon="flask" horizontal>
+リグレッションを防ぐため、コメント対応後はテストスイートを実行してください。
+</Card>
+
+<Card title="段階的アプローチ" icon="stairs" horizontal>
+複雑なロジックに取り組む前に、スタイルや単純な修正から始めてください。
+</Card>
+
+<Card title="コンテキストの把握" icon="brain" horizontal>
+個々のファイルだけでなく、変更の全体的なコンテキストを AI エディタが理解していることを確認してください。
+</Card>
+
+## トラブルシューティング
+
+**MCP サーバーが応答しない**：GitHub トークンに十分な権限があるか、サーバーのバイナリに実行権限が付与されているかを確認してください。
+
+**コメントを取得できない**：リポジトリ名と PR 番号が正しいこと、リポジトリに読み取り権限があることを確認してください。
+
+**修正でテストが失敗する**：テストのパターンや検証要件について、AI により多くのコンテキストが必要な場合があります。
+
+## ワークフロー例
+
+```bash
+# 1. PR コメントを取得
+"@github myorg/myrepo の PR #456 のコメントをすべて一覧表示して"
+
+# 2. Greptile のコメントに絞り込み  
+"Greptile ボットからのコメントだけを表示して"
+
+# 3. 系統的に解決
+"最も重大な問題から順に、提案された修正を実装して各 Greptile のコメントを解決して"
+
+# 4. 変更を検証
+"テストスイートを実行し、すべての修正が正しく機能していることを確認して"
+```
+
+このワークフローは、Greptile のコードレビューから得られたインサイトを具体的な修正に結びつけ、コード品質を維持しつつ開発サイクルを大幅に加速します。 

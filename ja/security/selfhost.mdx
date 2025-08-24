@@ -1,0 +1,86 @@
+---
+title: セルフホスト型Greptile
+description: "自社インフラにGreptileをデプロイし、完全な管理とカスタマイズを実現"
+---
+<Frame>
+  <img
+    className="dark:hidden"
+    src="/images/selfhost-light.svg"
+    alt="セルフホスト型Greptileのアーキテクチャ図"
+  />
+  <img
+    className="hidden dark:block" 
+    src="/images/selfhost-dark.svg"
+    alt="セルフホスト型Greptileのアーキテクチャ図"
+  />
+</Frame>
+
+# 概要
+
+Greptileはコードベースを理解し、PRレビューやドキュメント生成などを行えるAIです。Greptileのサービスは、エアギャップ環境で全体をセルフホストできます。
+
+# デプロイ
+
+- `docker-compose` を使って任意のコンピュートノード（EC2相当を含む）で実行可能
+- 主要クラウドプロバイダーに対応:
+  - Amazon Web Services (AWS)
+  - Google Cloud Platform (GCP)
+  - Microsoft Azure
+  - その他の主要プロバイダーにも対応
+- デプロイ方法の詳細は [akupara](https://github.com/greptileai/akupara) リポジトリをご覧ください。
+
+# LLMの構成
+
+- 柔軟なLLM連携をサポート:
+  - 任意のOpenAI互換API
+  - 独自のLLM実装
+  - 推奨: Anthropic Claude 3.7 Sonnet（2025年2月時点）およびOpenAI Embeddings
+  - AWS Bedrockとの連携に対応
+
+# データベース要件
+
+- PostgreSQL データベースが必須
+  - AWS RDS を推奨
+  - ベクターデータベースとして pgvector を使用
+  - データベースは顧客がプロビジョニングおよび保守
+
+- Redis キャッシュを推奨
+  - AWS ElastiCache を推奨
+  - キャッシュは顧客がプロビジョニングおよび保守
+
+# バージョン管理
+
+- 定期的な更新通知
+- 新しい Docker イメージのURLを提供
+- クラウド版とのバージョン差は最大30日
+- シームレスなアップグレードパス
+
+# コードホスト対応
+
+- GitHub連携
+  - GitHub Cloud（github.com）
+  - GitHub Enterprise Server（セルフホスト型）- アクセスについては hello@greptile.com までメールでお問い合わせください
+  - GitHub Enterprise Cloud
+
+- GitLab連携
+  - GitLab Cloud（gitlab.com）
+  - GitLab Self-Managed
+  - GitLab Enterprise Edition
+
+- 複数のコードホストを同時にサポート
+- 要望に応じてカスタムのコードホスト連携に対応
+
+
+# 料金体系
+
+- 月払いの年間契約
+- 年間一括前払いで15%割引
+- トライアルポリシー:
+  - 無料トライアルなし
+  - 初回30日以内は全額返金可
+  - 2〜4か月目は比例按分で返金可（前払いのみ）
+
+# はじめに
+
+セルフホスト型Greptileの導入を始めるには、[こちら](https://cal.com/team/greptile/demo)から当社エンジニアリングチームとのミーティングをご予約ください。
+---MDX_CONTENTEND---

@@ -1,0 +1,88 @@
+---
+title: はじめに
+description: 'あなたのVibeコードをVibeチェック'
+keywords: 'AIコードレビュー, コードベース分析, 自然言語クエリ, GitHub連携, Slack連携, PRレビューBot'
+metaTitle: 'Greptile ドキュメント: コード分析とレビューのAIエキスパート'
+metaDescription: 'GreptileでAIを活用したコード分析とレビュー。自然言語クエリと各種連携を通じて、コードベースに関する専門的なインサイトを得ましょう。'
+---
+
+GreptileのコードレビューBotは、コードベースの完全なコンテキストを踏まえて、GitHubとGitLabのプルリクエストをレビューします。
+
+<CardGroup cols={2}>
+  <Card title="コードレビューBotをインストール" icon="rocket" href="https://app.greptile.com/signup">
+    14日間無料、クレジットカード不要。
+  </Card>
+
+  <Card title="エンジニアに相談する" icon="calendar" href="https://greptile.com/demo">
+    セルフホスト型オプションとエンタープライズ機能についてご案内します。
+  </Card>
+</CardGroup>
+
+## Greptile は自分に向いていますか？
+
+<AccordionGroup>
+  <Accordion title="Supported Languages" icon="code">
+    Python、JavaScript、TypeScript、Go、Java、Ruby、Elixir、Rust、PHP、C++ など、主要なプログラミング言語を幅広くサポートしています。
+  </Accordion>
+
+  <Accordion title="Supported Code Hosts" icon="github">
+    GitHub、GitLab、ならびに GitHub Enterprise Server をサポートしています（GHES へのアクセスは hello@greptile.com までメールでお問い合わせください）。
+  </Accordion>
+
+  <Accordion title="Security & Privacy" icon="user">
+    医療、金融、防衛などのエンタープライズ企業と協業し、最も厳格なセキュリティ基準に準拠しています。
+
+    - SOC 2 タイプ II 準拠（レポートはリクエストに応じて提供）
+    - すべてのデータは保存時・転送時に暗号化
+    - 顧客コードでのトレーニング／ファインチューニングは一切行いません
+    - 顧客のエアギャップ環境でのセルフホストに対応
+
+    詳細は[セキュリティページ](https://greptile.com/security)をご覧ください。
+
+    セキュリティレポートの入手、セルフホストに関するご相談、その他のご質問は [security@greptile.com](mailto:security@greptile.com) までメールでご連絡ください。
+  </Accordion>
+</AccordionGroup>
+
+## はじめに
+
+<Steps>
+  <Step title="Greptile の無料トライアルを開始">
+    メール、Google、GitHub、または GitLab で[こちら](https://app.greptile.com/signup)からサインアップしてください。
+  </Step>
+
+  <Step title="GitHub または GitLab アカウントを接続">
+    GitHub App または GitLab Access Token を使用します。
+  </Step>
+
+  <Step title="リポジトリで Greptile を有効化">
+    レビュー対象のリポジトリで Greptile を有効にします。
+  </Step>
+
+  <Step title="以上です！" icon="party-horn">
+    以後、Greptile が新規の pull／merge リクエストをすべてレビューします。
+  </Step>
+</Steps>
+
+<Note>
+  Greptile は既存の PR にはデフォルトで実行されませんが、PR に `@greptileai` とコメントするとボットを起動できます。
+</Note>
+
+## さらに詳しく
+
+<CardGroup cols={2}>
+  <Card title="主な機能" icon="ranking-star" href="/ja/code-review-bot/key-features">
+    Greptile が競合製品とどう違うかをご紹介します。
+  </Card>
+
+  <Card title="トリガールール" icon="gears" href="/ja/code-review-bot/trigger-code-review">
+    特定のプルリクエストのみをレビューするように Greptile を構成します。
+  </Card>
+
+  <Card title="カスタム手順" icon="sliders-up" href="/ja/code-review-bot/custom-instructions">
+    自社のコーディングガイドラインを Greptile に順守させます。
+  </Card>
+
+  <Card title="セルフホスト" icon="shield-halved" href="/ja/security/selfhost">
+    自社インフラ上で Greptile をセルフホストする方法をご案内します。
+  </Card>
+</CardGroup>

@@ -1,0 +1,42 @@
+---
+title: 主要機能
+description: 'Greptile ができることを詳しく紹介'
+keywords: 'AI コードレビュー, コードベース分析, 自然言語クエリ, GitHub 連携, Slack 連携, PR レビューボット'
+metaTitle: 'Greptile ドキュメント: コード解析とレビューのための AI エキスパート'
+metaDescription: 'Greptile で AI を活用してコード解析とレビューを行いましょう。自然言語クエリや各種連携を通じて、コードベースへの専門的なインサイトを得られます。'
+---
+
+Greptile は、コードベースの完全なコンテキストを踏まえて PR をレビューできること、ユーザーのフィードバックから学習できること、そして高いシグナル対ノイズ比によって差別化されています。
+
+## 1. 完全なコードベースコンテキスト
+
+リポジトリを Greptile に接続すると、各関数・変数・クラス・ファイル・ディレクトリの役割と、相互のつながりを示す詳細なグラフが生成されます。
+
+diff をレビューする際、Greptile はこのグラフを用いて、diff の影響を受けたコード、その依存関係、関連コード、類似コードを取得し、コード変更を正しく評価するために必要なコンテキストを確保します。
+
+## 2. 会話
+
+Greptile に修正案を求めたり、追加の質問をする場合は、そのコメントに `@greptileai <your question>` の形式で返信してください。
+
+<Frame>
+  <img src="/images/cr-bot/qna.gif" alt="Greptile AI のコードレビューにおける会話例" />
+
+  <figcaption>Greptile AI のコードレビューにおける会話例</figcaption>
+</Frame>
+
+## 3. 強化学習
+
+Greptile は、コメントに対する `👍` や `👎` のリアクションから学習します。これにより、チームが最も重視する点にのみコメントするようになります。
+
+<Frame>
+  <img src="/images/cr-bot/downvote.gif" alt="Example of Greptile AI code review reaction" />
+
+  <figcaption>Greptile AI のコードレビューへのリアクション例</figcaption>
+</Frame>
+
+## 4. パターンリポジトリ
+
+`greptile.json` ファイルでは、レビュー対象のリポジトリに関連し、コンテキストの補強に役立つリポジトリを `patternsRepo` フィールドで指定できます。
+例えば、バックエンド用リポジトリの `greptile.json` にフロントエンド用リポジトリを追加しておくと、ボットはバックエンドコードをレビューする際にフロントエンドのコードも参照できます。
+
+greptile.json の詳細は[こちら](/ja/code-review-bot/greptile-json)をご覧ください。

@@ -1,0 +1,41 @@
+---
+title: Linear
+description: "Greptile は、Linear の Issue に役立つコードベースのコンテキストを含むコメントを追加します"
+keywords: "AI code analysis, Linear integration, codebase context, issue management, developer productivity, automated code insights"
+metaTitle: "Greptile AI for Linear: Automated Codebase Context for Issues"
+---
+<Note>
+Linear との連携は現在一時的にご利用いただけません。Zapier の Greptile 統合または Greptile API を使用して、ニーズに合ったカスタム統合を構築することをおすすめします。
+</Note>
+Greptile は、次の条件でコメントを自動投稿するように設定できます:
+1. すべての Issue
+2. 特定のワークスペース、プロジェクト、チーム、またはラベルの Issue
+3. 本文で `@greptile` に言及している Issue
+
+<Frame>
+    <img src="/images/linearbot.png" alt="Linear の Issue 上の Greptile AI コメント" />
+</Frame>
+
+### インストール
+
+Linear bot をインストールするには[こちら](https://app.greptile.com/enrich/linear)をクリックしてください。インストール後は、同じリンクから設定できます。 
+
+設定には以下が含まれます:
+1. トリガーの設定（例: `@mentions`）や、ワークスペース、プロジェクト、チーム、ラベルなどのフィルタ。
+2. 参照用リポジトリの設定。これにより、bot がコンテキストに即したコメントを提供できます。
+3. 任意: bot が従う「特別な指示」の追加（例: 「コンプライアンスへの影響に関するセクションを含める」）。
+
+<Note>
+Greptile がリポジトリを参照するには、まずそれらを**インデックス化**する必要があります。フロントエンドから[こちら](https://app.greptile.com/enrich/linear)で送信して実行できます。 
+</Note>
+
+### 有用な理由
+
+Greptile の Linear bot は、次のようなコメントを作成します:
+
+1. Issue の進め方を示し、エンジニアが素早くコンテキストを把握して着手できるようにします。 
+2. コードベース内の関連ファイルへのリンクを提示し、どこから調査を始めればよいかを示します。
+3. この Issue によりコードベースの他所で生じうるセキュリティや安定性、潜在的なバグへの影響を取り上げます。 
+4. すでにコードベースに存在する、Issue に関連する類似のコードや抽象化を参照し、重複を防ぎます。 
+
+Linear bot をインストールするには[こちら](https://app.greptile.com/enrich/linear)をクリックしてください。

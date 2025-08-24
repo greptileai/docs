@@ -1,0 +1,73 @@
+---
+title: SSO/SAML
+description: "BoxyHQ経由のSAMLで、グレプタイルアプリケーションにエンタープライズSSO（Single Sign-On）を有効化する"
+---
+
+<Note>
+   これらの手順は、グレプタイルのセルフホスト型SSOサービス向けです。Web版のグレプタイルをご利用でSSOを有効化したい場合は、[support@greptile.com](mailto:support@greptile.com) までご連絡ください。
+</Note>
+
+BoxyHQ経由のSAMLでグレプタイルアプリケーションにエンタープライズSSO（Single Sign-On）を有効化するには、以下の手順に従ってください。
+
+## 前提条件
+
+次のサービスが稼働していることを確認してください：
+- `web`（グレプタイルのWebアプリケーション）
+- `jackson`（BoxyHQのSSOサービス）
+
+## Jacksonサービスの設定
+
+Jacksonサービス用に次の環境変数を設定します:
+
+| 変数 | 説明 | 例 |
+|----------|-------------|---------|
+| `DB_ENCRYPTION_KEY` | 暗号化キー | `openssl rand -base64 32` |
+| `HOST_URL` | JacksonサービスのURL | `sso.greptile.com` |
+| `EXTERNAL_URL` | 外部公開用のJacksonのURL | `https://sso.greptile.com` |
+| `JACKSON_API_KEYS` | Jackson用のAPIキー | `openssl rand -base64 32` |
+| `SAML_AUDIENCE` | オーディエンス識別子 | `https://sso.greptile.com` |
+| `CLIENT_SECRET_VERIFIER` | シークレット検証子（英数字のみ） | `dummy` |
+| `NEXTAUTH_ADMIN_CREDENTIALS` | 管理者資格情報 | `admin@greptile.com:mysupersecretpassword` |
+| `PUBLIC_KEY` | 証明書（[Jackson ドキュメント](https://boxyhq.com/docs/jackson/deploy/env-variables)参照） | `-----BEGIN CERTIFICATE-----` で始まります |
+| `PRIVATE_KEY` | 秘密鍵（[Jackson ドキュメント](https://boxyhq.com/docs/jackson/deploy/env-variables)参照） | PEM 形式 |
+| `NEXTAUTH_URL` | `EXTERNAL_URL` と同じ | `https://sso.greptile.com` |
+| `NEXTAUTH_SECRET` | `web` サービスの JWT シークレット | JWT シークレット |
+| `IDP_ENABLED` | IdP を有効化 | `true` |
+
+## データベースエントリの設定
+
+1. PostgreSQL データベースにログインします。
+2. 既存の `Organization` を特定するか、新規に作成します。
+3. その `Organization` に紐づく `InternalApiKey` を生成します:
+
+   ```shell
+   openssl rand -base64 36
+   ```
+
+4. 新しい `SamlConnection` を作成します:
+
+   - `org_id` を組織の ID に設定します。
+   - `tenant_id` をメールドメイン（例: `example.com`）に設定します。
+
+## SSO接続を設定する
+
+1. Jackson の管理コンソールにアクセスします。
+2. 先に設定した管理者用の資格情報でログインします。
+3. **Enterprise SSO → Connections** に移動します。
+4. **New Setup Link** をクリックします。
+   - テナントをユーザーのメールドメインに設定します。
+   - プロダクトを `greptile` に設定します。
+   - 許可されたリダイレクトURL: `https://<greptile_web_domain>`
+   - 既定のリダイレクトURL: `https://<greptile_web_domain>/login/saml`
+5. セットアップリンクを生成します。
+6. SSO 構成のため、セットアップリンクを IdP 管理者と共有します。
+
+## SSOセットアップの完了
+
+設定が完了したら：
+- ユーザーはメールアドレスを入力して、SSO経由でウェブアプリにログインできます。
+- 新しいSSOユーザーは、設定済みの`Organization`に自動的に追加されます。
+
+## 重要な注意事項
+- Webサービスの `AUTH_BOXYHQ_SAML_SECRET` は Jackson の `CLIENT_SECRET_VERIFIER` と一致している必要があり、特殊文字は含めないでください。
+

@@ -1,0 +1,50 @@
+---
+title: greptile.json で設定する
+description: "リポジトリごとに Greptile の設定とパターンを構成する"
+keywords: "AI code reviews, codebase analysis, natural language queries, GitHub integration, Slack integration, PR review bot"
+metaTitle: "Greptile Docs: greptile.json によるリポジトリ単位の設定"
+metaDescription: "greptile.json を使って、各リポジトリ向けに Greptile の設定とパターンをカスタマイズする方法を解説します。"
+---
+
+デフォルトブランチのリポジトリのルートに `greptile.json` ファイルを追加することで、リポジトリ単位のカスタム設定を適用できます。
+
+設定パネル右上の `copy` または `download` アイコンをクリックして、[こちら](https://app.greptile.com/review/github?tab=config) から正しい形式のグローバル設定を取得できます。 
+
+<Note>
+  `ignorePatterns` フィールドは `.gitignore`
+  [構文](https://git-scm.com/docs/gitignore) に準拠します。
+</Note>
+
+```json greptile.json
+{
+  "labels": ["feature", "bug"],
+  "comment": "Disclaimer: This is AI-generated.",
+  "commentTypes": ["logic", "syntax"],
+  "instructions": "Ensure style_guide.md is enforced.",
+  "ignoreKeywords": "rename\nlinter\nprettier\ngreptile-ignor",
+  "ignorePatterns": "testing/**/*.py\n*.md\n*.txt\n*.json",
+  "patternRepositories": ["acme/backend"],
+  "triggerOnUpdates": true,
+  "shouldUpdateDescription": false,
+  "disabledLabels": ["docs"],
+  "includeAuthors": ["dakshgup", "schoi"],
+  "excludeAuthors": ["cool-dev"]
+}
+```
+
+### 設定パラメータ
+
+| Parameter                 | Type    | Description                                                                                                                                  |
+| ------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `labels`                  | array   | PR に追加されたときに Greptile のレビューを起動するラベル。上記の例では "feature" または "bug" を追加するとレビューが実行されます。  |
+| `comment`                 | string  | すべての Greptile の PR サマリーに付与される免責文またはプレフィックス。コンプライアンス要件に有用です。                                  |
+| `commentTypes`            | array   | Greptile が投稿するコメントの種類。オプションには "logic"、"syntax"、"style"、"info" が含まれます。                                             |
+| `instructions`            | string  | コードレビュー時に Greptile が従う自然言語のカスタム指示。リポジトリ内のファイル参照や、特定のルールを記述できます。 |
+| `ignoreKeywords`          | string  | 改行区切りのキーワード一覧。タイトルまたは説明にこれらのキーワードが含まれる PR は無視されます。                                   |
+| `ignorePatterns`          | string  | .gitignore 構文に準拠した、無視するファイルパターンの改行区切りリスト。該当パターンに一致するファイルはレビュー対象外になります。          |
+| `patternRepositories`     | array   | パターン学習対象のリポジトリ一覧。Greptile はこれらを分析して、あなたのコードベースのパターンを把握します。                       |
+| `triggerOnUpdates`        | boolean | true の場合、PR に新しいコミットが追加されて更新されるたびに Greptile がレビューを実行します。                                                             |
+| `shouldUpdateDescription` | boolean | true の場合、Greptile は変更サマリーで PR の説明を更新します。false の場合はコードへのコメントのみを行います。                                 |
+| `disabledLabels`          | array   | これらのラベルが付いた PR は、他のトリガー条件を満たしていても Greptile によるレビュー対象外です。                                            |
+| `includeAuthors`          | array   | 指定した作者からの PR のみレビューします。空の場合は、（除外された作者を除き）すべての作者の PR をレビューします。                                 |
+| `excludeAuthors`          | array   | 指定した作者からの PR は、他のトリガー条件を満たしていてもレビューしません。                                                       |

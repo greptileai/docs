@@ -1,0 +1,80 @@
+---
+title: セルフホスティングの概要
+description: "Greptile インフラをオンプレミスにデプロイするための完全ガイド"
+---
+
+このセクションでは、[akupara リポジトリ](https://github.com/greptileai/akupara)を使用して Greptile をセルフホストするための包括的なガイドを提供します。デプロイ方法は主に `docker-compose` と `kubernetes` の2通りをご用意しています。より簡便で柔軟なため、`docker-compose` の使用を強く推奨します。
+
+<Info>
+  akupara リポジトリには、Greptile をオンプレミスで実行するためのすべてのインフラコードとデプロイガイドが含まれています。必ず [GitHub](https://github.com/greptileai/akupara/releases) から最新のリリースをダウンロードしてください。
+</Info>
+
+## デプロイ方法
+
+<CardGroup cols={2}>
+  <Card title="Docker Compose" icon="docker" href="/ja/self-hosting/docker-compose">
+    **推奨方法** - Docker Compose を使ったシンプルで柔軟なデプロイ
+  </Card>
+
+  <Card title="Kubernetes" icon="dharmachakra" href="/ja/self-hosting/kubernetes">
+    Helm チャートを用いた Kubernetes によるエンタープライズ向けデプロイ
+  </Card>
+</CardGroup>
+
+## アーキテクチャ概要
+
+### Docker Compose アーキテクチャ
+
+docker-compose デプロイは、ほとんどのオンプレミス環境に適した、シンプルで効率的なアーキテクチャを提供します。
+
+<Frame>
+  <img src="https://github.com/greptileai/akupara/raw/main/OnPremEC2.jpg" alt="Docker Compose アーキテクチャ図" />
+</Frame>
+
+### Kubernetes アーキテクチャ
+
+Kubernetes デプロイは、より複雑ながら高いスケーラビリティを備えたアーキテクチャを提供します。
+
+<Frame>
+  <img src="https://github.com/greptileai/akupara/raw/main/OnPremEKS.jpg" alt="Kubernetes アーキテクチャ図" />
+</Frame>
+
+## はじめに
+
+デプロイ方法を選択してください:
+
+1. **ほとんどのユーザー向け**: [Docker Compose デプロイ](/ja/self-hosting/docker-compose) から始めましょう
+2. **エンタープライズ環境向け**: [Kubernetes デプロイ](/ja/self-hosting/kubernetes) の利用を検討してください
+
+## 前提条件
+
+### 共通要件
+
+- [akupara リポジトリ](https://github.com/greptileai/akupara) へのアクセス
+- Linux ベースのデプロイ環境
+- Docker イメージ取得のためのネットワークアクセス
+- HTTPS エンドポイント用の SSL 証明書
+
+### Docker Compose 要件
+
+- Docker および Docker Compose がインストール済み
+- 最低 8GB の RAM、CPU コア 4 基
+- 100GB 以上の空きディスク容量
+
+### Kubernetes 要件
+
+- `terraform`、`helm`、`kubectl` がインストール済み
+- AWS へのデプロイの場合：適切な認証情報を設定した `awscli`
+- Kubernetes クラスター（EKS、GKE、AKS、または自前管理）へのアクセス
+
+## サポート
+
+セルフホストに関する追加サポート:
+
+- 本セクションの詳細なデプロイガイドを参照してください
+- 最新情報は [akupara リポジトリ](https://github.com/greptileai/akupara) をご確認ください
+- エンタープライズサポートは当社のエンジニアリングチームまでご連絡ください
+
+<Note>
+  セルフホストにはエンタープライズライセンスが必要です。ライセンスに関する詳細は [sales@greptile.com](mailto:sales@greptile.com) までお問い合わせください。
+</Note>

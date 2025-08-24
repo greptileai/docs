@@ -1,0 +1,104 @@
+---
+title: Zapierとの連携
+description: "GreptileをZapierと連携する方法"
+keywords: "AIコード解析, Zapier統合, Linear統合, タスク管理, 開発者の生産性, 自動化によるインサイト"
+metaTitle: "GreptileをZapierと連携する方法"
+metaDescription: "GreptileとZapierでカスタム自動化を構築する"
+---
+
+
+GreptileはZapierとネイティブ統合されています。始めるには[こちら](https://zapier.com/apps/greptile/integrations)をご覧ください。
+
+<Frame>
+    <img src="/images/greptile-zapier.png" alt="Greptile + Zapierの例" />
+</ Frame>
+
+## 概要と例
+
+Greptile + Zapier を使うと、Greptile を開発者向けツールに素早く統合し、よりスマートにできます。 
+
+入力はプロンプトと1つ以上のリポジトリ、出力はそれらのリポジトリ由来のコンテキストと、コード内の特定箇所へのリンクを含む応答です。
+
+活用例:
+1. ClickUp で新しい Issue が作成されたら、その Issue の説明を Greptile に送信します。Greptile は、開発者がチケットに着手しやすいよう、コードベースのコンテキストを踏まえたコメントを生成します。
+2. GitHub Actions でテストが失敗したとき、Greptile はコードベースのコンテキストに基づく診断を生成できます。
+3. Sentry のアラートが発生したとき、Greptile はコードベースのコンテキストに基づく根本原因分析を生成できます。
+
+## 認証
+
+Greptile を利用するには、Greptile の API キーと GitHub トークンが必要です。
+
+<Steps>
+    <Step>
+        Greptile の API キーは[こちら](https://app.greptile.com/settings/api)で発行できます。
+    </ Step>
+    <Step>
+        GitHub トークンは[こちら](https://github.com/settings/tokens)で発行できます。対象リポジトリへのアクセス権が付与されていることを確認してください。
+    </ Step>
+</ Steps>
+
+<Note>
+    Greptile の API キーは、フィールドに `Bearer api_key` の形式で入力してください。
+</ Note>
+
+## 入出力フォーマット
+
+入力は、会話型ユースケース向けのプロンプトおよびプロンプト／レスポンス履歴を含む `messages` 配列と、参照対象のリポジトリを含む `repositories` 配列です。
+
+出力は、`message` と `sources` を含む `json` です。
+
+**サンプル入力:**
+
+`messages`:
+```json
+[
+    {
+        "content": "Diagnose this bug: `${stack_trace}`",
+        "role": "user",
+        "id": "0000"
+    }
+]
+```
+
+`repositories`:
+```json
+[
+      {
+         "repository":"helicone/helicone",
+         "remote":"github",
+         "branch":"main"
+      }
+]
+```
+
+**サンプル出力:**
+
+出力は次のようになります:
+```json
+{
+    "message": "Based on the code, there are several potential reasons why ClickHouse writes might be failing: ...",
+    "sources": [
+        {
+            "repository": "helicone/helicone",
+            "remote": "github", 
+            "branch": "main",
+            "filepath": "/valhalla/jawn/src/lib/db/ClickhouseWrapper.ts",
+            "linestart": 82,
+            "lineend": 92,
+            "summary": "The `ClickhouseWrapper.ts` file contains the implementation of the...",
+            "distance": 0.2171129350993909
+        },
+        {
+            "remote": "github",
+            "remoteUrl": null,
+            "branch": "main",
+            "repository": "helicone/helicone", 
+            "filepath": "/valhalla/jawn/src/lib/db/ClickhouseWrapper.ts",
+            "linestart": 1,
+            "lineend": 80,
+            "summary": "The `ClickhouseWrapper.ts` file contains the implementation of the...",
+            "distance": 0
+        }
+    ]
+}
+```

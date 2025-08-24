@@ -1,0 +1,30 @@
+---
+title: Slack
+description: 'GreptileはSlackでコードベースに関する質問に回答できます'
+keywords: 'AIコード解析, Slack連携, コードベースQ&A, 開発者の生産性, 自動コードインサイト, Slackbot'
+metaTitle: 'Greptile AI for Slack: ワークスペースで瞬時に得られるコードベースの洞察'
+metaDescription: 'GreptileのAI搭載BotをSlackに連携し、コードベースに関する質問へ即時に回答を取得。チームのコミュニケーション内でコンテキスト対応のコードインサイトを提供し、開発者の生産性を高めます。'
+---
+
+GreptileのSlackbotとは、次の方法でやり取りできます:
+1. Botにダイレクトメッセージを送る
+2. チャンネルで`@greptile`をメンションして呼び出す
+3. 特定のSlackチャンネル（通常は`#engineering-support`など）で、すべての質問に自動応答するよう設定する
+
+<Frame>
+    <img src="/images/slackbot.png" alt="Greptile AI Slackbotがコードベースに関する質問に回答している様子" />
+</Frame>
+
+### インストール
+
+Slackbotのインストールは[こちら](https://app.greptile.com/login)から行えます。インストール後は、同じリンクから設定も可能です。
+
+設定内容には以下が含まれます:
+1. トリガーの設定（例: `@mentions`、特定の`#channel`内のすべてのメッセージ など）
+2. 参照用リポジトリの設定（Botがコンテキストに基づく回答を提供できるようにするため）
+3. 任意: Botに従わせる「特別な指示」の指定（例: 「1〜2文で回答する」）
+
+<Note>
+Greptileがリポジトリを参照するには、まず**インデックス作成**が必要です。フロントエンドから[こちら](https://app.greptile.com/login)で送信して実行できます。
+</Note>
+

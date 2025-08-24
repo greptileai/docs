@@ -1,0 +1,59 @@
+---
+title: "Introduction"
+description: "コードベースに自然言語でクエリし、Slack、Sentry、GitHub のワークフローとシームレスに統合できます。"
+keywords: "AI コード解析, コードベースのエキスパート, 自然言語クエリ, GitHub 統合, Slack 統合, Sentry 統合"
+metaTitle: "Greptile: 開発者向け AI コード解析エキスパート API"
+metaDescription: "Greptile でコードベースに AI の力を。大規模リポジトリへ自然言語でクエリし、Slack、Sentry、GitHub と統合して開発ワークフローを強化します。"
+---
+
+Greptile は大規模リポジトリにインデックス作成を行い、自然言語による難しい質問に回答します。**あなたのコードベースに関する AI エキスパート**として、API で利用できます。
+
+クエリ例:
+
+1. 「このコードベースで認証はどのように機能していますか？」
+2. 「コードベースのコンテキストを踏まえてこの PR にコメントを生成して」
+3. 「`/retrieve` エンドポイントにページネーションを追加するにはどうすればよい？」
+
+API はさまざまな方法で利用できます:
+
+1. **Slack** と統合してコードベースに関する質問に回答。
+2. **Sentry** と統合して、アラートにコードベースのコンテキスト、診断、解決手順を付加。
+3. **GitHub** と統合して PR をレビューし、新しい Issue にコメント。
+
+[ファーストパーティ統合](https://app.greptile.com/login)を順次拡充中です。API を使って独自の統合を構築することもできます。
+
+### 処理の順序
+
+<Steps>
+  <Step title="Index repo(s)">
+    [`POST /repositories`](/ja/api-reference/index) を使用してリポジトリを送信し、インデックス作成します。
+  </Step>
+
+  <Step title="Query repos">
+    [`POST /query`](/ja/api-reference/query) を使用して、リポジトリ（複数可）を自然言語でクエリし、回答と関連するファイル、関数、クラスなどのリストを取得します。
+  </Step>
+
+  <Step title="Search repos">
+    必要に応じて、[`POST /search`](/ja/api-reference/query) を使用して、回答は返さずに関連するファイル、関数、クラスなどのリストのみを自然言語で検索します。
+  </Step>
+</Steps>
+
+### ベース URL
+
+すべての API リクエストのベース URL は `https://api.greptile.com/v2/` です。
+
+### 認証
+
+2 種類のトークンが必要です:
+
+**Greptile API key**:
+
+リクエストヘッダーに API キーを含めます: `Authorization: Bearer <API_KEY>`。
+API キーは[こちら](https://app.greptile.com/login)で取得できます。
+
+**GitHub Token**:
+
+GitHub アクセスが必要な操作には、GitHub/GitLab のアクセストークンをこのヘッダーで送信します:
+`X-GitHub-Token: <GITHUB_TOKEN>`。
+
+_注意: GitHub/GitLab トークンの読み取り権限によって、Greptile が回答で参照できるリポジトリが決まります。_

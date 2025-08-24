@@ -1,0 +1,44 @@
+---
+title: GitHub Issue Bot
+description: "Greptile は GitHub Issues に役立つコードベースのコンテキストを含むコメントを追加します"
+keywords: 'AIコード解析, GitHub連携, Issue管理, コードベースのコンテキスト, 自動インサイト, 開発者の生産性'
+metaTitle: 'Greptile AI for GitHub Issues: 自動コードベース分析とインサイト'
+metaDescription: 'Greptile のAI搭載ボットで GitHub Issues を強化。自動コードベースのコンテキスト、セキュリティインサイト、関連コード参照を取得して開発者の生産性を向上。'
+---
+
+Greptile は次のトリガーでコメントを投稿するように設定できます:
+
+1. すべての Issue
+2. 特定のワークスペース、プロジェクト、チーム、またはラベルの Issue
+3. 本文で `@greptile` が言及されている Issue
+
+<Frame>
+  <img src="/images/githubissuebot.png" alt="GitHub の Issue 上の Greptile AI のコメント" />
+</Frame>
+
+### インストール
+
+[こちら](https://app.greptile.com/login)をクリックして GitHub Issue ボットをインストールします。インストール後は、同じリンクから設定も行えます。インストール手順の詳細は [Code Review Bot のドキュメント](/ja/apps/code-review)を参照してください。
+
+設定項目には以下が含まれます:
+
+1. トリガーの設定（例: `@mentions` やワークスペース、プロジェクト、チーム、ラベルなどのフィルター）
+2. 対象リポジトリの設定（そのリポジトリの Issue にボットがコメントできるようにする）
+3. 任意: ボットに従わせる「特別な指示」の提供（例: 「コンプライアンスへの影響に関するセクションを含める」）
+
+<Note>
+  Greptile がリポジトリを参照するには、まずそれらが**インデックス作成**されている必要があります。フロントエンドから
+  [こちら](https://app.greptile.com/login)
+  に送信して実行できます。
+</Note>
+
+### なぜ有用か？
+
+Greptile の GitHub Issue ボットは次のようなコメントを生成します:
+
+1. Issue の進め方を示し、エンジニアが迅速にコンテキストを把握して着手できるようにします。
+2. コードベース内の関連ファイルへリンクし、どこから調査を始めるべきかを示します。
+3. この Issue によりコードベースの他所で生じうるセキュリティや安定性、潜在的なバグの影響を指摘します。
+4. 既存のコードベースにある類似コードや抽象化を参照し、重複を防ぎます。
+
+[こちら](https://app.greptile.com/login)をクリックして GitHub Issue ボットをインストールしてください。

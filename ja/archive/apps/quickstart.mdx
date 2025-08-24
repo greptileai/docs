@@ -1,0 +1,600 @@
+---
+title: "クイックスタート"
+description: "Greptile API の始め方"
+keywords: "Greptile API, AI コード解析, コードベースの理解, API セットアップ, GitHub 連携, クエリ実行"
+metaTitle: "Greptile API クイックスタート：数分で AI 駆動のコード解析をセットアップ"
+metaDescription: "Greptile API を使って AI 駆動のコード解析をセットアップする方法を紹介します。権限を設定し、コードベースのインデックス作成を行い、自然言語でのクエリを開始しましょう。"
+---
+
+このガイドでは、コードベースに関する難しい質問に答えられるように Greptile API をセットアップする方法を説明します。手順は 3 つだけで、**権限**、**インデックス作成**、**クエリ実行** を設定します。
+
+ベースURL: `https://api.greptile.com/v2/`。
+
+## 権限
+
+Greptile の API キーと、パーソナルアクセストークン（PAT）などの GitHub トークン、または GitHub App や GitHub OAuth App のトークンが必要です。この例では、リクエストの認証に PAT を使用します。
+
+1. **Greptile API キー** -- Greptile キーを取得するには[こちら](https://app.greptile.com/login)をクリックしてください。GitHub または Microsoft でログインする必要があります。
+
+2. **GitHub トークン** -- PAT を生成するには[こちら](https://github.com/settings/tokens?type=beta)をクリックしてください。Greptile がリポジトリをインデックス作成できるよう、あなたの GitHub リポジトリへの読み取りアクセスが必要です。GitHub の[このガイド](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token)に従って GitHub PAT を作成できます。トークン作成時は、Greptile がリポジトリをクローンするために必要な `repo` スコープを必ず選択してください。GitLab と Azure DevOps への対応は近日提供予定です。GitHub App や GitHub OAuth App など、他の種類の GitHub トークンも使用できます。
+
+## インデックス作成
+
+Greptile がリポジトリを検索して質問に回答できるようにするには、まずインデックス作成が必要です。小規模なリポジトリでは 3〜5 分、大規模なものでは 1 時間以上かかることがありますが、実行は 1 回のみで済みます。Greptile が生成した各インデックスは当社のデータベースに保存されます。
+
+1. **リポジトリをインデックス作成に送信する**
+
+`POST /repositories` エンドポイントを使用して、リポジトリのインデックス作成ジョブを送信できます。
+
+<AccordionGroup>
+  <Accordion title="サンプルリクエスト">
+    ```json
+    // POST https://api.greptile.com/v2/repositories
+    // Headers:
+    //   Authorization: Bearer {GREPTILE_API_KEY}
+    //   X-Github-Token: {GITHUB_TOKEN}
+    //   Content-Type: application/json
+
+    {
+        "remote": "github",
+        "repository": "pandas-dev/pandas",
+        "branch": "main"
+        // ... オプション項目は API リファレンスを参照
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="サンプルレスポンス">
+    ```json
+    // 200
+
+    {
+        "response": "started repo processing"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<CodeGroup>
+  ```bash cURL
+  export GREPTILE_API_KEY="your-greptile-api-key"
+  export GITHUB_TOKEN="your-github-token"
+
+  curl -X POST \
+    https://api.greptile.com/v2/repositories \
+    -H "Authorization: Bearer $GREPTILE_API_KEY" \
+    -H "X-Github-Token: $GITHUB_TOKEN" \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "remote": "github",
+        "repository": "pandas-dev/pandas",
+        "branch": "main"
+    }'
+  ```
+
+  ```javascript node
+  const greptile_api_key = "your-greptile-api-key";
+  const github_token = "your-github-token";
+
+  const repository_payload = {
+      remote: "github",
+      repository: "pandas-dev/pandas"
+  };
+
+  fetch('https://api.greptile.com/v2/repositories', {
+      method: 'POST',
+      headers: {
+          'Authorization': `Bearer ${greptile_api_key}`,
+          'X-Github-Token': github_token,
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(repository_payload)
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+
+  ```
+
+  ```python python
+  import requests
+
+  greptile_api_key = "your-greptile-api-key"
+  github_token = "your-github-token"
+
+  url = 'https://api.greptile.com/v2/repositories'
+  headers = {
+      'Authorization': f'Bearer {greptile_api_key}',
+      'X-Github-Token': github_token,
+      'Content-Type': 'application/json'
+  }
+  payload = {
+      "remote": "github",
+      "repository": "pandas-dev/pandas",
+      "branch": "main"
+  }
+
+  response = requests.post(url, json=payload, headers=headers)
+  print(response.json())
+  ```
+
+  ```go go
+  package main
+
+  import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+  )
+
+  func main() {
+    greptile_api_key := "your-greptile-api-key"
+    github_token := "your-github-token"
+
+    repository_data := map[string]string{
+      "remote":     "github",
+      "repository": "pandas-dev/pandas",
+      "branch": "main",
+    }
+    repository_payload, _ := json.Marshal(repository_data)
+
+    repository_req, _ := http.NewRequest("POST", "https://api.greptile.com/v2/repositories", bytes.NewBuffer(repository_payload))
+    repository_req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", greptile_api_key))
+    repository_req.Header.Set("X-Github-Token", github_token)
+    repository_req.Header.Set("Content-Type", "application/json")
+
+    repository_client := &http.Client{}
+    repository_resp, _ := repository_client.Do(repository_req)
+    defer repository_resp.Body.Close()
+
+    fmt.Println("Response Status:", repository_resp.Status)
+  }
+  ```
+</CodeGroup>
+
+詳細やテストリクエストの送信方法については、[API Reference](/ja/api-reference/index) を参照してください。
+
+2. **リポジトリのインデックス作成進行状況を確認する**
+
+`GET /repositories/{repositoryId}` エンドポイントを使用して、リポジトリのインデックスのステータスを確認できます。`repositoryId` は `remote:branch:owner/repository` の形式で URL エンコードする必要があります。
+
+<AccordionGroup>
+  <Accordion title="サンプルリクエスト">
+    ```json
+    // GET https://api.greptile.com/v2/repositories/github%3Amain%3Apandas-dev%2Fpandas
+    // Headers:
+    //   Authorization: Bearer {GREPTILE_API_KEY}
+    //   X-Github-Token: {GITHUB_TOKEN}
+    //   Content-Type: application/json
+    ```
+  </Accordion>
+
+  <Accordion title="サンプルレスポンス">
+    ```json
+    // 200
+
+    {
+      "repository": "pandas-dev/pandas",
+      "remote": "github",
+      "branch": "main",
+      "private": false,
+      "status": "submitted",
+      "filesProcessed": 0,
+      "numFiles": 26083,
+      "sampleQuestions": [],
+      "sha": "89b286a699b2d023b7a1ebc468abf230d84ad547"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<CodeGroup>
+  ```bash cURL
+  export GREPTILE_API_KEY="your-greptile-api-key"
+  export GITHUB_TOKEN="your-github-token"
+
+  curl -X GET \
+    https://api.greptile.com/v2/repositories/github%3Amain%3Apandas-dev%2Fpandas \
+    -H "Authorization: Bearer $GREPTILE_API_KEY" \
+    -H "X-Github-Token: $GITHUB_TOKEN"
+  ```
+
+  ```javascript node
+  const greptile_api_key = "your-greptile-api-key";
+  const github_token = "your-github-token";
+
+  const repository_identifier = encodeURIComponent("github:main:pandas-dev/pandas");
+
+  fetch(`https://api.greptile.com/v2/repositories/${repository_identifier}`, {
+      method: 'GET',
+      headers: {
+          'Authorization': `Bearer ${greptile_api_key}`,
+          'X-Github-Token': github_token
+      }
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+  ```
+
+  ```python python
+  import requests
+
+  greptile_api_key = "your-greptile-api-key"
+  github_token = "your-github-token"
+
+  repository_identifier = "github%3Amain%3Apandas-dev%2Fpandas"
+
+  url = f'https://api.greptile.com/v2/repositories/{repository_identifier}'
+  headers = {
+      'Authorization': f'Bearer {greptile_api_key}',
+      'X-Github-Token': github_token
+  }
+
+  response = requests.get(url, headers=headers)
+  print(response.json())
+  ```
+
+  ```go go
+  package main
+
+  import (
+    "fmt"
+    "net/http"
+    "io/ioutil"
+  )
+
+  func main() {
+    greptile_api_key := "your-greptile-api-key"
+    github_token := "your-github-token"
+
+    repository_identifier := "github%3Amain%3Apandas-dev%2Fpandas"
+
+    repository_req, _ := http.NewRequest("GET", fmt.Sprintf("https://api.greptile.com/v2/repositories/%s", repository_identifier), nil)
+    repository_req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", greptile_api_key))
+    repository_req.Header.Set("X-Github-Token", github_token)
+    repository_req.Header.Set("Content-Type", "application/json")
+
+    repository_client := &http.Client{}
+    repository_resp, _ := repository_client.Do(repository_req)
+    defer repository_resp.Body.Close()
+
+    body, _ := ioutil.ReadAll(repository_resp.Body)
+    body_string := string(body)
+    fmt.Println(body_string)
+  }
+  ```
+</CodeGroup>
+
+JSON レスポンスには `status` フィールドがあり、次のいずれかの値になります。
+
+- `SUBMITTED`: ジョブはキューにあります。
+- `CLONING`: インデックス作成を開始するために、リポジトリをエフェメラルストレージにクローンしています。
+- `PROCESSING`: インデックス作成中です。ここが最も時間のかかる工程です。
+- `COMPLETED`: リポジトリのインデックスはクエリ可能な状態です。
+- `FAILED`: リポジトリのインデックス作成に失敗しました。過去に成功していれば、引き続きクエリできる場合があります。
+
+レスポンスに `sha` が含まれる場合、そのリポジトリはインデックス作成済みでクエリ可能です。最新のコミットからの更新を処理中の可能性があります。
+
+詳細やテストリクエストの送信については、[API Reference](/ja/api-reference/get-repository) を参照してください。
+
+## クエリ
+
+自然言語のクエリを Greptile に送信できるようになりました。実行するには `POST /query` エンドポイントを使用してください。このエンドポイントは OpenAI の Chat 形式に基づいているため、クエリは `messages` オブジェクトとして整形する必要があり、要素数は 1 でも問題ありません。
+
+<AccordionGroup>
+  <Accordion title="サンプルリクエスト">
+    ```json
+    // POST https://api.greptile.com/v2/query
+    // ヘッダー:
+    //   Authorization: Bearer {GREPTILE_API_KEY}
+    //   X-Github-Token: {GITHUB_TOKEN}
+    //   Content-Type: application/json
+
+    {
+        "messages": [
+            {
+                "id": "some-id-1", // 任意。メッセージの一意な識別子
+                "content": "データフレームの連結を担当するコードはどこにありますか？",
+                "role": "user"
+            }
+        ],
+        "repositories": [
+            {
+                "remote": "github",
+                "repository": "pandas-dev/pandas",
+                "branch": "main"
+            }
+        ],
+        "sessionId": "test-session-id", // 任意
+        // "stream": true // 任意。結果をストリーミングする場合は true に設定
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="サンプルレスポンス（バッファリング）">
+    ````json
+    // 200
+
+    {
+      "message": "`pandas` ライブラリで `DataFrame` オブジェクトの連結を担うコードは、`/pandas/core/reshape/concat.py` にある `concat.py` ファイル内の `concat` 関数に実装されています。`concat` 関数は連結処理を統括し、`Series` と `DataFrame` の両方を扱えます。\n\n以下は `concat` 関数の関連部分の簡略表示です:\n\n```python\ndef concat(\n    objs: Iterable[Series | DataFrame] | Mapping[HashableT, Series | DataFrame],\n    *,\n    axis: Axis = 0,\n    join: str = \"outer\",\n    ignore_index: bool = False,\n    keys: Iterable[Hashable] | None = None,\n    levels=None,\n    names: list[HashableT] | None = None,\n    verify_integrity: bool = False,\n    sort: bool = False,\n    copy: bool | None = None,\n) -> DataFrame | Series:\n    \"\"\"\n    Concatenate pandas objects along a particular axis with optional set logic\n    along the other axes.\n    \"\"\"\n    # ... (some code omitted for brevity)\n\n    op = _Concatenator(\n        objs,\n        axis=axis,\n        ignore_index=ignore_index,\n        join=join,\n        keys=keys,\n        levels=levels,\n        names=names,\n        verify_integrity=verify_integrity,\n        sort=sort,\n    )\n\n    return op.get_result()\n```\n\n`concat` 関数は、渡されたパラメータで `_Concatenator` クラスのインスタンスを初期化し、その `get_result` メソッドを呼び出して実際の連結を行います。\n\n`_Concatenator` クラスには、軸、結合方法、インデックスを無視するかどうか、その他のパラメータを考慮して `DataFrame` オブジェクトの連結を処理するロジックが実装されています。`_Concatenator` の `get_result` メソッドは、`DataFrame` 内の実データを保持する内部データ構造である `BlockManager` に対する連結処理を統括します。\n\n詳細を理解するには、`_Concatenator` クラスとそのメソッド、特に `get_result` を確認するとよいでしょう。ここで `DataFrame` オブジェクトの連結が実行されます。",
+      "sources": [
+        {
+          "repository": "pandas-dev/pandas",
+          "remote": "github",
+          "branch": "main",
+          "filepath": "/pandas/core/reshape/concat.py",
+          "linestart": null,
+          "lineend": null,
+          "summary": "このコードファイルは pandas ライブラリの一部で、DataFrame や Series などの pandas オブジェクトを連結する関数やクラスを含みます。\n\n- ファイルは各種モジュールやクラスの import 文で始まります。\n- 指定した軸に沿って pandas オブジェクトを連結する `concat` 関数を定義しています。この関数には、異なるパラメータ型や戻り値型を持つ複数のオーバーロードがあり、`objs`（Series または DataFrame のイテラブルまたはマッピング）、`axis`（連結する軸）、`join`（他の軸のインデックスをどう扱うか）、`ignore_index`（連結軸に沿ったインデックス値を無視するか）、`keys`（階層インデックスの構築に使用）、`levels`（MultiIndex 構築に用いる特定のレベル）、`names`（結果の階層インデックスのレベル名）、`verify_integrity`（新しい連結軸に重複がないか検証するか）、`sort`（非連結軸をソートするか）、`copy`（不要なコピーを行うか）などのパラメータを受け取ります。関数は連結軸に応じて DataFrame または Series を返します。使用例や追加情報も提供されています。\n- また、`BlockManager` に対する連結処理を統括する `_Concatenator` クラスも含まれています。`_get_result_dim`、`new_axes`、`_get_comb_axis`、`_get_concat_axis`、`_maybe_check_integrity` などのメソッドがあります。\n- 連結処理で内部的に使用されるヘルパー関数 `_concat_indexes` と `_make_concat_multiindex` もあります。`_concat_indexes` は複数のインデックスを結合し、`_make_concat_multiindex` は指定された keys、levels、names に基づいて MultiIndex を作成します。\n\n全体として、このファイルはさまざまな軸に沿って pandas オブジェクトを連結し、連結プロセスにおける多様なパラメータやオプションを扱う機能を提供します。"
+        }
+      ]
+    }
+    ````
+  </Accordion>
+
+  <Accordion title="サンプルレスポンス（ストリーミング）">
+    ```json
+    {
+      "type": "status",
+      "message": "リクエストを受信しました"
+    }
+    {
+      "type": "status",
+      "message": "リクエストの処理を開始しました"
+    }
+    {
+      "type": "status",
+      "message": "関連するソースを特定しています"
+    }
+    {
+      "type": "status",
+      "message": "ソースを取得しています"
+    }
+    {
+      "type": "sources",
+      "message": [
+        {
+          "repository": "pandas-dev/pandas",
+          "remote": "github",
+          "branch": "main",
+          "filepath": "/pandas/core/reshape/concat.py",
+          "linestart": null,
+          "lineend": null,
+          "summary": "このコードファイルは pandas ライブラリの一部で、DataFrame や Series などの pandas オブジェクトを連結するための関数やクラスを含んでいます。\n\n- ファイルは各種モジュールやクラスの import 文から始まります。\n- 指定した軸に沿って pandas オブジェクトを連結する `concat` 関数を定義しています。この関数には複数のオーバーロードがあり、それぞれ異なるパラメータ型と戻り値の型を持ちます。引数として、`objs`（Series または DataFrame の反復可能オブジェクトまたはマッピング）、`axis`（連結する軸）、`join`（他の軸上のインデックスの扱い）、`ignore_index`（連結軸でインデックス値を無視するか）、`keys`（階層インデックスの構築に使用）、`levels`（MultiIndex 構築に使用する特定のレベル）、`names`（結果の階層インデックスの各レベル名）、`verify_integrity`（新しい連結軸に重複がないか検証するか）、`sort`（非連結軸をソートするか）、`copy`（不要なデータコピーを行うか）などを受け取ります。戻り値は連結軸に応じて DataFrame または Series です。使用例や追加情報も記載されています。\n- また、BlockManager の連結処理を司るクラス `_Concatenator` も含まれています。`_get_result_dim`、`new_axes`、`_get_comb_axis`、`_get_concat_axis`、`_maybe_check_integrity` などのメソッドがあります。\n- さらに、連結処理で内部的に使用されるヘルパー関数 `_concat_indexes` と `_make_concat_multiindex` があります。`_concat_indexes` は複数のインデックスを連結し、`_make_concat_multiindex` は与えられた keys、levels、names に基づいて MultiIndex オブジェクトを作成します。\n\n全体として、このファイルは異なる軸に沿って pandas オブジェクトを連結し、連結処理の各種パラメータやオプションに対応するための機能を提供します。"
+        }
+      ]
+    }
+    {
+      "type": "status",
+      "message": "レスポンスを書き出しています"
+    }
+    {
+      "type": "message",
+      "message": "The"
+    }
+    {
+      "type": "message",
+      "message": " code"
+    }
+    {
+      "type": "message",
+      "message": " responsible"
+    }
+    {
+      "type": "message",
+      "message": " for"
+    }
+    {
+      "type": "message",
+      "message": " concaten"
+    }
+    {
+      "type": "message",
+      "message": "ating"
+    }
+    {
+      "type": "message",
+      "message": " Data"
+    }
+    {
+      "type": "message",
+      "message": "Frames"
+    }
+    {
+      "type": "message",
+      "message": " in"
+    }
+    {
+      "type": "message",
+      "message": " the"
+    }
+    // ...message chunks omitted
+    {
+      "type": "message",
+      "message": " with"
+    }
+    {
+      "type": "message",
+      "message": " to"
+    }
+    {
+      "type": "message",
+      "message": " concatenate"
+    }
+    {
+      "type": "message",
+      "message": " their"
+    }
+    {
+      "type": "message",
+      "message": " data"
+    }
+    {
+      "type": "message",
+      "message": "."
+    }
+    {
+      "type": "status",
+      "message": ""
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<CodeGroup>
+  ```bash cURL
+  export GREPTILE_API_KEY="your-greptile-api-key"
+  export GITHUB_TOKEN="your-github-token"
+
+  curl -X POST \
+    https://api.greptile.com/v2/query \
+    -H "Authorization: Bearer $GREPTILE_API_KEY" \
+    -H "X-Github-Token: $GITHUB_TOKEN" \
+    -H 'Content-Type: application/json' \
+    -d '{
+        "messages": [
+            {
+                "id": "some-id-1",
+                "content": "データフレームを連結しているコードはどこにありますか？",
+                "role": "user"
+            }
+        ],
+        "repositories": [
+            {
+                "remote": "github",
+                "repository": "pandas-dev/pandas",
+                "branch": "main"
+            }
+        ],
+        "sessionId": "test-session-id" // 任意
+    }'
+  ```
+
+  ```javascript node
+  const greptileApiKey = "your-greptile-api-key";
+  const githubToken = "your-github-token";
+
+  const queryPayload = {
+      messages: [
+          {
+              id: "some-id-1",
+              content: "データフレームを連結しているコードはどこにありますか？",
+              role: "user"
+          }
+      ],
+      repositories: [
+          {
+              remote: "github",
+              repository: "pandas-dev/pandas",
+              branch: "main"
+          }
+      ],
+      sessionId: "test-session-id" // 任意
+  };
+
+  fetch('https://api.greptile.com/v2/query', {
+      method: 'POST',
+      headers: {
+          'Authorization': `Bearer ${greptileApiKey}`,
+          'X-Github-Token': githubToken,
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(queryPayload)
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+  ```
+
+  ```python python
+  import requests
+
+  greptile_api_key = "your-greptile-api-key"
+  github_token = "your-github-token"
+
+  url = 'https://api.greptile.com/v2/query'
+  headers = {
+      'Authorization': f'Bearer {greptile_api_key}',
+      'X-Github-Token': github_token,
+      'Content-Type': 'application/json'
+  }
+  payload = {
+      "messages": [
+          {
+              "id": "some-id-1",
+              "content": "データフレームを連結しているコードはどこにありますか？",
+              "role": "user"
+          }
+      ],
+      "repositories": [
+          {
+              "remote": "github",
+              "repository": "pandas-dev/pandas",
+              "branch": "main"
+          }
+      ],
+      "sessionId": "test-session-id" // 任意
+  }
+
+  response = requests.post(url, json=payload, headers=headers)
+  print(response.json())
+  ```
+
+  ```go go
+  package main
+
+  import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+    "io/ioutil"
+  )
+
+  func main() {
+    greptileApiKey := "your-greptile-api-key"
+    githubToken := "your-github-token"
+
+    queryData := map[string]interface{}{
+      "messages": []map[string]string{
+        {
+          "id":      "some-id-1",
+          "content": "データフレームを連結しているコードはどこにありますか？",
+          "role":    "user",
+        },
+      },
+      "repositories": []map[string]string{
+        {
+          "repository":   "pandas-dev/pandas",
+          "branch": "main",
+        },
+      },
+      "sessionId": "test-session-id",  // 任意
+    }
+    queryPayload, _ := json.Marshal(queryData)
+
+    queryReq, _ := http.NewRequest("POST", "https://api.greptile.com/v2/query", bytes.NewBuffer(queryPayload))
+    queryReq.Header.Set("Authorization", fmt.Sprintf("Bearer %s", greptileApiKey))
+    queryReq.Header.Set("X-Github-Token", githubToken)
+    queryReq.Header.Set("Content-Type", "application/json")
+
+    queryClient := &http.Client{}
+    queryResp, _ := queryClient.Do(queryReq)
+    defer queryResp.Body.Close()
+
+    body, _ := ioutil.ReadAll(queryResp.Body)
+    bodyString := string(body)
+    fmt.Println(bodyString)
+  }
+  ```
+</CodeGroup>
+
+詳細やテストリクエストの送信方法については、[API リファレンス](/ja/api-reference/query)をご覧ください。
+
+アイデアをお探しですか？Greptileで実現できる内容の[サンプル](/ja/examples)をご確認ください。
+
+---
+
+ご不明な点がありましたら、[support@greptile.com](mailto:support@greptile.com)までお問い合わせください。

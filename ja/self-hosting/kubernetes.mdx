@@ -1,0 +1,574 @@
+---
+title: Kubernetes へのデプロイ
+description: "エンタープライズ環境向けに、Helm チャートを使ってグレプタイルを Kubernetes にデプロイする"
+---
+
+
+高可用性、スケーラビリティ、高度なオーケストレーション機能を要するエンタープライズ環境向けに、Kubernetes 上でグレプタイルをデプロイします。
+
+## アーキテクチャ
+
+<Frame>
+  <img src="https://github.com/greptileai/akupara/raw/main/OnPremEKS.jpg" alt="Kubernetes アーキテクチャ図" />
+</Frame>
+
+Kubernetes のデプロイには次が含まれます:
+- **グレプタイル アプリケーション Pod**: 水平スケール可能な API と Web サービス
+- **Ingress コントローラー**: トラフィックのルーティングと SSL 終端
+- **外部依存サービス**: マネージド PostgreSQL および Redis
+- **ConfigMap と Secret**: 設定および認証情報の管理
+- **永続ボリューム**: ファイルストレージとキャッシュ
+- **サービスメッシュ**: 高度なネットワーキングとセキュリティ（任意）
+
+## 前提条件
+
+### システム要件
+- **Kubernetes クラスター**: バージョン 1.21 以降
+- **クラスターリソース**:
+  - 最小: ノード全体で CPU コア 8、RAM 16GB
+  - 推奨: CPU コア 16 以上、RAM 32GB 以上
+  - ストレージ: 500GB 以上の永続ストレージが利用可能
+
+### 必要なツール
+- `kubectl`: Kubernetes のコマンドラインツール
+- `helm`: Helm パッケージマネージャー（バージョン 3.0 以上）
+- `terraform`: Infrastructure as Code（AWS へのデプロイ用）
+- `awscli`: AWS CLI（AWS へのデプロイ用）
+
+### インフラ依存関係
+- **PostgreSQL データベース**: RDS、Cloud SQL、または同等のマネージドサービス
+- **Redis キャッシュ**: ElastiCache、Memorystore、または同等
+- **ロードバランサー**: ALB、GLB、またはクラスターの Ingress コントローラー
+- **DNS**: ドメインルーティング用のマネージド DNS サービス
+
+## インストール手順
+
+### 1. リポジトリのダウンロード
+
+```bash
+# akupara リポジトリをクローン
+git clone https://github.com/greptileai/akupara.git
+cd akupara/kubernetes
+
+# もしくは最新リリースをダウンロード
+wget https://github.com/greptileai/akupara/archive/refs/tags/v0.1.3.tar.gz
+tar -xzf v0.1.3.tar.gz
+cd akupara-0.1.3/kubernetes
+```
+
+### 2. インフラのセットアップ（AWS 例）
+
+AWS にデプロイする場合、まずインフラをセットアップします:
+
+```bash
+cd terraform
+
+# AWS 資格情報を設定
+aws configure
+
+# Terraform を初期化
+terraform init
+
+# terraform.tfvars を確認してカスタマイズ
+cp terraform.tfvars.example terraform.tfvars
+```
+
+`terraform.tfvars` を編集:
+
+```hcl
+# AWS Configuration
+aws_region = "us-east-1"
+availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
+
+# EKS Configuration
+cluster_name = "greptile-prod"
+cluster_version = "1.27"
+
+# Node Groups
+node_groups = {
+  general = {
+    desired_capacity = 3
+    max_capacity     = 10
+    min_capacity     = 3
+    instance_types   = ["m5.large"]
+  }
+  compute = {
+    desired_capacity = 2
+    max_capacity     = 5
+    min_capacity     = 1
+    instance_types   = ["c5.xlarge"]
+  }
+}
+
+# Database Configuration
+db_instance_class = "db.r5.large"
+db_allocated_storage = 100
+db_max_allocated_storage = 1000
+
+# Redis Configuration
+redis_node_type = "cache.r5.large"
+redis_num_cache_nodes = 2
+
+# Networking
+vpc_cidr = "10.0.0.0/16"
+```
+
+インフラをデプロイ:
+
+```bash
+# 事前プランの確認
+terraform plan
+
+# インフラの適用
+terraform apply
+
+# クラスター認証情報を取得
+aws eks update-kubeconfig --region us-east-1 --name greptile-prod
+```
+
+### 3. Helm チャートの設定
+
+Helm チャートのディレクトリへ移動:
+
+```bash
+cd ../helm
+```
+
+values ファイルを作成してカスタマイズ:
+
+```bash
+cp values.yaml values-prod.yaml
+```
+
+`values-prod.yaml` を編集:
+
+```yaml
+# Application Configuration
+image:
+  repository: greptile/api
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+replicaCount: 3
+
+# Service Configuration
+service:
+  type: ClusterIP
+  port: 8080
+
+# Ingress Configuration
+ingress:
+  enabled: true
+  className: "alb"
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/certificate-arn: "arn:aws:acm:us-east-1:123456789:certificate/your-cert-arn"
+  hosts:
+    - host: api.greptile.yourdomain.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: greptile-tls
+      hosts:
+        - api.greptile.yourdomain.com
+
+# Database Configuration
+database:
+  host: "greptile-db.cluster-xyz.us-east-1.rds.amazonaws.com"
+  port: 5432
+  name: "greptile"
+  user: "greptile_user"
+  # パスワードは Kubernetes Secret に保存してください
+
+# Redis Configuration
+redis:
+  host: "greptile-cache.abc123.cache.amazonaws.com"
+  port: 6379
+
+# LLM Configuration
+llm:
+  provider: "anthropic"  # 例: "openai", "bedrock"
+  # API キーは Kubernetes Secret に保存してください
+
+# Resource Configuration
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+
+# Autoscaling
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Security
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
+
+# Monitoring
+serviceMonitor:
+  enabled: true
+  interval: 30s
+```
+
+### 4. Kubernetes Secret の作成
+
+機密設定用の Secret を作成します:
+
+```bash
+# データベースの認証情報
+kubectl create secret generic greptile-db \
+  --from-literal=password='your-db-password'
+
+# LLMのAPIキー
+kubectl create secret generic greptile-llm \
+  --from-literal=openai-api-key='your-openai-key' \
+  --from-literal=anthropic-api-key='your-anthropic-key'
+
+# GitHub Appの認証情報
+kubectl create secret generic greptile-github \
+  --from-literal=app-id='123456' \
+  --from-literal=webhook-secret='your-webhook-secret' \
+  --from-file=private-key=github-private-key.pem
+
+# SSL証明書（cert-managerを使用しない場合）
+kubectl create secret tls greptile-tls \
+  --cert=certificate.pem \
+  --key=private-key.pem
+```
+
+### 5. Helmでデプロイ
+
+```bash
+# Helmリポジトリを追加（リモートチャートを使用する場合）
+helm repo add greptile https://charts.greptile.com
+helm repo update
+
+# またはローカルチャートからインストール
+helm install greptile ./greptile-chart \
+  --values values-prod.yaml \
+  --namespace greptile \
+  --create-namespace
+
+# デプロイ状況を確認
+kubectl get pods -n greptile
+kubectl get services -n greptile
+kubectl get ingress -n greptile
+```
+
+### 6. デプロイの検証
+
+```bash
+# Podのステータスを確認
+kubectl get pods -n greptile
+
+# Serviceのエンドポイントを確認
+kubectl get svc -n greptile
+
+# アプリケーションログを表示
+kubectl logs -n greptile deployment/greptile-api
+
+# APIエンドポイントをテスト
+curl https://api.greptile.yourdomain.com/health
+
+# Ingressを確認
+kubectl describe ingress -n greptile
+```
+
+## 高度な構成
+
+### 高可用性セットアップ
+
+マルチゾーンデプロイ向けに構成します:
+
+```yaml
+# values-ha.yaml
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+          - greptile
+      topologyKey: kubernetes.io/hostname
+
+tolerations:
+  - key: "spot"
+    operator: "Equal"
+    value: "true"
+    effect: "NoSchedule"
+
+nodeSelector:
+  kubernetes.io/arch: amd64
+```
+
+### 監視と可観測性
+
+包括的な監視をセットアップします:
+
+```yaml
+# Prometheus monitoring
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    path: /metrics
+
+# Grafana dashboards
+grafana:
+  enabled: true
+  dashboards:
+    greptile:
+      file: dashboards/greptile-dashboard.json
+
+# Logging
+fluentd:
+  enabled: true
+  elasticsearch:
+    host: "elasticsearch.logging.svc.cluster.local"
+```
+
+### セキュリティ強化
+
+セキュリティのベストプラクティスを実装します:
+
+```yaml
+# Pod Security Standards
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
+  seccompProfile:  
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  capabilities:
+    drop:
+    - ALL
+
+# Network Policies
+networkPolicy:
+  enabled: true
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: ingress-nginx
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            name: monitoring
+```
+
+## 運用
+
+### スケーリング
+
+負荷に応じてデプロイをスケールします：
+
+```bash
+# Manual scaling
+kubectl scale deployment greptile-api --replicas=5 -n greptile
+
+# Configure HPA
+kubectl apply -f - <<EOF
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: greptile-hpa
+  namespace: greptile
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: greptile-api
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+EOF
+```
+
+### アップデートとロールバック
+
+アプリケーションの更新を管理します：
+
+```bash
+# Update to new version
+helm upgrade greptile ./greptile-chart \
+  --values values-prod.yaml \
+  --set image.tag=v1.2.3
+
+# Monitor rollout
+kubectl rollout status deployment/greptile-api -n greptile
+
+# Rollback if needed
+helm rollback greptile 1
+
+# Check rollout history
+kubectl rollout history deployment/greptile-api -n greptile
+```
+
+### バックアップとリカバリ
+
+バックアップ戦略を実装します：
+
+```bash
+# Database backup using CronJob
+kubectl apply -f - <<EOF
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+  namespace: greptile
+spec:
+  schedule: "0 2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: postgres-backup
+            image: postgres:13
+            command:
+            - /bin/bash
+            - -c
+            - pg_dump -h $DB_HOST -U $DB_USER $DB_NAME | gzip > /backup/backup-$(date +%Y%m%d).sql.gz
+            env:
+            - name: DB_HOST
+              value: "greptile-db.cluster-xyz.us-east-1.rds.amazonaws.com"
+            - name: DB_USER
+              value: "greptile_user"
+            - name: DB_NAME
+              value: "greptile"
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: greptile-db
+                  key: password
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-pvc
+          restartPolicy: OnFailure
+EOF
+```
+
+## トラブルシューティング
+
+### よくある問題
+
+**Pod が起動しない**
+```bash
+# Pod のイベントを確認
+kubectl describe pod <pod-name> -n greptile
+
+# リソース制約を確認
+kubectl top nodes
+kubectl top pods -n greptile
+
+# ノードの状態を確認
+kubectl get nodes -o wide
+```
+
+**データベース接続の問題**
+```bash
+# データベース接続をテスト
+kubectl run -it --rm debug --image=postgres:13 --restart=Never -- psql -h db-host -U username -d database
+
+# NetworkPolicy を確認
+kubectl get networkpolicy -n greptile
+```
+
+**Ingress が機能しない**
+```bash
+# Ingress コントローラーのログを確認
+kubectl logs -n ingress-nginx deployment/ingress-nginx-controller
+
+# Ingress 設定を確認
+kubectl describe ingress greptile-ingress -n greptile
+
+# DNS 解決を確認
+nslookup api.greptile.yourdomain.com
+```
+
+### パフォーマンス最適化
+
+リソース使用を最適化:
+
+```yaml
+# リソースのチューニング
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+
+# API Pod の JVM チューニング
+env:
+  - name: JAVA_OPTS
+    value: "-Xms1g -Xmx3g -XX:+UseG1GC"
+
+# データベース接続プール
+database:
+  maxConnections: 100
+  connectionTimeout: 30000
+```
+
+## Docker Compose からの移行
+
+Docker Compose から Kubernetes へ移行するには:
+
+1. 既存のデプロイからデータをエクスポートする
+2. Kubernetes のインフラをデプロイする
+3. 新しいデータベースへデータをインポートする
+4. DNS を更新して新しい Ingress を参照させる
+5. 機能とパフォーマンスを確認する
+6. 旧デプロイを停止・廃止する
+
+## サポート
+
+Kubernetes のデプロイに関する問題:
+1. Pod のログを確認する: `kubectl logs -n greptile deployment/greptile-api`
+2. クラスターのイベントを確認する: `kubectl get events -n greptile --sort-by='.lastTimestamp'`
+3. リソース使用状況を監視する: `kubectl top pods -n greptile`
+4. クラスター情報とデプロイ構成を添えてサポートへ連絡する
+
+<Warning>
+Kubernetes のデプロイには、コンテナオーケストレーション、ネットワーキング、クラウドインフラに関する専門知識が必要です。本番環境へのデプロイでは、プロフェッショナルサービスの利用をご検討ください。
+</Warning> 

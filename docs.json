@@ -7,86 +7,175 @@
   },
   "favicon": "favicon.ico",
   "navigation": {
-    "anchors": [
+    "languages": [
       {
-        "anchor": "Documentation",
-        "icon": "book-open",
-        "groups": [
+        "anchors": [
           {
-            "group": "User Manual",
-            "pages": [
-              "introduction",
-              "developer-quick-reference",
-              "code-review-bot/getting-started",
-              "code-review-bot/key-features",
-              "code-review-bot/best-practices",
-              "code-review-bot/trigger-code-review",
-              "code-review-bot/custom-context",
-              "code-review-bot/greptile-json",
-              "code-review-bot/emoji-reactions",
-              "code-review-bot/auto-resolve-with-mcp"
-            ]
-          },
-          {
-            "group": "How Greptile Works",
-            "pages": [
-              "how-greptile-works/graph-based-codebase-context",
-              "how-greptile-works/nitpicks",
-              "how-greptile-works/custom-rules",
-              "how-greptile-works/memory-and-learning"
-            ]
-          },
-          {
-            "group": "Guide to Self-Hosting Greptile",
-            "pages": [
-              "self-hosting/overview",
-              "self-hosting/docker-compose",
-              "self-hosting/kubernetes"
-            ]
-          },
-          {
-            "group": "Security",
-            "pages": ["security/sso", "security/selfhost"]
-          },
-          {
-            "group": "API Reference",
-            "pages": [
-              "api-reference/introduction",
-              "api-reference/index",
-              "api-reference/get-repository",
-              "api-reference/query",
-              "api-reference/zapier"
+            "anchor": "Documentation",
+            "icon": "book-open",
+            "groups": [
+              {
+                "group": "User Manual",
+                "pages": [
+                  "introduction",
+                  "developer-quick-reference",
+                  "code-review-bot/getting-started",
+                  "code-review-bot/key-features",
+                  "code-review-bot/best-practices",
+                  "code-review-bot/trigger-code-review",
+                  "code-review-bot/custom-context",
+                  "code-review-bot/greptile-json",
+                  "code-review-bot/emoji-reactions",
+                  "code-review-bot/auto-resolve-with-mcp"
+                ]
+              },
+              {
+                "group": "How Greptile Works",
+                "pages": [
+                  "how-greptile-works/graph-based-codebase-context",
+                  "how-greptile-works/nitpicks",
+                  "how-greptile-works/custom-rules",
+                  "how-greptile-works/memory-and-learning"
+                ]
+              },
+              {
+                "group": "Guide to Self-Hosting Greptile",
+                "pages": [
+                  "self-hosting/overview",
+                  "self-hosting/docker-compose",
+                  "self-hosting/kubernetes"
+                ]
+              },
+              {
+                "group": "Security",
+                "pages": [
+                  "security/sso",
+                  "security/selfhost"
+                ]
+              },
+              {
+                "group": "API Reference",
+                "pages": [
+                  "api-reference/introduction",
+                  "api-reference/index",
+                  "api-reference/get-repository",
+                  "api-reference/query",
+                  "api-reference/zapier"
+                ]
+              }
             ]
           }
-        ]
+        ],
+        "global": {
+          "anchors": [
+            {
+              "anchor": "Greptile Home",
+              "href": "https://www.greptile.com/",
+              "icon": "house"
+            },
+            {
+              "anchor": "Discord",
+              "href": "https://discord.com/invite/xZhUcFKzu7",
+              "icon": "discord"
+            },
+            {
+              "anchor": "Blog",
+              "href": "https://www.greptile.com/blog",
+              "icon": "newspaper"
+            }
+          ]
+        },
+        "language": "en"
+      },
+      {
+        "anchors": [
+          {
+            "anchor": "ドキュメント",
+            "icon": "book-open",
+            "groups": [
+              {
+                "group": "ユーザーマニュアル",
+                "pages": [
+                  "ja/introduction",
+                  "ja/developer-quick-reference",
+                  "ja/code-review-bot/getting-started",
+                  "ja/code-review-bot/key-features",
+                  "ja/code-review-bot/best-practices",
+                  "ja/code-review-bot/trigger-code-review",
+                  "ja/code-review-bot/custom-context",
+                  "ja/code-review-bot/greptile-json",
+                  "ja/code-review-bot/emoji-reactions",
+                  "ja/code-review-bot/auto-resolve-with-mcp"
+                ]
+              },
+              {
+                "group": "Greptileの仕組み",
+                "pages": [
+                  "ja/how-greptile-works/graph-based-codebase-context",
+                  "ja/how-greptile-works/nitpicks",
+                  "ja/how-greptile-works/custom-rules",
+                  "ja/how-greptile-works/memory-and-learning"
+                ]
+              },
+              {
+                "group": "Greptileセルフホスティングガイド",
+                "pages": [
+                  "ja/self-hosting/overview",
+                  "ja/self-hosting/docker-compose",
+                  "ja/self-hosting/kubernetes"
+                ]
+              },
+              {
+                "group": "セキュリティ",
+                "pages": [
+                  "ja/security/sso",
+                  "ja/security/selfhost"
+                ]
+              },
+              {
+                "group": "APIリファレンス",
+                "pages": [
+                  "ja/api-reference/introduction",
+                  "ja/api-reference/index",
+                  "ja/api-reference/get-repository",
+                  "ja/api-reference/query",
+                  "ja/api-reference/zapier"
+                ]
+              }
+            ]
+          }
+        ],
+        "global": {
+          "anchors": [
+            {
+              "anchor": "Greptile ホーム",
+              "href": "https://www.greptile.com/",
+              "icon": "house"
+            },
+            {
+              "anchor": "Discord",
+              "href": "https://discord.com/invite/xZhUcFKzu7",
+              "icon": "discord"
+            },
+            {
+              "anchor": "ブログ",
+              "href": "https://www.greptile.com/blog",
+              "icon": "newspaper"
+            }
+          ]
+        },
+        "language": "ja"
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Greptile Home",
-          "href": "https://www.greptile.com/",
-          "icon": "house"
-        },
-        {
-          "anchor": "Discord",
-          "href": "https://discord.com/invite/xZhUcFKzu7",
-          "icon": "discord"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://www.greptile.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo.svg",
     "dark": "/logo.svg"
   },
   "api": {
-    "openapi": ["openapi.yml"]
+    "openapi": [
+      "openapi.yml"
+    ]
   },
   "navbar": {
     "links": [
