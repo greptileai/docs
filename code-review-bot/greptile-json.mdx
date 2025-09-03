@@ -28,7 +28,8 @@ You can grab your global settings in the correct format [here](https://app.grept
   "shouldUpdateDescription": false,
   "disabledLabels": ["docs"],
   "includeAuthors": ["dakshgup", "schoi"],
-  "excludeAuthors": ["cool-dev"]
+  "excludeAuthors": ["cool-dev"],
+  "strictness": 2
 }
 ```
 
@@ -48,3 +49,4 @@ You can grab your global settings in the correct format [here](https://app.grept
 | `disabledLabels`          | array   | PRs with these labels will not be reviewed by Greptile, even if other trigger conditions are met.                                            |
 | `includeAuthors`          | array   | Only PRs from these authors will be reviewed. If empty, reviews PRs from all authors (except excluded ones).                                 |
 | `excludeAuthors`          | array   | PRs from these authors will not be reviewed, even if other trigger conditions are met.                                                       |
+| `strictness`              | number  | Severity threshold for Greptile comments (1-3). 1 = comment on all issues, 2 = moderate filtering, 3 = only most critical issues.          |
