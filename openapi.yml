@@ -72,6 +72,10 @@ components:
         summary:
           type: string
           description: A summary or description of the contents and functionalities of the file.
+        distance:
+          type: number
+          description: Similarity score for the source returned by the API. Lower values indicate higher similarity.
+          nullable: true
 
     RepositoryRequest:
       type: object
