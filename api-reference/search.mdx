@@ -1,0 +1,12 @@
+---
+title: 'Search Repo(s)'
+openapi: 'POST /search'
+---
+
+Submit a natural language search query to find relevant code references without generating an AI response.
+
+Returns a list of relevant code files, functions, and snippets based on your search query, similar to the query endpoint but **without the AI-generated answer**.
+
+Use this endpoint when you only need the source references and don't need an AI explanation.
+
+Note: Before Greptile can search a repo, it must be indexed. See [Index Repository](/api-reference/index) for more information.
