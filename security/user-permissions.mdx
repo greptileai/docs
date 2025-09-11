@@ -1,0 +1,54 @@
+---
+title: User permissions
+description: Understanding different user permission levels in the Greptile admin dashboard
+---
+
+## Overview
+
+Greptile uses a three-tier permission system to control access to different features and capabilities within your organization's admin dashboard. Each permission level builds upon the previous one, providing increasingly comprehensive access to administrative functions.
+
+## Permission levels
+
+### Members
+
+Members have access to core functionality needed for day-to-day development work:
+
+- **Repository management**: Add, remove, and configure repositories for code review
+- **Integration configuration**: Set up and manage integrations with GitHub, GitLab, and other tools
+- **Analytics access**: View code review metrics, usage statistics, and team performance data
+
+### Admins
+
+Admins have all Member permissions plus additional administrative capabilities:
+
+- **User role management**: Assign and modify user roles within the organization
+- **Billing management**: Access billing information, update payment methods, and manage subscription details
+- **Advanced settings**: Configure organization-wide policies and advanced features
+
+### Owners
+
+Owners have the highest level of access with all Admin permissions plus:
+
+- **Organization deletion**: Permanently delete the organization and all associated data
+- **Ultimate administrative control**: Full access to all organization settings and configurations
+
+## Managing user permissions
+
+To modify user permissions in your organization:
+
+1. Navigate to the admin dashboard
+2. Go to the **Users** section
+3. Select the user whose permissions you want to change
+4. Choose the appropriate permission level from the dropdown menu
+5. Save your changes
+
+<Note>
+Only Admins and Owners can modify user permissions. Members cannot change role assignments.
+</Note>
+
+## Best practices
+
+- **Principle of least privilege**: Assign users the minimum permission level needed for their role
+- **Regular audits**: Periodically review user permissions to ensure they remain appropriate
+- **Multiple owners**: Consider having multiple Owners to prevent lockout scenarios
+- **Role transitions**: Update permissions promptly when team members change roles or leave the organization

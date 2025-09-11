@@ -46,7 +46,7 @@
           },
           {
             "group": "Security",
-            "pages": ["security/sso", "security/selfhost"]
+            "pages": ["security/user-permissions", "security/sso", "security/selfhost"]
           },
           {
             "group": "API Reference",
