@@ -17,6 +17,7 @@
             "pages": [
               "introduction",
               "developer-quick-reference",
+              "admin-dashboard/user-permissions",
               "code-review-bot/getting-started",
               "code-review-bot/key-features",
               "code-review-bot/best-practices",
