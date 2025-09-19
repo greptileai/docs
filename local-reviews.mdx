@@ -1,0 +1,215 @@
+---
+title: Local Code Review
+description: 'Get Greptile reviews inside your editor before sharing with teammates'
+---
+
+# Local Code Review with Greptile
+
+Greptile normally leaves review comments directly on GitHub Pull Requests (PRs) or GitLab Merge Requests (MRs).  
+But sometimes you want the **experience of a local code review inside your editor**, before sharing code with teammates.  
+This guide walks through all the ways you can do that.
+
+---
+
+## How It Works
+
+Greptile reviews are tied to PRs/MRs.  
+To simulate a "local" review, you create a **draft (ephemeral) PR/MR** and view Greptile's comments inline in your editor.  
+This keeps the loop private and fast, while still using GitHub/GitLab as the review surface.
+
+---
+
+## Prerequisites
+
+- Greptile app installed on your repo (GitHub or GitLab).  
+- GitHub or GitLab CLI installed:
+  - [GitHub CLI (`gh`)](https://cli.github.com/)  
+  - [GitLab CLI (`glab`)](https://gitlab.com/gitlab-org/cli)  
+- A personal access token (PAT) if required by CLI or MCP setup.  
+- Your preferred editor: VS Code, Cursor, or Claude Code.
+
+---
+
+## GitHub
+
+### Using GitHub CLI + VS Code
+1. Create a draft PR from your branch:
+   ```bash
+   gh pr create --draft --title "Greptile local review" --body "Ephemeral PR for local review"
+   ```
+
+2. Open the PR in VS Code with the
+   [GitHub Pull Requests and Issues extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request).
+   Greptile's inline comments will appear directly in the diff view.
+3. When done, close/delete the PR and branch.
+
+---
+
+## GitLab
+
+### Using GitLab CLI or `git push`
+
+1. Create a draft MR:
+
+   ```bash
+   glab mr create --draft --fill
+   ```
+
+   Or:
+
+   ```bash
+   git push -o merge_request.create -o merge_request.draft
+   ```
+2. Open the MR in VS Code with the
+   [GitLab Workflow extension](https://marketplace.visualstudio.com/items?itemName=GitLab.gitlab-workflow).
+   Greptile's comments will show inline on the MR diff.
+3. Close & clean up the MR after review.
+
+---
+
+## Using MCP (Model Context Protocol)
+
+MCP lets editors and AI assistants create draft PRs/MRs and fetch Greptile's comments, keeping everything inside your editor or AI chat.
+
+### Setup
+
+* Install an MCP client (VS Code, Cursor, or Claude Code support MCP).
+* Add a GitHub or GitLab MCP server (community and official implementations exist).
+* Configure your `.json`:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "node",
+      "args": ["./servers/github-mcp/index.js"],
+      "env": { "GITHUB_TOKEN": "${GITHUB_TOKEN}" }
+    }
+  }
+}
+```
+
+### Workflow
+
+1. Generate a draft PR/MR via MCP.
+2. Wait for Greptile to leave review comments.
+3. Fetch comments back into your editor (chat buffer, inline view, or file like `greptile_review.md`).
+
+This allows for a truly "local" review loop, without leaving your editor.
+
+---
+
+## Editor-specific Notes
+
+### VS Code
+
+* **Best supported**: GitHub PRs and GitLab MRs render natively in editor.
+* Also works as an MCP client.
+
+### Cursor
+
+* Based on VS Code, so some extensions (like GitHub PRs) may work.
+* If the extension misbehaves, use MCP instead (more reliable).
+
+### Claude Code
+
+* No native PR/MR extensions, but supports MCP.
+* Use MCP to spin up draft PRs/MRs and fetch Greptile's comments directly into Claude Code chat.
+
+---
+
+## Recipes
+
+### GitHub one-liner
+
+```bash
+gh pr create --draft --title "Greptile local review" --body "Ephemeral PR"
+code .
+# In VS Code: open PR with GitHub Pull Requests and Issues extension
+```
+
+### GitLab one-liner
+
+```bash
+git push -o merge_request.create -o merge_request.draft
+code .
+# In VS Code: open MR with GitLab Workflow extension
+```
+
+---
+
+## Security & Cleanup
+
+* **Visibility:** Draft PRs/MRs are still visible to repo collaborators.
+
+  * Use a private fork/mirror repo if you want full privacy.
+* **Best practices:**
+
+  * Always mark reviews as **Draft**.
+  * Disable notifications (where possible) to avoid pinging teammates.
+* **Cleanup:** Delete branches and close PRs/MRs after review.
+
+---
+
+## Troubleshooting
+
+* **Comments not showing up?**
+
+  * Check that Greptile is installed on the repo.
+  * Verify commits are pushed to the branch.
+  * Confirm you're opening the correct PR/MR in your editor.
+
+* **VS Code extension not working in Cursor?**
+
+  * Cursor doesn't always support VS Code extensions fully.
+  * Use MCP or open the PR/MR in browser as a fallback.
+
+* **Comments delayed?**
+
+  * Greptile's review may take a minute to complete. Refresh the PR/MR view.
+
+---
+
+## Advanced Automations
+
+You can wrap the flow into a script or git alias for one-step local reviews:
+
+### Example Bash Alias
+
+```bash
+git config alias.review-local '!f() {
+  branch=$(git rev-parse --abbrev-ref HEAD);
+  gh pr create --draft --title "Local Greptile Review: $branch" --body "Ephemeral PR";
+  code .;
+}; f'
+```
+
+Now you can run:
+
+```bash
+git review-local
+```
+
+This creates a draft PR, waits for Greptile's comments, and opens VS Code automatically.
+
+---
+
+## Comparison Table
+
+| Editor          | Extension Support               | MCP Support | Notes                          |
+| --------------- | ------------------------------- | ----------- | ------------------------------ |
+| **VS Code**     | ✅ GitHub PRs / GitLab Workflow  | ✅           | Best supported, seamless UX    |
+| **Cursor**      | ⚠️ Some VS Code extensions work | ✅           | MCP is most reliable           |
+| **Claude Code** | ❌ No native PR/MR extension     | ✅           | Use MCP to fetch review inline |
+
+---
+
+## Summary
+
+To get a **local review experience** with Greptile:
+
+* Create a **draft PR/MR** (ephemeral)
+* Open it in your editor with the appropriate extension **or via MCP**
+* Review Greptile's comments inline, then delete the branch when done
+
+This gives you a private, repeatable workflow that feels local but leverages Greptile's standard review pipeline.

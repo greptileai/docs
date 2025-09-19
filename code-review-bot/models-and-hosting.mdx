@@ -1,0 +1,38 @@
+---
+title: Models & Hosting
+description: 'AI models used by Greptile and hosting options'
+keywords: 'AI models, Claude, GPT-4, AWS Bedrock, self-hosting, custom models'
+---
+
+## AI Models Used by Greptile
+
+Greptile uses state-of-the-art AI models with a fallback strategy for reliability:
+
+### Primary Models
+- **Claude 3.5 Sonnet** (claude-3-5-sonnet-20241022) - Primary model from Anthropic
+- **GPT-4o** - Secondary model from OpenAI
+- **AWS Bedrock Claude 3.5 Sonnet** - Cloud-hosted fallback option
+
+### Fallback Strategy
+Greptile automatically falls back between providers (Anthropic → OpenAI → AWS Bedrock) to ensure high availability and reliability of code reviews.
+
+## Hosting Options
+
+### Cloud Hosting
+Greptile's default cloud hosting uses the models above with automatic failover between providers.
+
+### Self-Hosting
+For enterprise customers, Greptile supports self-hosting with:
+- **AWS Bedrock integration** - Use your own AWS account with Bedrock models
+- **Custom base URLs** - Point to your own hosted model endpoints
+- **Air-gapped deployments** - Complete isolation in your infrastructure
+
+Learn more about self-hosting options in our [self-hosting documentation](/self-hosting/overview).
+
+### Unsupported Providers
+- **GCP Vertex AI** - Not currently supported
+- Custom model training - Greptile does not fine-tune models on customer code
+
+<Note>
+For enterprise features, custom model configurations, or questions about self-hosting, contact us at hello@greptile.com.
+</Note>

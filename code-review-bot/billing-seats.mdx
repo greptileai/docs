@@ -1,0 +1,54 @@
+---
+title: Billing & Seat Management
+description: 'Understanding active seats, billing, and user management'
+keywords: 'billing, seats, active users, pricing, subscription'
+---
+
+## How Active Seats Are Counted
+
+Greptile counts **active seats** based on users who have:
+- **PRO_CHAT entitlement** with no expiration date (`expiresAt: null`)
+- Active usage within the billing period
+
+### Automatic Seat Adjustment
+Greptile automatically optimizes your billing:
+- **Auto-reduction** - When active user count falls below allocated seats, the system automatically reduces your seat count
+- **Usage-based scaling** - Seats are adjusted based on actual usage patterns
+- **Billing efficiency** - You're only charged for seats that are actively being used
+
+## Managing User Access
+
+### Assigning Seats
+Seats are automatically assigned to users when they:
+1. Join your organization
+2. Get granted `PRO_CHAT` or `CODE_REVIEWS` entitlements
+3. Actively use Greptile features
+
+### Excluding Developers
+To exclude developers from automatic reviews and seat usage:
+- Remove their entitlements through the dashboard
+- Use author filtering in `greptile.json` to exclude specific users
+- Configure repository-level access controls
+
+### Reducing Seats
+To reduce active seats:
+1. Remove unused users from your organization
+2. Revoke entitlements for inactive users
+3. Use the dashboard to adjust subscription limits
+
+## Billing Management
+
+### Subscription Changes
+- **Upgrading** - Additional seats are prorated and available immediately
+- **Downgrading** - Changes take effect at the next billing cycle
+- **Cancellation** - Contact support to cancel your subscription
+
+### Usage Monitoring
+Track seat usage through:
+- Organization dashboard showing active vs. allocated seats
+- Usage reports (contact support for detailed reports)
+- Real-time seat allocation in your account settings
+
+<Note>
+For specific billing questions, subscription changes, or custom enterprise pricing, contact hello@greptile.com.
+</Note>
