@@ -86,10 +86,10 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 Use your AI editor to fetch all comments from a pull request:
 
 ```
-@github Can you get all the comments from PR #123 in owner/repo-name? Focus on the ones from the Greptile bot.
+@github Can you get all the comments from PR #123 in owner/repo-name? Focus on the ones from the Greptile agent.
 ```
 
-The MCP server will retrieve all PR comments, including those from Greptile's code review bot.
+The MCP server will retrieve all PR comments, including those from Greptile's code review agent.
 
 ### 2. Analyze and Resolve
 
@@ -184,7 +184,7 @@ Ensure your AI editor understands the full context of changes, not just individu
 "@github List all comments from PR #456 in myorg/myrepo"
 
 # 2. Filter for Greptile comments  
-"Show me only the comments from the Greptile bot"
+"Show me only the comments from the Greptile agent"
 
 # 3. Resolve systematically
 "Starting with the most critical issues, please resolve each Greptile comment by implementing the suggested fixes"
