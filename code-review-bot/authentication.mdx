@@ -1,0 +1,45 @@
+---
+title: Authentication & Tokens
+description: 'Required tokens and permissions for GitHub and GitLab integration'
+keywords: 'GitHub App, GitLab tokens, authentication, permissions, scopes'
+---
+
+## GitHub Authentication
+
+Greptile uses GitHub App authentication for secure, scalable access to your repositories.
+
+### Required Configuration
+- **GitHub App ID** (`GITHUB_APP_ID`)
+- **GitHub Client ID** (`GITHUB_CLIENT_ID`)
+- **GitHub Client Secret** (`GITHUB_CLIENT_SECRET`)
+- **GitHub Private Key** (`GITHUB_PRIVATE_KEY`)
+
+### How It Works
+1. Greptile creates installation tokens automatically using the GitHub App
+2. These tokens are scoped to only the repositories you've granted access to
+3. Tokens are automatically rotated for security
+
+### X-GitHub-Token Header
+When using Greptile's API to query repositories, include the `X-GitHub-Token` header with a valid GitHub token that has access to the repository you're querying.
+
+## GitLab Authentication
+
+GitLab integration uses personal access tokens for authentication.
+
+### Required Tokens
+- **GitLab Personal Access Token** - Passed via `X-GitLab-Token` header
+- **Domain-specific tokens** - For self-hosted GitLab instances, use `X-Token-{sanitized-hostname}` header format
+
+### Token Permissions
+Your GitLab token needs sufficient permissions to:
+- Read repository contents
+- Create and update merge request comments
+- Access merge request webhooks (if using automatic reviews)
+
+## Private Repository Access
+
+Both GitHub and GitLab tokens automatically provide access to private repositories that the authenticated user or app installation has permissions for. No additional configuration is needed beyond the standard authentication setup.
+
+<Warning>
+Never commit tokens or credentials to your repository. Use environment variables or secure secret management systems.
+</Warning>

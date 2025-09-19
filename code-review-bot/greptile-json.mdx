@@ -10,6 +10,14 @@ You can have custom settings at the repo level by adding a `greptile.json` file 
 
 You can grab your global settings in the correct format [here](https://app.greptile.com/review/github?tab=config) by clicking on the `copy` or `download` icons on the top right of the Settings panel.
 
+### Configuration Hierarchy
+
+Settings in `greptile.json` **override** dashboard settings for that repository. The hierarchy is:
+1. **greptile.json** (highest priority) - Repository-specific configuration
+2. **Dashboard settings** (lower priority) - Organization-wide defaults
+
+This allows you to set organization-wide defaults in the dashboard while customizing specific repositories with greptile.json.
+
 <Note>
   The `ignorePatterns` field follows `.gitignore`
   [syntax](https://git-scm.com/docs/gitignore).
