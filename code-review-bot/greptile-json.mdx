@@ -37,7 +37,16 @@ This allows you to set organization-wide defaults in the dashboard while customi
   "disabledLabels": ["docs"],
   "includeAuthors": ["dakshgup", "schoi"],
   "excludeAuthors": ["cool-dev"],
-  "strictness": 2
+  "strictness": 2,
+  "directoryRules": {
+    "src/critical/**": {
+      "strictness": 1,
+      "commentTypes": ["logic", "syntax"]
+    },
+    "tests/**": {
+      "strictness": 3
+    }
+  }
 }
 ```
 
@@ -47,7 +56,7 @@ This allows you to set organization-wide defaults in the dashboard while customi
 | ------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `labels`                  | array   | Labels that will trigger a Greptile review when added to a PR. In the example above, adding "feature" or "bug" label will trigger a review.  |
 | `comment`                 | string  | A disclaimer or prefix that will be added to every Greptile PR summary. Useful for compliance requirements.                                  |
-| `commentTypes`            | array   | Types of comments Greptile should make. Options include: "logic", "syntax", "style", and "info".                                             |
+| `commentTypes`            | array   | Types of comments Greptile should make. Options: "logic" (business logic issues), "syntax" (language-specific best practices), "style" (formatting, naming conventions). All enabled by default. |
 | `instructions`            | string  | Natural language custom instructions for Greptile to follow when reviewing code. Can reference files in your repo or contain specific rules. |
 | `ignoreKeywords`          | string  | Newline-separated list of keywords. PRs with these keywords in their title or description will be ignored.                                   |
 | `ignorePatterns`          | string  | Newline-separated list of file patterns to ignore, following .gitignore syntax. Files matching these patterns will not be reviewed.          |
@@ -58,3 +67,55 @@ This allows you to set organization-wide defaults in the dashboard while customi
 | `includeAuthors`          | array   | Only PRs from these authors will be reviewed. If empty, reviews PRs from all authors (except excluded ones).                                 |
 | `excludeAuthors`          | array   | PRs from these authors will not be reviewed, even if other trigger conditions are met.                                                       |
 | `strictness`              | number  | Severity threshold for Greptile comments (1-3). 1 = comment on all issues, 2 = moderate filtering, 3 = only most critical issues.            |
+| `directoryRules`          | object  | Apply specific rules to certain directories using glob patterns. See directory-specific rules section below.                                     |
+
+## Comment Types Explained
+
+### Available Comment Types
+- **`logic`** - Business logic issues, algorithmic problems, potential bugs
+- **`syntax`** - Language-specific best practices, proper usage patterns
+- **`style`** - Code formatting, naming conventions, structural consistency
+
+All comment types are **enabled by default**. You can restrict reviews to specific types by setting `commentTypes` to a subset.
+
+### Example Configurations
+```json
+// Only check for logic issues (most critical)
+{
+  "commentTypes": ["logic"]
+}
+
+// Focus on code quality without style nitpicks
+{
+  "commentTypes": ["logic", "syntax"]
+}
+```
+
+## Directory-Specific Rules
+
+You can apply different rules to specific directories using glob patterns:
+
+```json
+{
+  "directoryRules": {
+    "src/critical/**": {
+      "strictness": 1,
+      "commentTypes": ["logic", "syntax"]
+    },
+    "tests/**": {
+      "strictness": 3,
+      "commentTypes": ["logic"]
+    },
+    "docs/**": {
+      "strictness": 2,
+      "commentTypes": ["style"]
+    }
+  }
+}
+```
+
+### Use Cases
+- **Critical paths** - Maximum scrutiny on core business logic
+- **Test files** - Focus only on serious issues
+- **Documentation** - Primarily style and formatting checks
+- **Legacy code** - Reduced noise during refactoring

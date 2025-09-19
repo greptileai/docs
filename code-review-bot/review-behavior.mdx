@@ -1,0 +1,120 @@
+---
+title: Review Behavior & Limitations
+description: 'Understanding how Greptile reviews work and their current limitations'
+keywords: 'review behavior, limitations, process, PR reviews, commit reviews'
+---
+
+## Review Scope & Capabilities
+
+### What Greptile Reviews
+- **Pull Requests / Merge Requests** - Complete PR analysis with full context
+- **Commit-by-commit analysis** - When multiple commits are in a PR
+- **Cross-file impact** - How changes affect related files and dependencies
+- **Business logic alignment** - Code changes against requirements and patterns
+
+### What Greptile Does NOT Review
+- **Individual commits** - Only reviews complete PRs/MRs, not standalone commits
+- **Draft PRs by default** - Must be manually triggered or marked ready for review
+- **Merged PRs** - Reviews only happen on open PRs unless manually triggered
+
+## Review Process
+
+### Single-Pass Review System
+Greptile uses a **single-pass review approach**:
+- Each review is **independent and complete**
+- **Not iterative** - doesn't build on previous review comments
+- **Fresh analysis** each time, considering all current code
+
+### Review Timing
+- **Initial review** - Triggered when PR is first opened
+- **Update reviews** - Only if `triggerOnUpdates: true` is configured
+- **Manual reviews** - Available anytime via `@greptileai` comment
+
+### Review Content
+Each review includes:
+1. **PR Summary** - High-level description of changes
+2. **Line-by-line comments** - Specific issues and suggestions
+3. **Confidence score** - 0-5 rating of how safe the PR is to merge
+4. **Cross-file analysis** - Impact on related code
+
+## Current Limitations
+
+### Cannot Cancel Running Reviews
+- **No cancellation mechanism** - Reviews run to completion once started
+- **Wait before major changes** - Avoid pushing large changes while review is in progress
+- **Resource consideration** - Running reviews consume processing time and resources
+
+#### Best Practices
+- **Timing pushes** - Wait for review completion before major updates
+- **Incremental changes** - Make smaller, focused commits to reduce review conflicts
+- **Communication** - Let team know when pushing changes to active PRs
+
+### Review Frequency Limitations
+- **No multi-pass reviews** - Each review is a complete, independent analysis
+- **No iterative improvement** - Cannot ask Greptile to "try again" or "review differently"
+- **Fresh perspective each time** - May repeat similar comments across reviews
+
+### Auto-Approval Limitations
+- **No automatic approval** - Greptile cannot automatically approve PRs
+- **Humans required** - All PR approvals must come from human reviewers
+- **Status checks only** - Can block merging but cannot approve merging
+
+## Understanding Review Updates
+
+### When `triggerOnUpdates` is Enabled
+```json greptile.json
+{
+  "triggerOnUpdates": true
+}
+```
+
+**Every new commit** triggers a fresh review:
+- **Complete re-analysis** - Doesn't build on previous reviews
+- **All files re-examined** - Even unchanged files are reconsidered for context
+- **Fresh comments** - Previous review comments don't influence new ones
+
+### When `triggerOnUpdates` is Disabled (Default)
+- **Single initial review** - Only when PR is first opened
+- **Manual re-review only** - Use `@greptileai` comment to trigger new review
+- **Reduced noise** - Avoids constant re-reviews during development
+
+## Review Consistency
+
+### What Stays Consistent
+- **Code analysis quality** - Same depth of analysis each time
+- **Context awareness** - Always considers full codebase context
+- **Rule application** - Custom rules applied consistently
+
+### What May Vary
+- **Comment phrasing** - AI may express similar issues differently
+- **Priority focus** - May highlight different aspects of the same issue
+- **Example suggestions** - Different but equivalent solutions may be suggested
+
+## Integration with Workflows
+
+### Status Checks Integration
+- **Blocks merging** until review completes
+- **Provides review status** to GitHub/GitLab
+- **Integrates with branch protection** rules
+
+### Team Workflows
+- **Complements human review** - Not a replacement for human reviewers
+- **Pre-review filtering** - Catches issues before human review
+- **Focus enhancement** - Allows human reviewers to focus on architecture and business logic
+
+## Performance Considerations
+
+### Review Speed Factors
+- **Repository size** - Larger codebases take longer to analyze
+- **Change complexity** - More complex changes require deeper analysis
+- **External context** - Jira/Notion integration may add processing time
+- **First-time indexing** - New repositories require initial setup time
+
+### Optimization Tips
+- **Smaller PRs** - Break large changes into focused, smaller PRs
+- **Clear descriptions** - Help Greptile understand the intent quickly
+- **Consistent patterns** - Following established patterns speeds analysis
+
+<Note>
+These limitations are actively being addressed. Contact hello@greptile.com for updates on new capabilities or to discuss specific workflow requirements.
+</Note>
