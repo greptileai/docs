@@ -1,0 +1,294 @@
+---
+title: Advanced Rules & Policy Enforcement
+description: 'Directory-specific rules, custom policies, and advanced comment configuration'
+keywords: 'rules, policies, directory-specific, comment types, enforcement, compliance'
+---
+
+## Comment Types Deep Dive
+
+### Available Comment Types
+
+Greptile provides three main comment types, all **enabled by default**:
+
+#### `logic` - Business Logic & Algorithmic Issues
+- **Bug detection** - Potential runtime errors, null pointer exceptions
+- **Logic flaws** - Incorrect business logic implementation
+- **Edge cases** - Unhandled edge cases and error conditions
+- **Performance issues** - Inefficient algorithms, resource leaks
+- **Security vulnerabilities** - Authentication, authorization, data exposure
+
+#### `syntax` - Language-Specific Best Practices
+- **Language idioms** - Using language features correctly
+- **Framework patterns** - Proper use of libraries and frameworks
+- **API usage** - Correct implementation of external APIs
+- **Code structure** - Class design, method organization
+- **Type safety** - Proper typing and null handling
+
+#### `style` - Code Formatting & Conventions
+- **Naming conventions** - Variable, function, and class naming
+- **Code organization** - File structure, import organization
+- **Formatting consistency** - Indentation, spacing, line length
+- **Documentation** - Comments, docstrings, README updates
+- **Code repetition** - DRY principle violations
+
+### Custom Comment Type Configurations
+
+```json greptile.json
+{
+  "commentTypes": ["logic", "syntax"]
+}
+```
+
+#### Focus Configurations
+
+**Maximum scrutiny (all types):**
+```json
+{
+  "commentTypes": ["logic", "syntax", "style"],
+  "strictness": 1
+}
+```
+
+**Critical issues only:**
+```json
+{
+  "commentTypes": ["logic"],
+  "strictness": 3
+}
+```
+
+**Pre-production review:**
+```json
+{
+  "commentTypes": ["logic", "syntax"],
+  "strictness": 2
+}
+```
+
+## Directory-Specific Rules
+
+Apply different rules and strictness to specific directories using glob patterns:
+
+### Basic Directory Rules
+```json greptile.json
+{
+  "directoryRules": {
+    "src/critical/**": {
+      "strictness": 1,
+      "commentTypes": ["logic", "syntax"]
+    },
+    "tests/**": {
+      "strictness": 3,
+      "commentTypes": ["logic"]
+    },
+    "docs/**": {
+      "strictness": 2,
+      "commentTypes": ["style"]
+    }
+  }
+}
+```
+
+### Advanced Directory Patterns
+
+#### Frontend vs Backend Rules
+```json
+{
+  "directoryRules": {
+    "frontend/src/**": {
+      "strictness": 2,
+      "commentTypes": ["logic", "style"],
+      "instructions": "Focus on accessibility and performance"
+    },
+    "backend/src/**": {
+      "strictness": 1,
+      "commentTypes": ["logic", "syntax"],
+      "instructions": "Emphasize security and data validation"
+    }
+  }
+}
+```
+
+#### Component-Based Rules
+```json
+{
+  "directoryRules": {
+    "components/ui/**": {
+      "strictness": 2,
+      "commentTypes": ["style", "syntax"],
+      "instructions": "Ensure design system compliance"
+    },
+    "components/business/**": {
+      "strictness": 1,
+      "commentTypes": ["logic", "syntax"],
+      "instructions": "Focus on business logic correctness"
+    },
+    "utils/**": {
+      "strictness": 1,
+      "commentTypes": ["logic"],
+      "instructions": "Ensure utility functions are pure and well-tested"
+    }
+  }
+}
+```
+
+#### File Type Rules
+```json
+{
+  "directoryRules": {
+    "**/*.test.js": {
+      "strictness": 3,
+      "commentTypes": ["logic"],
+      "instructions": "Focus only on test logic and coverage"
+    },
+    "**/*.config.*": {
+      "strictness": 2,
+      "commentTypes": ["syntax"],
+      "instructions": "Verify configuration syntax and security"
+    },
+    "**/*.md": {
+      "strictness": 2,
+      "commentTypes": ["style"],
+      "instructions": "Check formatting and link validity"
+    }
+  }
+}
+```
+
+## Pattern-Based Policy Enforcement
+
+### Architectural Compliance
+```json
+{
+  "directoryRules": {
+    "src/models/**": {
+      "instructions": "Ensure all models follow the repository pattern and include proper validation"
+    },
+    "src/controllers/**": {
+      "instructions": "Controllers should be thin, delegate to services, and handle only HTTP concerns"
+    },
+    "src/services/**": {
+      "instructions": "Services should contain business logic and be framework-agnostic"
+    }
+  }
+}
+```
+
+### Security-Focused Rules
+```json
+{
+  "directoryRules": {
+    "src/auth/**": {
+      "strictness": 1,
+      "commentTypes": ["logic", "syntax"],
+      "instructions": "Strict security review: check for authentication bypass, authorization flaws, and credential exposure"
+    },
+    "src/api/public/**": {
+      "strictness": 1,
+      "commentTypes": ["logic"],
+      "instructions": "Public APIs require input validation, rate limiting, and security headers"
+    }
+  }
+}
+```
+
+### Performance-Critical Rules
+```json
+{
+  "directoryRules": {
+    "src/performance-critical/**": {
+      "strictness": 1,
+      "commentTypes": ["logic"],
+      "instructions": "Focus on algorithm efficiency, memory usage, and scalability concerns"
+    },
+    "src/database/**": {
+      "strictness": 1,
+      "instructions": "Review for N+1 queries, indexing issues, and migration safety"
+    }
+  }
+}
+```
+
+## Global Pattern Enforcement
+
+### Cross-Directory Rules
+```json
+{
+  "instructions": "Ensure all database changes include migrations and all API changes update OpenAPI specs",
+  "directoryRules": {
+    "src/database/models/**": {
+      "instructions": "Any model changes must include corresponding migration files"
+    },
+    "src/api/routes/**": {
+      "instructions": "API changes must update the OpenAPI specification in /docs/api"
+    }
+  }
+}
+```
+
+### Compliance Requirements
+```json
+{
+  "directoryRules": {
+    "src/medical/**": {
+      "strictness": 1,
+      "commentTypes": ["logic", "syntax"],
+      "instructions": "HIPAA compliance required: ensure PHI is properly encrypted and access is logged"
+    },
+    "src/financial/**": {
+      "strictness": 1,
+      "instructions": "PCI DSS compliance: verify secure handling of payment data and proper audit trails"
+    }
+  }
+}
+```
+
+## Rule Priority and Inheritance
+
+### Rule Resolution Order
+1. **Most specific pattern** - Exact file matches take highest priority
+2. **Directory depth** - Deeper directory rules override shallower ones
+3. **Pattern specificity** - More specific glob patterns override general ones
+4. **Global defaults** - Applied when no specific rules match
+
+### Example Resolution
+```json
+{
+  "strictness": 2,                    // Global default
+  "directoryRules": {
+    "src/**": {                      // Level 1: src directory
+      "strictness": 1
+    },
+    "src/tests/**": {                // Level 2: more specific
+      "strictness": 3
+    },
+    "src/tests/integration/**": {    // Level 3: most specific wins
+      "strictness": 1,
+      "commentTypes": ["logic"]
+    }
+  }
+}
+```
+
+## Best Practices
+
+### Rule Organization
+- **Start broad** - Set sensible global defaults
+- **Add specificity** - Override for special directories
+- **Document reasoning** - Comment why certain rules exist
+- **Regular review** - Adjust rules based on team feedback
+
+### Performance Considerations
+- **Avoid excessive rules** - Too many directory rules can slow analysis
+- **Use clear patterns** - Ambiguous globs can cause conflicts
+- **Test configurations** - Verify rules work as expected on test PRs
+
+### Team Adoption
+- **Gradual rollout** - Start with lenient settings, tighten over time
+- **Team buy-in** - Discuss rules with the team before implementation
+- **Feedback loops** - Use 👍/👎 reactions to refine rules
+- **Documentation** - Keep a team wiki explaining your rule choices
+
+<Note>
+For complex rule requirements or questions about specific use cases, contact hello@greptile.com for guidance.
+</Note>

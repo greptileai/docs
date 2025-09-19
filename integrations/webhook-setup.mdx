@@ -1,0 +1,76 @@
+---
+title: Webhook Setup
+description: 'Setting up webhooks for GitHub and GitLab integration'
+keywords: 'webhooks, GitHub, GitLab, setup, integration'
+---
+
+## GitHub Webhook Setup
+
+GitHub webhooks are **automatically configured** when you install the Greptile GitHub App. No manual setup is required.
+
+### Automatic Configuration
+1. Install the Greptile GitHub App from the marketplace
+2. Grant repository permissions during installation
+3. Webhooks are automatically created for:
+   - Pull request events (opened, updated, closed)
+   - Push events to PR branches
+   - Review request events
+
+### Verification
+To verify webhooks are working:
+1. Go to your repository settings → Webhooks
+2. Look for a webhook pointing to Greptile's endpoint
+3. Check recent deliveries for successful responses (200 status)
+
+### Troubleshooting
+- **Webhook not appearing**: Reinstall the GitHub App with proper permissions
+- **Failed deliveries**: Check that repository access hasn't been revoked
+- **Missing reviews**: Ensure the repository is enabled in your Greptile dashboard
+
+## GitLab Webhook Setup
+
+GitLab webhooks require manual configuration through app.greptile.com.
+
+### Setup Process
+1. Go to [app.greptile.com](https://app.greptile.com)
+2. Navigate to your GitLab integration settings
+3. Follow the **on-screen instructions** to configure webhooks
+4. Copy the provided webhook URL and secret
+
+### GitLab Configuration
+1. In your GitLab project, go to Settings → Webhooks
+2. Add a new webhook with:
+   - **URL**: The webhook URL from Greptile dashboard
+   - **Secret Token**: The secret provided by Greptile
+   - **Trigger events**:
+     - Merge requests events
+     - Push events
+     - Wiki page events (optional)
+
+### Self-Hosted GitLab
+For self-hosted GitLab instances:
+1. Ensure your GitLab instance can reach Greptile's webhook endpoint
+2. Use the domain-specific token format: `X-Token-{sanitized-hostname}`
+3. Configure firewall rules to allow outbound webhook calls
+4. Test connectivity before configuring webhooks
+
+### Webhook Events
+Greptile listens for these GitLab events:
+- **Merge request opened** - Triggers initial review
+- **Merge request updated** - Triggers re-review (if enabled)
+- **Push to MR branch** - Updates review with new commits
+
+### Security
+- All webhook payloads are verified using the secret token
+- Failed authentication attempts are logged and rejected
+- Webhooks use HTTPS for secure transmission
+
+### Troubleshooting GitLab Webhooks
+- **Webhook fails**: Verify the URL and secret token are correct
+- **No reviews triggered**: Check that merge request events are enabled
+- **Connection timeout**: Ensure GitLab can reach Greptile's servers
+- **SSL errors**: Verify GitLab's SSL certificate configuration
+
+<Note>
+For enterprise GitLab instances or custom webhook configurations, contact hello@greptile.com for assistance.
+</Note>

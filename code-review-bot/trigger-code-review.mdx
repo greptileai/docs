@@ -8,6 +8,13 @@ metaDescription: 'Greptile can be configured to include or exclude certain label
 
 By default, Greptile reviews **every new PR** when it is first opened or when a user comments `@greptileai` on the PR. It can also be configured to review PRs on certain triggers.
 
+### Draft PR Behavior
+
+**Draft PRs are not automatically reviewed** by default to avoid noise during development. However, you can:
+- **Manually trigger** reviews on draft PRs by commenting `@greptileai`
+- **Configure automatic reviews** for drafts (contact support for this option)
+- Reviews will automatically start when you **mark the PR as ready for review**
+
 
 ### Filters
 
@@ -21,9 +28,15 @@ You can configure Greptile to only review PRs that match certain filters. The fi
 | `keywords` | Include or exclude PRs containing a specific keyword in the title, description,or last commit message |
 
 
-### Trigger Manually
+### Manual Triggering
 
 You can trigger Greptile to review a PR manually by commenting `@greptileai` on the PR.
+
+#### When to Use Manual Triggering
+- **Draft PRs** that need early feedback
+- **Re-review after major changes** (though Greptile will note what changed)
+- **PRs that don't match automatic triggers** due to filters
+- **Testing Greptile configuration** changes
 
 <Frame>
   <img src="/images/cr-bot/manual-trigger.gif" alt="Example of Greptile AI code review trigger" />
@@ -31,5 +44,46 @@ You can trigger Greptile to review a PR manually by commenting `@greptileai` on 
 </Frame>
 
 <Note>
-GitHub does not allow users to tag bots, so as you comment `@greptileai` it may not show you the bot in the dropdown suggestions..
+GitHub does not allow users to tag bots, so as you comment `@greptileai` it may not show you the bot in the dropdown suggestions.
 </Note>
+
+### Status Checks & Merge Protection
+
+You can configure Greptile to **block merging** until reviews are complete:
+
+#### GitHub Status Checks
+1. Go to your repository Settings → Branches
+2. Add or edit a branch protection rule
+3. Enable "Require status checks to pass before merging"
+4. Search for and select the **Greptile status check**
+5. Save the protection rule
+
+#### Benefits
+- **Prevents accidental merges** before review completion
+- **Ensures code quality** by requiring Greptile approval
+- **Integrates with existing workflows** alongside other required checks
+
+<Warning>
+Status checks will prevent merging even if Greptile finds no issues. Make sure your team understands this workflow change.
+</Warning>
+
+### Auto-Review on Every Commit
+
+By default, Greptile only reviews the initial PR. You can enable **continuous review**:
+
+```json greptile.json
+{
+  "triggerOnUpdates": true
+}
+```
+
+When enabled:
+- **Every new commit** to the PR branch triggers a fresh review
+- **Keeps reviews current** as code evolves
+- **May increase review volume** - consider adjusting strictness settings
+
+### Review Limitations
+
+- **Cannot cancel running reviews** - wait for completion before pushing major changes
+- **Reviews PRs/MRs only** - individual commits are not reviewed separately
+- **Single-pass system** - each review is independent, not iterative

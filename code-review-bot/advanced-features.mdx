@@ -1,0 +1,204 @@
+---
+title: Advanced Features
+description: 'Sequence diagrams, architectural analysis, and optimization insights'
+keywords: 'sequence diagrams, architecture analysis, optimization, advanced features'
+---
+
+## Sequence Diagram Generation
+
+Greptile can **automatically generate sequence diagrams** to visualize complex code interactions and workflows.
+
+### When Diagrams Are Generated
+- **Complex API flows** - Multi-service interactions and data flows
+- **Authentication workflows** - Login, token validation, and user sessions
+- **Business process implementations** - Order processing, payment flows, etc.
+- **Error handling chains** - How errors propagate through the system
+
+### Requesting Specific Diagrams
+You can request diagrams in your PR description or comments:
+
+```markdown
+@greptileai can you generate a sequence diagram for the new payment processing flow?
+```
+
+### Example Generated Diagrams
+Greptile creates diagrams showing:
+- **Service interactions** - API calls between microservices
+- **Database operations** - Query sequences and transactions
+- **External integrations** - Third-party API interactions
+- **User journeys** - Frontend to backend workflows
+
+### Integration with Reviews
+- **Diagrams appear in PR summaries** when complex flows are detected
+- **Architecture validation** - Diagrams help reviewers understand system interactions
+- **Documentation generation** - Diagrams can be saved for future reference
+
+## Architectural Analysis
+
+Greptile provides deep insights into software architecture and design patterns.
+
+### Architecture Problem Detection
+
+#### Design Pattern Violations
+- **Singleton misuse** - Identifying inappropriate singleton implementations
+- **God objects** - Classes or modules with too many responsibilities
+- **Circular dependencies** - Import cycles and dependency issues
+- **Tight coupling** - Components that are overly dependent on each other
+
+#### Architectural Concerns
+- **Layer violations** - Business logic in presentation layers
+- **Abstraction leakage** - Implementation details exposed in interfaces
+- **Separation of concerns** - Mixed responsibilities within components
+- **SOLID principle violations** - Single responsibility, open/closed, etc.
+
+### Performance Architecture Analysis
+
+#### Scalability Issues
+- **Database bottlenecks** - N+1 queries, missing indexes
+- **Memory inefficiencies** - Unnecessary object creation, memory leaks
+- **CPU optimization opportunities** - Algorithm improvements, caching strategies
+- **Network optimization** - API call reduction, bundling opportunities
+
+#### System Design Improvements
+- **Caching strategies** - Where to implement caching for better performance
+- **Async processing** - Opportunities for background job processing
+- **Resource pooling** - Database connections, HTTP clients
+- **Load distribution** - Identifying single points of failure
+
+### Cross-System Impact Analysis
+
+#### Dependency Analysis
+- **Breaking change detection** - API changes that affect downstream services
+- **Contract validation** - Interface changes and compatibility
+- **Version compatibility** - Library and framework version conflicts
+- **Migration impact** - Database schema changes and their effects
+
+#### Integration Points
+- **Third-party service dependencies** - External API reliability concerns
+- **Configuration management** - Environment-specific settings validation
+- **Security boundaries** - Trust zones and data flow security
+
+## Optimization Insights
+
+### Code Optimization Opportunities
+
+#### Algorithm Improvements
+```javascript
+// Greptile might suggest:
+// "This O(n²) nested loop could be optimized to O(n log n)
+// using a hash map approach"
+
+const findDuplicates = (arr) => {
+  const duplicates = [];
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[i] === arr[j]) {
+        duplicates.push(arr[i]);
+      }
+    }
+  }
+  return duplicates;
+};
+```
+
+#### Resource Optimization
+- **Memory usage patterns** - Identifying memory-intensive operations
+- **I/O optimization** - File system and database access improvements
+- **Concurrent processing** - Opportunities for parallel execution
+- **Lazy loading** - Deferred initialization of expensive resources
+
+### Business Logic Optimization
+
+#### Process Efficiency
+- **Workflow simplification** - Reducing unnecessary steps
+- **Business rule conflicts** - Identifying contradictory logic
+- **Data validation redundancy** - Eliminating duplicate checks
+- **Error handling efficiency** - Streamlined error recovery
+
+#### User Experience Optimization
+- **Response time improvements** - Faster API endpoints
+- **UI performance** - Rendering optimization suggestions
+- **Accessibility enhancements** - Screen reader compatibility
+- **Mobile optimization** - Touch-friendly interface improvements
+
+## Architectural Documentation Generation
+
+### System Overview Creation
+Greptile can generate documentation describing:
+- **Component relationships** - How services interact
+- **Data flow diagrams** - Information movement through the system
+- **API documentation** - Endpoint descriptions and usage patterns
+- **Architecture decision records** - Rationale behind design choices
+
+### Pattern Recognition and Documentation
+- **Established patterns** - Identifying and documenting recurring patterns
+- **Anti-patterns** - Warning about problematic implementations
+- **Best practices** - Suggesting improvements based on industry standards
+- **Team conventions** - Learning and enforcing team-specific patterns
+
+## Integration with Development Workflow
+
+### Pull Request Enhancement
+- **Architecture summaries** - High-level impact descriptions
+- **Performance predictions** - Expected impact on system performance
+- **Security implications** - Potential security considerations
+- **Maintenance burden** - Long-term maintainability assessment
+
+### Continuous Architecture Monitoring
+- **Trend analysis** - Architecture quality over time
+- **Technical debt identification** - Areas needing refactoring
+- **Complexity metrics** - Measuring code and system complexity
+- **Evolution tracking** - How the architecture changes with each release
+
+## Advanced Configuration
+
+### Enabling Advanced Features
+```json greptile.json
+{
+  "advancedAnalysis": {
+    "generateDiagrams": true,
+    "architecturalAnalysis": true,
+    "performanceInsights": true,
+    "optimizationSuggestions": true
+  },
+  "instructions": "Focus on architectural improvements and include sequence diagrams for complex workflows"
+}
+```
+
+### Feature-Specific Settings
+```json
+{
+  "diagramGeneration": {
+    "threshold": "complex",    // Generate diagrams for complex flows only
+    "includeDatabase": true,   // Show database interactions
+    "includeExternal": true    // Show external API calls
+  },
+  "architecturalAnalysis": {
+    "designPatterns": true,    // Check design pattern compliance
+    "layerViolations": true,   // Detect architectural layer violations
+    "performanceImpact": true  // Analyze performance implications
+  }
+}
+```
+
+## Best Practices
+
+### Maximizing Advanced Feature Value
+1. **Clear PR descriptions** - Help Greptile understand the intended architecture
+2. **Consistent patterns** - Establish and document your architectural standards
+3. **Regular review** - Use insights to guide architectural decisions
+4. **Team education** - Share architectural insights with the team
+
+### Performance Considerations
+- **Large systems** - Advanced analysis may take longer for complex codebases
+- **Configuration tuning** - Adjust thresholds based on your needs
+- **Selective enablement** - Enable features only where they add value
+
+### Integration Tips
+- **Documentation workflow** - Save generated diagrams to project documentation
+- **Architecture reviews** - Use insights during formal architecture review sessions
+- **Refactoring planning** - Prioritize improvements based on Greptile's suggestions
+
+<Note>
+Advanced features are continuously evolving. Contact hello@greptile.com for the latest capabilities and configuration options.
+</Note>

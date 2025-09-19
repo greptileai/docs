@@ -1,0 +1,294 @@
+---
+title: Troubleshooting Common Issues
+description: 'Solutions to frequent problems with Greptile setup and configuration'
+keywords: 'troubleshooting, issues, problems, debugging, configuration, greptile.json'
+---
+
+## Configuration Issues
+
+### greptile.json Not Taking Effect
+
+#### Symptoms
+- Changes to greptile.json don't appear in reviews
+- Dashboard settings still being used despite repository configuration
+- Rules and instructions seem to be ignored
+
+#### Common Causes & Solutions
+
+**1. File Location Issues**
+```bash
+# ✅ Correct - greptile.json in repository root
+your-repo/
+├── greptile.json
+├── src/
+└── package.json
+
+# ❌ Wrong - greptile.json in subdirectory
+your-repo/
+├── src/
+│   └── greptile.json  # This won't be found
+└── package.json
+```
+
+**2. JSON Syntax Errors**
+```json
+// ❌ Invalid JSON - trailing comma
+{
+  "strictness": 2,
+  "commentTypes": ["logic", "syntax"],  // Remove this comma
+}
+
+// ✅ Valid JSON
+{
+  "strictness": 2,
+  "commentTypes": ["logic", "syntax"]
+}
+```
+
+**3. Branch Configuration**
+- Greptile reads `greptile.json` from the **source branch** of the PR
+- If you add greptile.json in a PR, it only takes effect for that PR
+- Merge the greptile.json to your main branch for it to apply to future PRs
+
+**4. Configuration Validation**
+Use the dashboard to validate your configuration:
+1. Go to [app.greptile.com/review](https://app.greptile.com/review)
+2. Select your repository
+3. Check if your greptile.json is detected and parsed correctly
+
+#### Debugging Steps
+1. **Verify file location** - Ensure greptile.json is in repository root
+2. **Validate JSON syntax** - Use a JSON validator to check for errors
+3. **Check branch** - Confirm the file exists in the branch being reviewed
+4. **Test on new PR** - Create a test PR to verify configuration works
+
+### Custom Context "Never Used"
+
+#### Symptoms
+- External context sources (Jira, Notion) not being referenced in reviews
+- Pattern repositories not providing relevant context
+- Custom instructions being ignored
+
+#### Common Causes & Solutions
+
+**1. Integration Not Connected**
+- **Check connections** - Verify Jira/Notion/Google Drive connections in dashboard
+- **Permissions** - Ensure Greptile has access to the specific documents/projects
+- **Authentication** - Refresh expired tokens or credentials
+
+**2. Content Not Indexed**
+- **Wait for indexing** - New integrations need time to index content
+- **Check status** - Look for indexing status in the dashboard
+- **Trigger re-index** - Contact support if indexing seems stuck
+
+**3. Pattern Repository Issues**
+```json
+// ❌ Repository doesn't exist or isn't accessible
+{
+  "patternRepositories": ["nonexistent/repo"]
+}
+
+// ✅ Verify repository exists and is accessible
+{
+  "patternRepositories": ["your-org/shared-utils"]
+}
+```
+
+**4. Content Relevance**
+- External content must be **relevant** to the code changes
+- Greptile filters out unrelated context automatically
+- Try more specific references in PR descriptions
+
+#### Debugging Steps
+1. **Test integrations** - Verify connections work in dashboard
+2. **Check content** - Ensure linked documents exist and are accessible
+3. **Review relevance** - Make sure external content relates to code changes
+4. **Monitor indexing** - Allow time for new content to be indexed
+
+## Review Issues
+
+### Greptile Not Running for New PRs
+
+#### Symptoms
+- New PRs don't get automatic reviews
+- No comments or summaries appear
+- Webhook deliveries failing
+
+#### Common Causes & Solutions
+
+**1. Repository Not Enabled**
+- **Check dashboard** - Ensure repository is enabled for reviews
+- **Verify permissions** - Confirm GitHub/GitLab access hasn't been revoked
+- **Re-enable if needed** - Toggle repository off and on in dashboard
+
+**2. Filter Configuration Issues**
+```json
+// ❌ Too restrictive filters
+{
+  "includeAuthors": ["specific-user"],  // Only reviews from this user
+  "labels": ["review-needed"]           // Only PRs with this label
+}
+
+// ✅ More inclusive configuration
+{
+  "excludeAuthors": ["dependabot[bot]"],
+  "disabledLabels": ["skip-review"]
+}
+```
+
+**3. Draft PR Settings**
+- **Draft PRs** are not reviewed automatically by default
+- Mark PR as "Ready for review" or comment `@greptileai` to trigger
+
+**4. Webhook Issues**
+```bash
+# Check webhook deliveries in GitHub/GitLab settings
+Repository Settings → Webhooks → Recent Deliveries
+```
+
+#### Debugging Steps
+1. **Verify repository status** - Check if enabled in dashboard
+2. **Test manual trigger** - Comment `@greptileai` on a PR
+3. **Check webhook logs** - Look for failed webhook deliveries
+4. **Review filters** - Ensure PR matches your trigger conditions
+
+### Reviews Taking Too Long
+
+#### Symptoms
+- Reviews never complete or take hours
+- "Pending" status that doesn't update
+- Timeouts or partial reviews
+
+#### Common Causes & Solutions
+
+**1. Large PR Size**
+- **Break down PRs** - Split large changes into smaller, focused PRs
+- **Ignore unnecessary files** - Use `ignorePatterns` to exclude generated files
+
+```json
+{
+  "ignorePatterns": "dist/**\nnode_modules/**\n*.generated.*\nbuild/**"
+}
+```
+
+**2. Repository Size**
+- **First-time indexing** - New repositories take longer to initially process
+- **Wait for completion** - Allow extra time for large codebases
+- **Contact support** - For repositories over 100k files
+
+**3. External Context Delays**
+- **Disable temporarily** - Remove external integrations to test speed
+- **Check integration status** - Ensure Jira/Notion connections are responsive
+
+#### Debugging Steps
+1. **Check PR size** - Consider breaking down large PRs
+2. **Monitor progress** - Use statusEndpoint to track review progress
+3. **Test smaller PRs** - Verify speed with minimal changes
+4. **Review configuration** - Simplify rules and integrations if needed
+
+## Integration Problems
+
+### Jira/Notion Connection Issues
+
+#### Symptoms
+- Authentication failures
+- "Connection expired" messages
+- External context not loading
+
+#### Common Solutions
+1. **Refresh tokens** - Re-authenticate integrations in dashboard
+2. **Check permissions** - Ensure access to specific projects/workspaces
+3. **Network connectivity** - Verify Greptile can reach your instances
+4. **Instance configuration** - For self-hosted instances, check firewall rules
+
+### Pattern Repository Access
+
+#### Symptoms
+- Pattern repositories not found
+- Access denied errors
+- Context from related repos not appearing
+
+#### Common Solutions
+```json
+// ✅ Correct repository references
+{
+  "patternRepositories": [
+    "your-github-org/shared-library",
+    "your-gitlab-group/common-utils"
+  ]
+}
+
+// ❌ Common mistakes
+{
+  "patternRepositories": [
+    "shared-library",                    // Missing org/group
+    "your-org/repo-that-doesnt-exist",   // Repository doesn't exist
+    "private-org/private-repo"           // No access permissions
+  ]
+}
+```
+
+**Debugging Steps:**
+1. **Verify repository exists** - Check that referenced repos are accessible
+2. **Test permissions** - Ensure your GitHub/GitLab token can access the repo
+3. **Check naming** - Use full `org/repo` format
+4. **Monitor indexing** - Allow time for pattern repos to be indexed
+
+## Performance Optimization
+
+### Reducing Review Time
+
+#### Configuration Optimizations
+```json
+{
+  "strictness": 3,                    // Focus on critical issues only
+  "commentTypes": ["logic"],          // Reduce comment types for speed
+  "ignorePatterns": "tests/**\ndocs/**", // Skip less critical directories
+  "directoryRules": {
+    "vendor/**": { "strictness": 3 },  // Minimal review for vendor code
+    "generated/**": { "strictness": 3 }
+  }
+}
+```
+
+#### Process Improvements
+1. **Smaller PRs** - Break large changes into focused PRs
+2. **Clear descriptions** - Help Greptile understand context quickly
+3. **Consistent patterns** - Established patterns are analyzed faster
+4. **Regular maintenance** - Keep configuration up to date
+
+### Managing Review Volume
+
+#### Noise Reduction
+```json
+{
+  "strictness": 2,                           // Balance thoroughness and noise
+  "excludeAuthors": ["bot", "automation"],   // Skip automated PRs
+  "disabledLabels": ["trivial", "docs-only"], // Skip low-risk PRs
+  "ignoreKeywords": "typo\nformatting\nspacing" // Skip minor fixes
+}
+```
+
+## Getting Help
+
+### When to Contact Support
+- **Persistent authentication issues**
+- **Repositories that won't index**
+- **Consistent performance problems**
+- **Enterprise integration needs**
+
+### Information to Provide
+1. **Repository details** - Organization and repository name
+2. **Configuration** - Your greptile.json and dashboard settings
+3. **Error messages** - Exact error text and screenshots
+4. **Timeline** - When the issue started occurring
+5. **Examples** - Specific PRs or reviews that demonstrate the problem
+
+### Contact Information
+- **Support email**: hello@greptile.com
+- **Include**: Account details, repository information, and specific examples
+- **Response time**: Typically within 24 hours for standard issues
+
+<Note>
+For urgent issues affecting production workflows, mark your email as "URGENT" in the subject line.
+</Note>
