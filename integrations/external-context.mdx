@@ -1,0 +1,157 @@
+---
+title: External Context & Integrations
+description: 'Connect Jira, Notion, Google Drive and other sources for richer code reviews'
+keywords: 'Jira, Notion, Google Drive, Linear, integrations, external context, ticket tracking'
+---
+
+## Overview
+
+Greptile can integrate with external sources to provide richer context during code reviews. This helps ensure that code changes align with business requirements, specifications, and project goals.
+
+## Supported Integrations
+
+### Jira Integration
+
+Greptile can **read and analyze Jira tickets** referenced in your PRs to provide context-aware reviews.
+
+#### How It Works
+- **Automatic ticket detection** - Greptile identifies Jira ticket references in PR titles, descriptions, and commit messages
+- **Requirement verification** - Reviews code against ticket requirements and acceptance criteria
+- **Context-aware comments** - Comments consider the business context from linked tickets
+- **Status awareness** - Understands ticket priority and type (bug, feature, story)
+
+#### Setup
+1. Connect your Jira instance through the Greptile dashboard
+2. Configure authentication and permissions
+3. Greptile will automatically detect and use ticket context in reviews
+
+#### Example Usage
+```
+PR Title: "JIRA-123: Add user authentication endpoint"
+Ticket Content: "As a user, I want to login securely..."
+
+Greptile Review: "The implementation looks good, but the ticket
+requires password complexity validation which seems missing from
+this endpoint implementation."
+```
+
+### Notion Integration
+
+Greptile can access **Notion documents** for specifications, architecture docs, and business context.
+
+#### Capabilities
+- **Spec document analysis** - Reads product requirements and technical specifications
+- **Architecture alignment** - Verifies code follows documented architecture patterns
+- **Business context** - Understands product goals and constraints from planning docs
+- **Design system compliance** - Checks against design system documentation
+
+#### Setup
+1. Grant Greptile access to relevant Notion workspaces
+2. Specify which documents/databases to use for context
+3. Configure access permissions for your team's documentation
+
+### Google Drive Integration
+
+Access **Google Drive documents** for additional context and specifications.
+
+#### Use Cases
+- **PRDs and specifications** stored in Google Docs
+- **Architecture diagrams** and technical documentation
+- **Meeting notes** and decision records
+- **Shared spreadsheets** with requirements or configurations
+
+#### Setup
+1. Connect your Google Drive account through the dashboard
+2. Grant permissions to specific folders or documents
+3. Greptile will index and reference relevant content during reviews
+
+### Linear Integration
+
+<Note>
+Linear integration is **temporarily unavailable** but will return with enhanced features. Contact hello@greptile.com for updates.
+</Note>
+
+When available, Linear integration will provide:
+- Issue tracking and context
+- Sprint planning alignment
+- Project milestone awareness
+- Team priority understanding
+
+## Pattern Repositories
+
+Connect **supporting repositories** and **custom documentation** using `patternRepositories` in your greptile.json:
+
+```json greptile.json
+{
+  "patternRepositories": [
+    "acme/frontend-patterns",
+    "acme/api-documentation",
+    "acme/design-system"
+  ]
+}
+```
+
+### Use Cases
+- **Shared libraries** - Reference common utilities and patterns
+- **API documentation** - Understand API contracts when reviewing backend changes
+- **Design systems** - Ensure frontend changes follow established patterns
+- **Testing frameworks** - Reference testing patterns and utilities
+
+### Benefits
+- **Cross-repository awareness** - Reviews consider related codebases
+- **Pattern consistency** - Ensures new code follows established patterns
+- **Reduced duplication** - Identifies existing solutions before creating new ones
+
+## Custom Documentation Sources
+
+### Pipeline Integration
+You can connect custom documentation sources without adding them directly to your repository:
+
+- **CI/CD pipeline integration** - Automatically sync documentation during builds
+- **External documentation sites** - Reference wiki pages and knowledge bases
+- **API documentation** - Connect OpenAPI specs and GraphQL schemas
+
+### Setup Process
+1. Configure webhook or API access to your documentation source
+2. Set up automated syncing through build pipelines
+3. Reference documentation in greptile.json configuration
+
+## Coming Soon
+
+### Planned Integrations
+- **Slack** - Enhanced notifications and team communication
+- **Confluence** - Enterprise documentation access
+- **Azure DevOps** - Work item tracking and documentation
+- **GitHub Issues** - Enhanced issue context and tracking
+
+### Beta Program
+Want early access to new integrations? Contact hello@greptile.com to join our beta program and influence which integrations we prioritize.
+
+## Configuration Examples
+
+### Multi-Source Context
+```json greptile.json
+{
+  "patternRepositories": [
+    "acme/shared-utils",
+    "acme/api-docs"
+  ],
+  "instructions": "Reference Jira tickets for business context and check API docs for breaking changes"
+}
+```
+
+### Context Prioritization
+```json
+{
+  "contextPriority": [
+    "jira-tickets",
+    "pattern-repositories",
+    "notion-specs",
+    "google-drive-docs"
+  ]
+}
+```
+
+<Note>
+For enterprise integrations, custom authentication, or specific documentation sources not listed here, contact hello@greptile.com for assistance.
+</Note>
