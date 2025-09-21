@@ -1,0 +1,50 @@
+---
+title: Organization & Team Management
+description: 'Managing teams, roles, and access in Greptile'
+keywords: 'organization, teams, roles, permissions, access control'
+---
+
+## User Roles & Permissions
+
+Greptile supports three role types within organizations:
+
+### Role Types
+- **OWNER** - Full administrative access to the organization
+- **ADMIN** - Administrative access with some restrictions
+- **MEMBER** - Standard user access
+
+### Entitlements
+Users can have the following entitlements based on their subscription:
+- **API_ACCESS** - Access to Greptile's API endpoints
+- **PRO_CHAT** - Access to advanced chat features and codebase querying
+- **CODE_REVIEWS** - Access to automated code review features
+
+## Team Management
+
+### Creating Teams
+Teams in Greptile are represented as organizations with multiple users assigned different roles.
+
+### Managing Members
+- Add users to your organization through the dashboard
+- Assign appropriate roles based on their responsibilities
+- Users can belong to multiple organizations
+
+### Data Isolation
+Each organization (team) operates independently:
+- **Separate codebases** - Each organization's repositories are isolated
+- **Independent settings** - Configuration doesn't leak between organizations
+- **Isolated learning** - Feedback and learning are scoped to each organization
+
+## Multi-Organization Support
+
+### Connecting Multiple GitHub Organizations
+You can connect multiple GitHub organizations to a single Greptile account, allowing you to manage code reviews across all your repositories from one place.
+
+### Access Control
+- Repository access is controlled by the underlying GitHub/GitLab permissions
+- Users only see repositories they have access to in the connected code hosts
+- Organization-level settings apply only to repositories within that organization
+
+<Note>
+For help setting up complex organization structures or enterprise features, contact us at hello@greptile.com.
+</Note>

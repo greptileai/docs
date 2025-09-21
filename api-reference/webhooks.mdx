@@ -1,0 +1,75 @@
+---
+title: Webhooks & API Details
+description: 'Understanding Greptile API responses and webhook handling'
+keywords: 'webhooks, API, sessionId, statusEndpoint, responses'
+---
+
+## API Response Fields
+
+When using Greptile's API, you'll encounter several key response fields:
+
+### Core Response Fields
+- **`sessionId`** - Tracks conversation sessions in LLM calls. Use this to maintain context across multiple API requests in the same session.
+- **`statusEndpoint`** - Provides a URL for checking the progress of indexing or review operations. Poll this endpoint to get real-time updates on long-running processes.
+- **`sources`** - Contains references to the code files and locations that informed the response.
+- **`messages.id`** - Unique identifier for each message in the conversation thread.
+
+### Using statusEndpoint
+The `statusEndpoint` is particularly useful for:
+- **Repository indexing** - Check when a repository has finished being indexed
+- **Review progress** - Monitor the status of ongoing PR reviews
+- **Long-running queries** - Track progress of complex codebase analysis
+
+Example of polling a status endpoint:
+```javascript
+// Initial API call returns statusEndpoint
+const response = await greptileAPI.query({...});
+const statusUrl = response.statusEndpoint;
+
+// Poll for completion
+const checkStatus = async () => {
+  const status = await fetch(statusUrl);
+  const data = await status.json();
+
+  if (data.status === 'completed') {
+    // Process completed results
+    return data;
+  } else if (data.status === 'failed') {
+    // Handle error
+    throw new Error(data.error);
+  } else {
+    // Still processing, check again later
+    setTimeout(checkStatus, 1000);
+  }
+};
+```
+
+## Webhook Configuration
+
+### GitHub Webhooks
+- **Endpoint** - `/webhook` (configured automatically with GitHub App)
+- **Authentication** - Uses `WEBHOOK_SECRET` for verification
+- **Events** - Handles PR creation, updates, and synchronization events
+
+### GitLab Webhooks
+- **Authentication** - Uses `X-GitLab-Token` header for verification
+- **Events** - Handles merge request events and push updates
+- **Self-hosted** - Supports self-hosted GitLab instances with domain-specific configuration
+
+### Webhook Security
+- All webhooks are verified using cryptographic signatures
+- Tokens are validated before processing any webhook events
+- Failed authentication attempts are logged and rejected
+
+## Error Handling
+
+### "Code review failed" Errors
+Common causes and solutions:
+- **Repository not indexed** - Ensure the repository has been added to Greptile and indexing is complete
+- **Authentication issues** - Verify that tokens have the correct permissions
+- **Rate limiting** - Requests may be throttled during high usage periods
+- **Large diffs** - Very large PRs may timeout and require manual retry
+
+<Note>
+For webhook troubleshooting or API integration support, contact hello@greptile.com with specific error messages and request details.
+</Note>

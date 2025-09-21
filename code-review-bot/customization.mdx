@@ -1,0 +1,229 @@
+---
+title: Customization & Personalization
+description: 'Customize review language, instructions, and behavior for your team'
+keywords: 'customization, review language, custom instructions, personalization, team settings'
+---
+
+## Review Language Configuration
+
+You can configure Greptile to conduct reviews in different languages using **custom instructions** in the dashboard.
+
+### Supported Languages
+While Greptile's interface is in English, it can provide code reviews in multiple languages including:
+- **Spanish** - "Provide all code review comments in Spanish"
+- **French** - "Conduct reviews in French with technical terms explained"
+- **German** - "Write all feedback in German"
+- **Japanese** - "Provide reviews in Japanese"
+- **Chinese** - "Write code review comments in Simplified Chinese"
+- **Portuguese** - "Conduct reviews in Portuguese"
+
+### Language Configuration Examples
+
+#### Spanish Reviews
+```json greptile.json
+{
+  "instructions": "Provide all code review comments in Spanish. Focus on clear explanations of potential issues and improvements."
+}
+```
+
+#### Japanese Reviews with Context
+```json
+{
+  "instructions": "Provide code reviews in Japanese. Include detailed explanations for complex technical concepts and maintain a polite, professional tone."
+}
+```
+
+#### Multilingual Team Setup
+```json
+{
+  "instructions": "Provide reviews in English, but include Spanish translations for any complex technical explanations to help our bilingual team."
+}
+```
+
+## Custom Instructions Management
+
+### Dashboard vs greptile.json
+
+#### Dashboard Instructions (Global)
+- **Organization-wide defaults** applied to all repositories
+- **Easy to update** through web interface
+- **Team-wide consistency** ensures all projects follow same guidelines
+- **Inheritance** - Repository-specific instructions can extend global ones
+
+#### greptile.json Instructions (Repository-Specific)
+- **Override global settings** for specific repositories
+- **Project-specific requirements** for different codebases
+- **Version controlled** alongside your code
+- **Team collaboration** through pull requests
+
+### Instruction Hierarchy
+1. **Repository greptile.json** (highest priority)
+2. **Global dashboard settings** (fallback)
+3. **Greptile defaults** (final fallback)
+
+## Effective Custom Instructions
+
+### Writing Clear Instructions
+
+#### Good Examples
+```json
+{
+  "instructions": "Focus on security best practices for our fintech application. Always check for proper input validation, authentication bypass vulnerabilities, and ensure sensitive data is properly encrypted. Reference our security guidelines in /docs/security.md."
+}
+```
+
+```json
+{
+  "instructions": "This is a React TypeScript project. Emphasize type safety, component reusability, and accessibility. Check that all interactive elements have proper ARIA labels and keyboard navigation. Prefer functional components with hooks over class components."
+}
+```
+
+#### Specific vs General
+```json
+// Too general - not helpful
+{
+  "instructions": "Write good code and follow best practices"
+}
+
+// Specific and actionable
+{
+  "instructions": "Ensure all API endpoints include proper error handling with standardized error responses. Check that database queries are properly indexed and avoid N+1 query patterns. All user inputs must be validated using our Joi schemas."
+}
+```
+
+### Domain-Specific Instructions
+
+#### Healthcare/HIPAA Compliance
+```json
+{
+  "instructions": "This application handles PHI (Protected Health Information). Ensure all patient data is properly encrypted at rest and in transit. Check that audit logs are created for all data access. Verify that user access controls follow least-privilege principles."
+}
+```
+
+#### E-commerce Platform
+```json
+{
+  "instructions": "Focus on payment security, inventory consistency, and performance under high load. Ensure all financial calculations use decimal types, not floats. Check that cart operations are atomic and handle race conditions properly."
+}
+```
+
+#### Education Technology
+```json
+{
+  "instructions": "Prioritize student data privacy and FERPA compliance. Ensure all student information is properly protected and access is role-based. Check for inclusive design patterns and accessibility compliance for students with disabilities."
+}
+```
+
+## Team-Specific Customizations
+
+### Code Style Enforcement
+```json
+{
+  "instructions": "Follow our internal style guide at /docs/style-guide.md. Prefer early returns over nested conditionals. Use descriptive variable names even if they're longer. All functions should have TypeScript documentation comments."
+}
+```
+
+### Architecture Compliance
+```json
+{
+  "instructions": "This microservice follows Clean Architecture principles. Controllers should only handle HTTP concerns, business logic belongs in use cases, and data access should be abstracted behind interfaces. Check for proper dependency injection usage."
+}
+```
+
+### Performance Requirements
+```json
+{
+  "instructions": "This is a high-performance trading system. Focus on algorithm efficiency and memory usage. Avoid unnecessary object allocations in hot paths. All database queries should be analyzed for performance impact."
+}
+```
+
+## Advanced Customization Patterns
+
+### Context-Aware Instructions
+```json
+{
+  "instructions": "Reference our API documentation in the /api-docs repository when reviewing backend changes. For frontend changes, ensure they align with our design system components in /design-system. Check that all breaking changes are documented in CHANGELOG.md."
+}
+```
+
+### Role-Based Instructions
+```json
+{
+  "directoryRules": {
+    "src/auth/**": {
+      "instructions": "Security-focused review: This handles authentication and authorization. Look for potential security vulnerabilities, proper session management, and compliance with our OAuth implementation."
+    },
+    "src/ui/**": {
+      "instructions": "UX-focused review: Ensure components follow our design system, are accessible, and provide good user experience. Check for proper loading states and error handling."
+    }
+  }
+}
+```
+
+### Integration-Aware Instructions
+```json
+{
+  "instructions": "When reviewing changes that affect our Stripe integration, verify PCI compliance requirements are met. For changes affecting our email system, ensure CAN-SPAM compliance and proper unsubscribe handling."
+}
+```
+
+## Noise Control & Focus
+
+### Strictness Levels with Instructions
+```json
+{
+  "strictness": 1,
+  "instructions": "This is a critical production system. Review thoroughly and comment on any potential issues, including minor style inconsistencies and possible edge cases."
+}
+```
+
+```json
+{
+  "strictness": 3,
+  "instructions": "Focus only on critical bugs, security vulnerabilities, and major architectural violations. Ignore minor style issues unless they significantly impact readability."
+}
+```
+
+### Comment Type Coordination
+```json
+{
+  "commentTypes": ["logic", "syntax"],
+  "instructions": "Focus on code correctness and proper use of our frameworks. Don't comment on formatting issues as we have automated formatters in place."
+}
+```
+
+## Measuring Customization Effectiveness
+
+### Feedback Integration
+- Use **👍/👎 reactions** on review comments to train Greptile
+- **Custom instructions are learned** and refined based on team feedback
+- **Iterative improvement** - adjust instructions based on review quality
+
+### Analytics Considerations
+- **Custom instructions don't affect** upvote/downvote analytics for rules
+- **Team-specific learning** is separate from global rule improvements
+- **Feedback data** helps improve both custom and default behaviors
+
+## Best Practices
+
+### Instruction Writing
+1. **Be specific** - Vague instructions produce inconsistent results
+2. **Reference documentation** - Point to existing team resources
+3. **Include context** - Explain the "why" behind requirements
+4. **Regular updates** - Evolve instructions as your codebase grows
+
+### Team Collaboration
+1. **Version control** instructions in greptile.json when possible
+2. **Document decisions** - Keep a changelog of instruction updates
+3. **Team review** - Have multiple people review instruction changes
+4. **Gradual rollout** - Test new instructions on smaller PRs first
+
+### Maintenance
+1. **Regular review** - Periodically assess instruction effectiveness
+2. **Feedback incorporation** - Adjust based on team reactions and comments
+3. **Simplification** - Remove outdated or conflicting instructions
+4. **Performance monitoring** - Ensure instructions don't slow down reviews
+
+<Note>
+For help crafting effective custom instructions for your specific domain or use case, contact hello@greptile.com for consultation.
+</Note>
