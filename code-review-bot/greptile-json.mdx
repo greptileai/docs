@@ -69,12 +69,6 @@ This allows you to set organization-wide defaults in the dashboard while customi
     "defaultOpen": false
   },
   "customContext": {
-    "other": [
-      {
-        "scope": ["*.ts", "*.js"],
-        "content": "Custom instruction or context"
-      }
-    ],
     "rules": [
       {
         "scope": ["src/**/*.py"],
@@ -86,6 +80,12 @@ This allows you to set organization-wide defaults in the dashboard while customi
         "scope": ["*.md"],
         "path": "docs/style-guide.md",
         "description": "Style guide reference"
+      }
+    ],
+    "other": [
+      {
+        "scope": ["*.ts", "*.js"],
+        "content": "Custom instruction or context"
       }
     ]
   }
@@ -179,11 +179,6 @@ code review decisions. It supports three types of context, each with optional sc
 
 ### Custom Context Types
 
-**`other`** - General instructions or context
-- Provide additional background information about your codebase, team practices, or specific
-requirements
-- Use for high-level guidance that doesn't fit into rules or file references
-
 **`rules`** - Specific coding rules to enforce
 - Define custom coding standards, best practices, or project-specific requirements
 - More specific than general instructions, focused on enforceable coding practices
@@ -191,6 +186,12 @@ requirements
 **`files`** - Reference existing documentation files
 - Point Greptile to existing documentation, style guides, or reference files in your repository
 - Includes a `path` field to specify the file location and optional `description` for context
+
+**`other`** - General instructions or context
+- Provide additional background information about your codebase, team practices, or specific
+requirements
+- Use for high-level guidance that doesn't fit into rules or file references
+
 
 ### Scope Targeting
 
