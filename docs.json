@@ -6,6 +6,9 @@
     "primary": "#107A4D"
   },
   "favicon": "favicon.ico",
+  "banner": {
+    "content": "🎉 We just raised a $25M Series A led by Benchmark! [Read the announcement →](https://www.greptile.com/blog/series-a)"
+  },
   "navigation": {
     "anchors": [
       {
@@ -33,6 +36,7 @@
               "mcp/overview",
               "mcp/authentication",
               "mcp/tool-reference",
+              "mcp/setup-ides",
               "mcp/comment-resolution",
               "mcp/custom-context",
               "mcp/use-cases"

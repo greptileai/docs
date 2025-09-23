@@ -5,427 +5,410 @@ keywords: 'MCP tools, API reference, custom context, pull requests, code reviews
 ---
 
 
-## Tool Categories
+## Tool Reference
 
-<CardGroup cols={2}>
-    <Card title="Custom Context (4 tools)" href="#custom-context-tools">
-        Manage coding patterns and organizational standards
-    </Card>
-    <Card title="Pull Requests (3 tools)" href="#pull-request-tools">
-        Access PR data and metadata across repositories
-    </Card>
-    <Card title="Code Reviews (3 tools)" href="#code-review-tools">
-        Manage review lifecycle and results
-    </Card>
-    <Card title="Comments (1 tool)" href="#comment-tools">
-        Search and filter review feedback
-    </Card>
-</CardGroup>
+<Tabs>
+  <Tab title="Custom Context">
+    **4 tools for managing coding patterns and organizational standards**
 
----
+    ### list_custom_context
 
-## Custom Context Tools
+    List organization custom context entries.
 
-### list_custom_context
+    **Parameters:**
+    - `type` (optional): `CUSTOM_INSTRUCTION` or `PATTERN`
+    - `greptileGenerated` (optional): Filter by Greptile-generated content
+    - `limit` (optional): Maximum results (1-100, default 20)
+    - `offset` (optional): Skip results for pagination (default 0)
 
-List organization custom context entries.
-
-**Parameters:**
-- `type` (optional): `CUSTOM_INSTRUCTION` or `PATTERN`
-- `greptileGenerated` (optional): Filter by Greptile-generated content
-- `limit` (optional): Maximum results (1-100, default 20)
-- `offset` (optional): Skip results for pagination (default 0)
-
-**Response:**
-```json
-{
-  "customContexts": [
+    **Response:**
+    ```json
     {
-      "id": "memory_9a7fe8b3-4cc6-4c1a-9c4c-8b7f3d2e1a6c",
-      "type": "CUSTOM_INSTRUCTION",
-      "body": "Use async/await instead of Promise.then() for better readability",
-      "status": "ACTIVE",
-      "scopes": {"AND": [{"operator": "MATCHES", "field": "filepath", "value": "**/*.js"}]},
-      "metadata": {},
-      "evidenceCount": 15,
-      "commentsCount": 8,
-      "createdAt": "2024-12-15T10:30:00Z"
-    },
-    {
-      "id": "memory_1b2c3d4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q",
-      "type": "PATTERN",
-      "body": "Always validate input parameters in API endpoints",
-      "status": "ACTIVE",
-      "scopes": {"AND": [{"operator": "MATCHES", "field": "filepath", "value": "**/api/**"}]},
-      "metadata": {"priority": "high"},
-      "evidenceCount": 23,
-      "commentsCount": 12,
-      "createdAt": "2024-12-10T14:22:00Z"
+      "customContexts": [
+        {
+          "id": "memory_9a7fe8b3-4cc6-4c1a-9c4c-8b7f3d2e1a6c",
+          "type": "CUSTOM_INSTRUCTION",
+          "body": "Use async/await instead of Promise.then() for better readability",
+          "status": "ACTIVE",
+          "scopes": {"AND": [{"operator": "MATCHES", "field": "filepath", "value": "**/*.js"}]},
+          "metadata": {},
+          "evidenceCount": 15,
+          "commentsCount": 8,
+          "createdAt": "2024-12-15T10:30:00Z"
+        }
+      ],
+      "total": 20
     }
-  ],
-  "total": 20
-}
-```
+    ```
 
-### get_custom_context
+    ### get_custom_context
 
-Get detailed custom context information.
+    Get detailed custom context information.
 
-**Parameters:**
-- `customContextId` (required): Custom context ID
+    **Parameters:**
+    - `customContextId` (required): Custom context ID
 
-**Response:**
-```json
-{
-  "customContext": {
-    "id": "ctx_123",
-    "type": "CUSTOM_INSTRUCTION",
-    "body": "Always use proper error handling",
-    "status": "ACTIVE",
-    "metadata": {},
-    "scopes": {"AND": []},
-    "createdAt": "2024-01-01T00:00:00Z",
-    "linkedComments": [
-      {
-        "id": "comment_456",
-        "filePath": "src/utils.js",
-        "mergeRequestId": "mr_789"
-      }
-    ]
-  }
-}
-```
-
-### search_custom_context
-
-Search custom context by content.
-
-**Parameters:**
-- `query` (required): Search term
-- `limit` (optional): Maximum results (1-50, default 10)
-
-**Response:**
-```json
-{
-  "customContexts": [...],
-  "query": "error handling",
-  "total": 3
-}
-```
-
-### create_custom_context
-
-Create new custom context.
-
-**Parameters:**
-- `type` (optional): `CUSTOM_INSTRUCTION` or `PATTERN` (default `CUSTOM_INSTRUCTION`)
-- `body` (optional): Context content
-- `scopes` (optional): Boolean expression defining where context applies
-- `status` (optional): `ACTIVE`, `INACTIVE`, or `SUGGESTED` (default `ACTIVE`)
-- `metadata` (optional): Additional metadata object
-
-**Scopes Example:**
-```json
-{
-  "scopes": {
-    "AND": [
-      {
-        "operator": "MATCHES",
-        "field": "filepath",
-        "value": "**/*.js"
-      }
-    ]
-  }
-}
-```
-
-## Pull Request Tools
-
-### list_merge_requests / list_pull_requests
-
-List merge/pull requests.
-
-**Parameters:**
-- `name` (optional): Repository name (owner/repo format)
-- `remote` (optional): `github` or `gitlab`
-- `defaultBranch` (optional): Repository default branch
-- `remoteUrl` (optional): Self-hosted instance URL
-- `state` (optional): `open`, `closed`, or `merged`
-- `limit` (optional): Maximum results (1-100, default 20)
-- `offset` (optional): Skip results for pagination (default 0)
-
-**Note:** Repository parameters must be provided together (name, remote, defaultBranch) or omitted entirely.
-
-**Response:**
-```json
-{
-  "mergeRequests": [
+    **Response:**
+    ```json
     {
-      "id": "mr_123",
-      "number": 45,
-      "title": "Fix authentication bug",
-      "state": "open",
-      "isDraft": false,
-      "authorLogin": "developer",
+      "customContext": {
+        "id": "ctx_123",
+        "type": "CUSTOM_INSTRUCTION",
+        "body": "Always use proper error handling",
+        "status": "ACTIVE",
+        "metadata": {},
+        "scopes": {"AND": []},
+        "createdAt": "2024-01-01T00:00:00Z",
+        "linkedComments": [
+          {
+            "id": "comment_456",
+            "filePath": "src/utils.js",
+            "mergeRequestId": "mr_789"
+          }
+        ]
+      }
+    }
+    ```
+
+    ### search_custom_context
+
+    Search custom context by content.
+
+    **Parameters:**
+    - `query` (required): Search term
+    - `limit` (optional): Maximum results (1-50, default 10)
+
+    **Response:**
+    ```json
+    {
+      "customContexts": [...],
+      "query": "error handling",
+      "total": 3
+    }
+    ```
+
+    ### create_custom_context
+
+    Create new custom context.
+
+    **Parameters:**
+    - `type` (optional): `CUSTOM_INSTRUCTION` or `PATTERN` (default `CUSTOM_INSTRUCTION`)
+    - `body` (optional): Context content
+    - `scopes` (optional): Boolean expression defining where context applies
+    - `status` (optional): `ACTIVE`, `INACTIVE`, or `SUGGESTED` (default `ACTIVE`)
+    - `metadata` (optional): Additional metadata object
+
+    **Scopes Example:**
+    ```json
+    {
+      "scopes": {
+        "AND": [
+          {
+            "operator": "MATCHES",
+            "field": "filepath",
+            "value": "**/*.js"
+          }
+        ]
+      }
+    }
+    ```
+
+  </Tab>
+  <Tab title="Pull Requests">
+    **3 tools for accessing PR data and metadata across repositories**
+
+    ### list_merge_requests / list_pull_requests
+
+    List merge/pull requests.
+
+    **Parameters:**
+    - `name` (optional): Repository name (owner/repo format)
+    - `remote` (optional): `github` or `gitlab`
+    - `defaultBranch` (optional): Repository default branch
+    - `remoteUrl` (optional): Self-hosted instance URL
+    - `state` (optional): `open`, `closed`, or `merged`
+    - `limit` (optional): Maximum results (1-100, default 20)
+    - `offset` (optional): Skip results for pagination (default 0)
+
+    **Note:** Repository parameters must be provided together (name, remote, defaultBranch) or omitted entirely.
+
+    **Response:**
+    ```json
+    {
+      "mergeRequests": [
+        {
+          "id": "mr_123",
+          "number": 45,
+          "title": "Fix authentication bug",
+          "state": "open",
+          "isDraft": false,
+          "authorLogin": "developer",
+          "repository": {
+            "name": "owner/repo",
+            "remote": "github"
+          },
+          "stats": {
+            "changedFiles": 3,
+            "additions": 45,
+            "deletions": 12
+          },
+          "commentsCount": 2,
+          "reviewsCount": 1,
+          "createdAt": "2024-01-01T00:00:00Z"
+        }
+      ],
+      "total": 15
+    }
+    ```
+
+    ### get_merge_request
+
+    Get detailed pull request information.
+
+    **Parameters:**
+    - `name` (required): Repository name (owner/repo format)
+    - `remote` (required): `github` or `gitlab`
+    - `defaultBranch` (required): Default branch
+    - `remoteUrl` (optional): Self-hosted instance URL
+    - `prNumber` (required): Pull request number
+
+    **Response:**
+    ```json
+    {
+      "mergeRequest": {
+        "number": 45,
+        "title": "Fix authentication bug",
+        "description": "This PR fixes the auth issue...",
+        "state": "open",
+        "isDraft": false,
+        "authorLogin": "developer",
+        "branches": {
+          "source": "feature/auth-fix",
+          "target": "main"
+        },
+        "stats": {
+          "changedFiles": 3,
+          "additions": 45,
+          "deletions": 12
+        },
+        "labels": ["bug", "authentication"],
+        "repository": {
+          "name": "owner/repo",
+          "url": "https://github.com/owner/repo"
+        },
+        "greptileComments": [
+          {
+            "commentId": "comment_789",
+            "filePath": "src/auth.js",
+            "createdAt": "2024-01-01T00:00:00Z"
+          }
+        ],
+        "codeReviews": [
+          {
+            "id": "review_456",
+            "status": "COMPLETED",
+            "createdAt": "2024-01-01T00:00:00Z",
+            "completedAt": "2024-01-01T01:00:00Z"
+          }
+        ]
+      }
+    }
+    ```
+
+    ### list_merge_request_comments
+
+    Get pull request comments.
+
+    **Parameters:**
+    - `name` (required): Repository name
+    - `remote` (required): `github` or `gitlab`
+    - `defaultBranch` (required): Default branch
+    - `remoteUrl` (optional): Self-hosted instance URL
+    - `prNumber` (required): Pull request number
+    - `greptileGenerated` (optional): Filter Greptile comments
+    - `addressed` (optional): Filter by addressed status
+
+    **Response:**
+    ```json
+    {
+      "comments": [
+        {
+          "id": "comment_123",
+          "commentId": "github_comment_456",
+          "body": "Consider using async/await here",
+          "authorLogin": "greptile-bot",
+          "filePath": "src/utils.js",
+          "lineStart": 45,
+          "lineEnd": 47,
+          "greptileGenerated": true,
+          "addressed": false,
+          "createdAt": "2024-01-01T00:00:00Z",
+          "linkedMemory": {
+            "id": "memory_789",
+            "type": "CUSTOM_INSTRUCTION",
+            "body": "Always use async/await for promises"
+          }
+        }
+      ],
+      "repository": "owner/repo",
+      "prNumber": 45,
+      "total": 3
+    }
+    ```
+
+  </Tab>
+  <Tab title="Code Reviews">
+    **3 tools for managing review lifecycle and results**
+
+    ### list_code_reviews
+
+    List code reviews.
+
+    **Parameters:**
+    - `name` (optional): Repository name
+    - `remote` (optional): `github` or `gitlab`
+    - `defaultBranch` (optional): Default branch
+    - `remoteUrl` (optional): Self-hosted instance URL
+    - `prNumber` (optional): Filter by pull request
+    - `status` (optional): `PENDING`, `REVIEWING_FILES`, `GENERATING_SUMMARY`, `COMPLETED`, `FAILED`, `SKIPPED`
+    - `limit` (optional): Maximum results (1-100, default 20)
+    - `offset` (optional): Skip results for pagination (default 0)
+
+    **Response:**
+    ```json
+    {
+      "codeReviews": [
+        {
+          "id": "review_123",
+          "status": "COMPLETED",
+          "createdAt": "2024-01-01T00:00:00Z",
+          "completedAt": "2024-01-01T01:00:00Z",
+          "metadata": {},
+          "mergeRequest": {
+            "id": "mr_456",
+            "prNumber": 45,
+            "title": "Fix authentication bug",
+            "sourceRepoUrl": "https://github.com/owner/repo",
+            "repository": {
+              "name": "owner/repo"
+            }
+          }
+        }
+      ],
+      "total": 8
+    }
+    ```
+
+    ### get_code_review
+
+    Get detailed code review.
+
+    **Parameters:**
+    - `codeReviewId` (required): Code review ID
+
+    **Response:**
+    ```json
+    {
+      "codeReview": {
+        "id": "review_123",
+        "body": "## Summary\n\nThis PR fixes authentication...",
+        "status": "COMPLETED",
+        "createdAt": "2024-01-01T00:00:00Z",
+        "completedAt": "2024-01-01T01:00:00Z",
+        "metadata": {},
+        "mergeRequest": {
+          "id": "mr_456",
+          "prNumber": 45,
+          "title": "Fix authentication bug",
+          "sourceRepoUrl": "https://github.com/owner/repo",
+          "description": "This PR fixes...",
+          "authorLogin": "developer",
+          "repository": {
+            "id": "repo_789",
+            "name": "owner/repo",
+            "remote": "github",
+            "remoteUrl": "https://github.com/owner/repo"
+          }
+        }
+      }
+    }
+    ```
+
+    ### trigger_code_review
+
+    Start new code review.
+
+    **Parameters:**
+    - `name` (required): Repository name
+    - `remote` (required): `github` or `gitlab`
+    - `defaultBranch` (required): Default branch
+    - `branch` (optional): Working branch
+    - `remoteUrl` (optional): Self-hosted instance URL
+    - `prNumber` (required): Pull request number
+
+    **Response:**
+    ```json
+    {
+      "success": true,
+      "message": "Code review triggered successfully",
       "repository": {
         "name": "owner/repo",
         "remote": "github"
       },
-      "stats": {
-        "changedFiles": 3,
-        "additions": 45,
-        "deletions": 12
-      },
-      "commentsCount": 2,
-      "reviewsCount": 1,
-      "createdAt": "2024-01-01T00:00:00Z"
+      "prNumber": 45
     }
-  ],
-  "total": 15
-}
-```
+    ```
 
-### get_merge_request
+  </Tab>
+  <Tab title="Comments">
+    **1 tool for searching and filtering review feedback**
 
-Get detailed pull request information.
+    ### search_greptile_comments
 
-**Parameters:**
-- `name` (required): Repository name (owner/repo format)
-- `remote` (required): `github` or `gitlab`
-- `defaultBranch` (required): Default branch
-- `remoteUrl` (optional): Self-hosted instance URL
-- `prNumber` (required): Pull request number
+    Search Greptile review comments.
 
-**Response:**
-```json
-{
-  "mergeRequest": {
-    "number": 45,
-    "title": "Fix authentication bug",
-    "description": "This PR fixes the auth issue...",
-    "state": "open",
-    "isDraft": false,
-    "authorLogin": "developer",
-    "branches": {
-      "source": "feature/auth-fix",
-      "target": "main"
-    },
-    "stats": {
-      "changedFiles": 3,
-      "additions": 45,
-      "deletions": 12
-    },
-    "labels": ["bug", "authentication"],
-    "repository": {
-      "name": "owner/repo",
-      "url": "https://github.com/owner/repo"
-    },
-    "greptileComments": [
-      {
-        "commentId": "comment_789",
-        "filePath": "src/auth.js",
-        "createdAt": "2024-01-01T00:00:00Z"
-      }
-    ],
-    "codeReviews": [
-      {
-        "id": "review_456",
-        "status": "COMPLETED",
-        "createdAt": "2024-01-01T00:00:00Z",
-        "completedAt": "2024-01-01T01:00:00Z"
-      }
-    ]
-  }
-}
-```
+    **Parameters:**
+    - `query` (required): Search term
+    - `limit` (optional): Maximum results (1-50, default 10)
+    - `includeAddressed` (optional): Include resolved comments (default false)
 
-### list_merge_request_comments
-
-Get pull request comments.
-
-**Parameters:**
-- `name` (required): Repository name
-- `remote` (required): `github` or `gitlab`
-- `defaultBranch` (required): Default branch
-- `remoteUrl` (optional): Self-hosted instance URL
-- `prNumber` (required): Pull request number
-- `greptileGenerated` (optional): Filter Greptile comments
-- `addressed` (optional): Filter by addressed status
-
-**Response:**
-```json
-{
-  "comments": [
+    **Response:**
+    ```json
     {
-      "id": "comment_123",
-      "commentId": "github_comment_456",
-      "body": "Consider using async/await here",
-      "authorLogin": "greptile-bot",
-      "filePath": "src/utils.js",
-      "lineStart": 45,
-      "lineEnd": 47,
-      "greptileGenerated": true,
-      "addressed": false,
-      "createdAt": "2024-01-01T00:00:00Z",
-      "linkedMemory": {
-        "id": "memory_789",
-        "type": "CUSTOM_INSTRUCTION",
-        "body": "Always use async/await for promises"
-      }
-    }
-  ],
-  "repository": "owner/repo",
-  "prNumber": 45,
-  "total": 3
-}
-```
-
-## Code Review Tools
-
-### list_code_reviews
-
-List code reviews.
-
-**Parameters:**
-- `name` (optional): Repository name
-- `remote` (optional): `github` or `gitlab`
-- `defaultBranch` (optional): Default branch
-- `remoteUrl` (optional): Self-hosted instance URL
-- `prNumber` (optional): Filter by pull request
-- `status` (optional): `PENDING`, `REVIEWING_FILES`, `GENERATING_SUMMARY`, `COMPLETED`, `FAILED`, `SKIPPED`
-- `limit` (optional): Maximum results (1-100, default 20)
-- `offset` (optional): Skip results for pagination (default 0)
-
-**Response:**
-```json
-{
-  "codeReviews": [
-    {
-      "id": "review_123",
-      "status": "COMPLETED",
-      "createdAt": "2024-01-01T00:00:00Z",
-      "completedAt": "2024-01-01T01:00:00Z",
-      "metadata": {},
-      "mergeRequest": {
-        "id": "mr_456",
-        "prNumber": 45,
-        "title": "Fix authentication bug",
-        "sourceRepoUrl": "https://github.com/owner/repo",
-        "repository": {
-          "name": "owner/repo"
+      "comments": [
+        {
+          "id": "34567890",
+          "commentId": "github_comment_987654321",
+          "body": "Consider adding input validation to prevent potential security vulnerabilities. The user input should be sanitized before processing.",
+          "authorLogin": "greptile-bot",
+          "filePath": "src/auth/login.js",
+          "lineStart": 45,
+          "lineEnd": 47,
+          "addressed": false,
+          "createdAt": "2024-12-14T09:15:00Z",
+          "mergeRequest": {
+            "id": "12345",
+            "prNumber": 156,
+            "title": "Add user authentication endpoint",
+            "sourceRepoUrl": "https://github.com/myorg/backend",
+            "repository": {
+              "name": "myorg/backend"
+            }
+          },
+          "linkedMemory": {
+            "id": "memory_security_001",
+            "type": "PATTERN",
+            "body": "Always validate and sanitize user inputs to prevent security vulnerabilities"
+          }
         }
-      }
+      ],
+      "query": "security",
+      "total": 8
     }
-  ],
-  "total": 8
-}
-```
+    ```
 
-### get_code_review
-
-Get detailed code review.
-
-**Parameters:**
-- `codeReviewId` (required): Code review ID
-
-**Response:**
-```json
-{
-  "codeReview": {
-    "id": "review_123",
-    "body": "## Summary\n\nThis PR fixes authentication...",
-    "status": "COMPLETED",
-    "createdAt": "2024-01-01T00:00:00Z",
-    "completedAt": "2024-01-01T01:00:00Z",
-    "metadata": {},
-    "mergeRequest": {
-      "id": "mr_456",
-      "prNumber": 45,
-      "title": "Fix authentication bug",
-      "sourceRepoUrl": "https://github.com/owner/repo",
-      "description": "This PR fixes...",
-      "authorLogin": "developer",
-      "repository": {
-        "id": "repo_789",
-        "name": "owner/repo",
-        "remote": "github",
-        "remoteUrl": "https://github.com/owner/repo"
-      }
-    }
-  }
-}
-```
-
-### trigger_code_review
-
-Start new code review.
-
-**Parameters:**
-- `name` (required): Repository name
-- `remote` (required): `github` or `gitlab`
-- `defaultBranch` (required): Default branch
-- `branch` (optional): Working branch
-- `remoteUrl` (optional): Self-hosted instance URL
-- `prNumber` (required): Pull request number
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Code review triggered successfully",
-  "repository": {
-    "name": "owner/repo",
-    "remote": "github"
-  },
-  "prNumber": 45
-}
-```
-
-## Comment Tools
-
-### search_greptile_comments
-
-Search Greptile review comments.
-
-**Parameters:**
-- `query` (required): Search term
-- `limit` (optional): Maximum results (1-50, default 10)
-- `includeAddressed` (optional): Include resolved comments (default false)
-
-**Response:**
-```json
-{
-  "comments": [
-    {
-      "id": "34567890",
-      "commentId": "github_comment_987654321",
-      "body": "Consider adding input validation to prevent potential security vulnerabilities. The user input should be sanitized before processing.",
-      "authorLogin": "greptile-bot",
-      "filePath": "src/auth/login.js",
-      "lineStart": 45,
-      "lineEnd": 47,
-      "addressed": false,
-      "createdAt": "2024-12-14T09:15:00Z",
-      "mergeRequest": {
-        "id": "12345",
-        "prNumber": 156,
-        "title": "Add user authentication endpoint",
-        "sourceRepoUrl": "https://github.com/myorg/backend",
-        "repository": {
-          "name": "myorg/backend"
-        }
-      },
-      "linkedMemory": {
-        "id": "memory_security_001",
-        "type": "PATTERN",
-        "body": "Always validate and sanitize user inputs to prevent security vulnerabilities"
-      }
-    }
-  ],
-  "query": "security",
-  "total": 8
-}
-```
+  </Tab>
+</Tabs>
 
 ## Error Responses
 

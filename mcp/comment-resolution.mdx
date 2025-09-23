@@ -1,116 +1,32 @@
 ---
-title: Resolve Greptile comments in your IDE
+title: Resolve Comments in your IDE
 description: 'Retrieve and resolve Greptile review comments automatically with coding agents'
 keywords: 'comment resolution, automated fixes, code review, AI assistance'
 ---
 
-Enable coding agents to automatically retrieve and resolve Greptile review comments, reducing manual review follow-up work.
+Use Greptile's MCP server to automatically retrieve and resolve code review comments directly in your IDE.
 
 <Note>
-This is a comprehensive guide covering setup through advanced automation. For quick setup, see the [Authentication page](/mcp/authentication).
+**Prerequisites**: First [set up the MCP server in your IDE](/mcp/setup-ides), then follow the workflows below.
 </Note>
 
-## Quick Navigation
+## Overview
 
-<CardGroup cols={3}>
-    <Card title="Setup" href="#setup-in-claude-code" icon="gear">
-        Configure MCP servers in Claude Code and Cursor
-    </Card>
-    <Card title="Comment Retrieval" href="#retrieving-comments-in-your-ide" icon="comments">
-        Find and analyze Greptile review feedback
-    </Card>
-    <Card title="Resolution Workflows" href="#resolving-comments-step-by-step" icon="wrench">
-        Automated and manual fix processes
-    </Card>
-</CardGroup>
+Once you have set up the Greptile MCP server in your IDE, you will be able to:
+- Retrieve unaddressed review comments
+- Search for specific types of issues
+- Get context about why issues were flagged
+- Apply fixes based on Greptile's suggestions
 
-## Setup in Claude Code
+...all from within your IDE.
 
-<Steps>
-    <Step title="Get Your Greptile API Key">
-        Obtain your API key from [app.greptile.com](https://app.greptile.com/login).
-    </Step>
-    <Step title="Add Greptile MCP Server">
-        In your terminal, run the command to add the Greptile MCP server:
-        ```bash
-        claude mcp add --transport http greptile https://api.greptile.com/mcp \
-          --header "Authorization: Bearer YOUR_GREPTILE_API_KEY"
-        ```
-        Replace `YOUR_GREPTILE_API_KEY` with your actual API key.
-    </Step>
-    <Step title="Verify Server Installation">
-        Check that the server was added successfully:
-        ```bash
-        claude mcp list
-        ```
-        You should see `greptile` in the list of configured servers.
-    </Step>
-    <Step title="Start Claude Code Session">
-        Open Claude Code and start a new session. The Greptile MCP server tools will be available automatically.
-    </Step>
-</Steps>
-
-### Alternative: Project-Level Configuration
-
-For team-shared configuration, create a `.mcp.json` file in your project root:
-
-```json
-{
-  "servers": {
-    "greptile": {
-      "transport": "http",
-      "url": "https://api.greptile.com/mcp",
-      "headers": {
-        "Authorization": "Bearer ${GREPTILE_API_KEY}"
-      }
-    }
-  }
-}
-```
-
-Set the environment variable:
-```bash
-export GREPTILE_API_KEY=your-api-key-here
-```
-
-## Setup in Cursor
-
-### Quick Setup
-
-<Steps>
-    <Step title="Get Your API Key">
-        Get your Greptile API key from [app.greptile.com](https://app.greptile.com/login).
-    </Step>
-    <Step title="Create MCP Configuration">
-        Create or edit your `mcp.json` file in your project root:
-        ```json
-        {
-          "greptile": {
-            "type": "http",
-            "url": "https://api.greptile.com/mcp",
-            "headers": {
-              "Authorization": "Bearer YOUR_API_KEY"
-            }
-          }
-        }
-        ```
-        Replace `YOUR_API_KEY` with your actual Greptile API key.
-    </Step>
-    <Step title="Restart Cursor">
-        Restart Cursor to load the MCP server configuration.
-    </Step>
-    <Step title="Verify Connection">
-        In Cursor, you should now see Greptile tools available in the MCP context.
-    </Step>
-</Steps>
-
-## Retrieving Comments in Your IDE
+## Retrieving Comments
 
 ### Get Comments for Current PR
 
 <Steps>
     <Step title="Identify Current PR">
-        When working on a branch, Claude Code/Cursor will automatically detect the associated PR.
+        When working on a branch, your IDE will automatically detect the associated PR.
     </Step>
     <Step title="Ask for Comments">
         Use these proven prompts with Claude:
@@ -148,7 +64,7 @@ These searches work across your entire organization's repositories and return re
 
 <Steps>
     <Step title="Select Comment to Fix">
-        In Claude Code/Cursor, click on a Greptile comment or use:
+        In your IDE, click on a Greptile comment or use:
         "Fix this Greptile comment: [paste comment text]"
     </Step>
     <Step title="Analyze the Issue">
@@ -181,25 +97,21 @@ These searches work across your entire organization's repositories and return re
 ### Manual Resolution with AI Guidance
 
 **Get Detailed Explanation:**
-```
-"Explain this Greptile comment in detail and suggest how to fix it"
-"Why is this flagged as a security issue?"
-"What's the best way to resolve this performance concern?"
-```
+- *"Explain this Greptile comment in detail and suggest how to fix it"*
+- *"Why is this flagged as a security issue?"*
+- *"What's the best way to resolve this performance concern?"*
 
 **Get Fix Suggestions:**
-```
-"How should I fix this memory leak issue?"
-"Suggest 2-3 ways to address this code duplication"
-"What's the proper error handling pattern here?"
-```
+- *"How should I fix this memory leak issue?"*
+- *"Suggest 2-3 ways to address this code duplication"*
+- *"What's the proper error handling pattern here?"*
 
 ## Practical Examples
 
 ### Security Issue Resolution
 
 **Greptile Comment:**
-> "Missing input validation for user ID parameter - potential injection vulnerability"
+> "Consider adding input validation to prevent potential security vulnerabilities. The user input should be sanitized before processing."
 
 **In Claude Code:**
 ```
@@ -314,415 +226,8 @@ Would you like me to fix these before you commit?
 
 ### Verification Steps
 
-<Steps>
-    <Step title="Code Review">
-        Always review auto-generated fixes before applying them to ensure they make sense in context.
-    </Step>
-    <Step title="Test Execution">
-        Run relevant tests after applying fixes to catch any regressions.
-    </Step>
-    <Step title="Comment Validation">
-        Verify that the fix actually addresses the original Greptile concern.
-    </Step>
-    <Step title="Documentation">
-        Update comments or documentation if the fix changes behavior.
-    </Step>
-</Steps>
-
-## Retrieving Comments
-
-### Get PR Comments
-
-Retrieve all comments for a specific pull request:
-
-```javascript
-list_merge_request_comments({
-  name: "owner/repo",
-  remote: "github",
-  defaultBranch: "main",
-  prNumber: 123,
-  greptileGenerated: true,
-  addressed: false
-})
-```
-
-**Response includes:**
-- Comment text and location (file, line numbers)
-- Addressed status
-- Linked custom context (patterns that triggered the comment)
-- Creation timestamp
-
-### Search Issue-Specific Comments
-
-Find comments about specific code issues across repositories:
-
-```javascript
-search_greptile_comments({
-  query: "memory leak",
-  limit: 10,
-  includeAddressed: false
-})
-```
-
-**Use cases:**
-- Find all instances of a specific issue type
-- Learn from past review feedback
-- Identify recurring problems across codebases
-
-## Automated Resolution Workflows
-
-### Basic Resolution Flow
-
-<Steps>
-    <Step title="Retrieve Comments">
-        Coding agent gets unaddressed comments for current PR or file.
-    </Step>
-    <Step title="Analyze Context">
-        Agent reads comment details, linked patterns, and surrounding code.
-    </Step>
-    <Step title="Apply Fixes">
-        Agent generates and applies code changes to address the issue.
-    </Step>
-    <Step title="Verify Resolution">
-        Agent checks that the fix addresses the original concern.
-    </Step>
-</Steps>
-
-### Comment Analysis
-
-**Extract Actionable Information:**
-```javascript
-function analyzeComment(comment) {
-  return {
-    issueType: categorizeIssue(comment.body),
-    location: {
-      file: comment.filePath,
-      startLine: comment.lineStart,
-      endLine: comment.lineEnd
-    },
-    severity: assessSeverity(comment.body),
-    suggestedFix: extractSuggestion(comment.body),
-    relatedPattern: comment.linkedMemory?.body
-  };
-}
-```
-
-**Issue Categorization:**
-- **Logic errors:** Incorrect behavior, edge cases
-- **Performance issues:** Inefficient algorithms, memory leaks
-- **Security vulnerabilities:** Input validation, authentication
-- **Style violations:** Formatting, naming conventions
-- **Architecture concerns:** Design patterns, coupling
-
-### Fix Application Strategies
-
-**Direct Code Replacement:**
-```javascript
-async function applyDirectFix(comment, codeContent) {
-  const analysis = analyzeComment(comment);
-
-  if (analysis.suggestedFix && analysis.location) {
-    // Apply suggested fix to specified lines
-    const fixedCode = replaceLines(
-      codeContent,
-      analysis.location.startLine,
-      analysis.location.endLine,
-      analysis.suggestedFix
-    );
-
-    return {
-      success: true,
-      changes: fixedCode,
-      method: 'direct_replacement'
-    };
-  }
-
-  return { success: false, reason: 'no_direct_suggestion' };
-}
-```
-
-**Pattern-Based Fixes:**
-```javascript
-async function applyPatternFix(comment, codeContent) {
-  if (!comment.linkedMemory) return { success: false };
-
-  const pattern = comment.linkedMemory.body;
-  const violation = identifyPatternViolation(codeContent, pattern);
-
-  if (violation) {
-    const fixedCode = applyPattern(codeContent, pattern, violation);
-    return {
-      success: true,
-      changes: fixedCode,
-      method: 'pattern_application',
-      pattern: pattern
-    };
-  }
-
-  return { success: false, reason: 'pattern_not_applicable' };
-}
-```
-
-**AI-Generated Fixes:**
-```javascript
-async function generateFix(comment, codeContent, context) {
-  const prompt = `
-Fix this code issue:
-Issue: ${comment.body}
-File: ${comment.filePath}
-Lines ${comment.lineStart}-${comment.lineEnd}:
-${extractLines(codeContent, comment.lineStart, comment.lineEnd)}
-
-Related pattern: ${comment.linkedMemory?.body || 'None'}
-Context: ${context}
-`;
-
-  const fix = await aiCodeGeneration(prompt);
-  return {
-    success: true,
-    changes: fix,
-    method: 'ai_generated'
-  };
-}
-```
-
-## Integration Examples
-
-### VS Code Extension
-
-```javascript
-// Extension activation
-async function resolveGreptileComments(workspaceFolder) {
-  const currentBranch = await git.getCurrentBranch();
-  const prNumber = await git.getPRNumber(currentBranch);
-
-  if (!prNumber) return;
-
-  // Get unaddressed comments
-  const comments = await mcpClient.call('list_merge_request_comments', {
-    name: workspaceFolder.name,
-    remote: 'github',
-    defaultBranch: 'main',
-    prNumber: prNumber,
-    greptileGenerated: true,
-    addressed: false
-  });
-
-  // Process each comment
-  for (const comment of comments.comments) {
-    const success = await attemptAutoFix(comment);
-
-    if (success) {
-      vscode.window.showInformationMessage(
-        `Auto-fixed: ${comment.body.substring(0, 50)}...`
-      );
-    } else {
-      // Show as code action for manual review
-      registerCodeAction(comment);
-    }
-  }
-}
-```
-
-### Pre-commit Hook
-
-```javascript
-#!/usr/bin/env node
-// pre-commit-review-check.js
-
-async function checkForUnaddressedComments() {
-  const changedFiles = await git.getChangedFiles();
-
-  // Get comments for changed files
-  const allComments = await mcpClient.call('search_greptile_comments', {
-    query: changedFiles.join(' OR '),
-    limit: 50,
-    includeAddressed: false
-  });
-
-  const relevantComments = allComments.comments.filter(comment =>
-    changedFiles.includes(comment.filePath)
-  );
-
-  if (relevantComments.length > 0) {
-    console.log('Unaddressed review comments found:');
-    relevantComments.forEach(comment => {
-      console.log(`- ${comment.filePath}:${comment.lineStart}: ${comment.body}`);
-    });
-
-    // Attempt auto-fixes
-    const fixResults = await Promise.all(
-      relevantComments.map(comment => attemptAutoFix(comment))
-    );
-
-    const unfixedComments = relevantComments.filter((_, index) =>
-      !fixResults[index].success
-    );
-
-    if (unfixedComments.length > 0) {
-      console.log(`${unfixedComments.length} comments require manual attention`);
-      process.exit(1);
-    }
-  }
-}
-
-checkForUnaddressedComments().catch(console.error);
-```
-
-### CI/CD Integration
-
-```yaml
-# .github/workflows/auto-fix-reviews.yml
-name: Auto-fix Review Comments
-
-on:
-  pull_request:
-    types: [opened, synchronize]
-
-jobs:
-  auto-fix:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Auto-fix Review Comments
-        env:
-          GREPTILE_API_KEY: ${{ secrets.GREPTILE_API_KEY }}
-        run: |
-          # Get PR comments
-          node -e "
-          const { execSync } = require('child_process');
-          const prNumber = process.env.GITHUB_REF.split('/')[2];
-
-          // Run auto-fix script
-          execSync('node scripts/auto-fix-comments.js ' + prNumber, {stdio: 'inherit'});
-          "
-
-      - name: Commit fixes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git diff --staged --quiet || git commit -m "Auto-fix review comments"
-          git push
-```
-
-## Comment Resolution Patterns
-
-### Security Issues
-
-**Input Validation:**
-```javascript
-// Comment: "Missing input validation for user ID"
-// Before:
-function getUserData(userId) {
-  return database.users.find(userId);
-}
-
-// Auto-fix:
-function getUserData(userId) {
-  if (!userId || typeof userId !== 'string') {
-    throw new Error('Invalid user ID');
-  }
-  return database.users.find(userId);
-}
-```
-
-### Performance Issues
-
-**Inefficient Queries:**
-```javascript
-// Comment: "N+1 query problem - use joins or batch loading"
-// Before:
-const users = await User.findAll();
-const profiles = await Promise.all(
-  users.map(user => Profile.findByUserId(user.id))
-);
-
-// Auto-fix:
-const users = await User.findAll({
-  include: [Profile]
-});
-```
-
-### Style Violations
-
-**Naming Conventions:**
-```javascript
-// Comment: "Use camelCase for variable names"
-// Before:
-const user_data = fetchUserInfo();
-const is_valid_user = checkUser(user_data);
-
-// Auto-fix:
-const userData = fetchUserInfo();
-const isValidUser = checkUser(userData);
-```
-
-## Advanced Features
-
-### Context-Aware Fixes
-
-```javascript
-async function getFixContext(comment) {
-  // Get PR context
-  const pr = await mcpClient.call('get_merge_request', {
-    name: comment.mergeRequest.repository.name,
-    remote: 'github',
-    defaultBranch: 'main',
-    prNumber: comment.mergeRequest.prNumber
-  });
-
-  // Get related patterns
-  const patterns = await mcpClient.call('search_custom_context', {
-    query: extractKeywords(comment.body),
-    limit: 5
-  });
-
-  // Get similar resolved comments
-  const similarComments = await mcpClient.call('search_greptile_comments', {
-    query: comment.body.substring(0, 50),
-    limit: 10,
-    includeAddressed: true
-  });
-
-  return {
-    prContext: pr.mergeRequest,
-    relatedPatterns: patterns.customContexts,
-    similarResolutions: similarComments.comments.filter(c => c.addressed)
-  };
-}
-```
-
-### Learning from Resolutions
-
-```javascript
-async function trackResolutionSuccess(comment, fix, outcome) {
-  // Store resolution data for learning
-  const resolutionData = {
-    commentId: comment.id,
-    issueType: categorizeIssue(comment.body),
-    fixMethod: fix.method,
-    success: outcome.success,
-    timeToFix: outcome.timeToFix,
-    humanReviewRequired: outcome.needsReview
-  };
-
-  // Use data to improve future auto-fixes
-  await updateFixStrategies(resolutionData);
-}
-```
-
-## Best Practices
-
-### Fix Verification
-
-- **Syntax checking:** Ensure fixes don't break code syntax
-- **Test execution:** Run relevant tests after applying fixes
+- **Code Review**: Always review auto-generated fixes before applying them to ensure they make sense in context
+- **Test execution:** Run relevant tests after applying fixes to catch any regressions
 - **Review integration:** Mark comments as addressed only after verification
 - **Rollback capability:** Provide undo functionality for problematic fixes
 
