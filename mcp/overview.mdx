@@ -6,13 +6,38 @@ metaTitle: 'Greptile MCP Server - AI Tool Integration'
 metaDescription: 'Integrate Greptile code analysis capabilities into AI assistants using the Model Context Protocol server'
 ---
 
-The Greptile MCP Server provides AI assistants and applications with direct access to Greptile's comments and context.
+The Greptile MCP Server provides AI assistants and applications with direct access to Greptile's comments and context through 13 tools across 4 categories.
+
+<Note>
+**New to MCP?** Start with [Authentication](/mcp/authentication) → [Custom Context](/mcp/custom-context) → [Comment Resolution](/mcp/comment-resolution)
+</Note>
+
+
+## Quick Start
+
+<Steps>
+    <Step title="Get API Key">
+        Sign up at [app.greptile.com](https://app.greptile.com/signup) and get your API key.
+    </Step>
+    <Step title="Add to Claude Code">
+        ```bash
+        claude mcp add --transport http greptile https://api.greptile.com/mcp \
+          --header "Authorization: Bearer YOUR_GREPTILE_API_KEY"
+        ```
+    </Step>
+    <Step title="Test Connection">
+        Ask Claude: "What custom context does my organization have?"
+    </Step>
+</Steps>
 
 ## Quick Links
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
     <Card title="Authentication" href="/mcp/authentication" icon="key">
         Set up API key and configure MCP clients.
+    </Card>
+    <Card title="Add to Your IDE" href="/mcp/setup-ides" icon="code">
+        Configure MCP server in Claude Code and Cursor.
     </Card>
     <Card title="Tool Reference" href="/mcp/tool-reference" icon="book">
         Complete reference for all available tools.

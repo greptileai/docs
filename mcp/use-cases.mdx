@@ -10,44 +10,22 @@ Additional applications for the Greptile MCP server beyond direct coding assista
 
 ### Metrics Collection
 
-**Repository Health Overview:**
-```javascript
-async function collectRepositoryMetrics(repositories) {
-  const metrics = await Promise.all(repositories.map(async (repo) => {
-    const [prs, reviews, comments] = await Promise.all([
-      mcpClient.call('list_merge_requests', {
-        name: repo.name,
-        remote: repo.remote,
-        defaultBranch: repo.branch,
-        limit: 100
-      }),
-      mcpClient.call('list_code_reviews', {
-        name: repo.name,
-        remote: repo.remote,
-        defaultBranch: repo.branch,
-        limit: 100
-      }),
-      mcpClient.call('search_greptile_comments', {
-        query: repo.name,
-        limit: 100
-      })
-    ]);
+**Repository Health Overview using Claude:**
 
-    return {
-      repository: repo.name,
-      totalPRs: prs.mergeRequests.length,
-      reviewedPRs: reviews.codeReviews.length,
-      reviewCoverage: reviews.codeReviews.length / prs.mergeRequests.length,
-      unaddressedComments: comments.comments.filter(c => !c.addressed).length,
-      criticalIssues: comments.comments.filter(c =>
-        c.body.includes('security') || c.body.includes('critical')
-      ).length
-    };
-  }));
+Ask Claude: *"Give me a health overview of my repositories using Greptile data"*
 
-  return metrics;
-}
-```
+Claude can now:
+1. List all merge requests across your repositories
+2. Get code review completion rates
+3. Count unaddressed security comments
+4. Identify repositories with the most issues
+5. Calculate review coverage percentages
+
+Example metrics Claude can provide:
+- Total PRs reviewed vs unreviewed
+- Number of open security issues
+- Most active repositories by review volume
+- Custom context adoption rates
 
 **Team Performance Analytics:**
 ```javascript
@@ -111,7 +89,17 @@ class GreptileDatasource {
 
 ## CI/CD Integration
 
+The MCP server enables automated workflows that check code quality before merges.
+
 ### Pre-merge Validation
+
+Ask Claude to validate PRs: *"Check if this PR has any unaddressed Greptile security comments"*
+
+Claude can:
+- Verify all critical comments are addressed
+- Check if code review is complete
+- Identify blocking issues before merge
+- Trigger new reviews if needed
 
 **GitHub Actions Integration:**
 ```yaml

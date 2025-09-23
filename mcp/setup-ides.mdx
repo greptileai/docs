@@ -1,0 +1,164 @@
+---
+title: Add Greptile MCP to your IDE
+description: 'Configure Greptile MCP server in Claude Code and Cursor'
+keywords: 'MCP setup, Claude Code, Cursor, IDE integration, MCP configuration'
+---
+
+Configure the Greptile MCP server in your IDE to access code analysis tools and review data.
+
+## Setup in Claude Code
+
+<Steps>
+    <Step title="Get Your Greptile API Key">
+        Obtain your API key from [app.greptile.com](https://app.greptile.com/login).
+    </Step>
+    <Step title="Add Greptile MCP Server">
+        In your terminal, run the command to add the Greptile MCP server:
+        ```bash
+        claude mcp add --transport http greptile https://api.greptile.com/mcp \
+          --header "Authorization: Bearer YOUR_GREPTILE_API_KEY"
+        ```
+        Replace `YOUR_GREPTILE_API_KEY` with your actual API key.
+    </Step>
+    <Step title="Verify Server Installation">
+        Check that the server was added successfully:
+        ```bash
+        claude mcp list
+        ```
+        You should see `greptile` in the list of configured servers with ✓ Connected status.
+    </Step>
+    <Step title="Start Claude Code Session">
+        Open Claude Code and start a new session. The Greptile MCP server tools will be available automatically.
+    </Step>
+</Steps>
+
+### Alternative: Project-Level Configuration
+
+For team-shared configuration, create a `.mcp.json` file in your project root:
+
+```json
+{
+  "servers": {
+    "greptile": {
+      "transport": "http",
+      "url": "https://api.greptile.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${GREPTILE_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+Set the environment variable:
+```bash
+export GREPTILE_API_KEY=your-api-key-here
+```
+
+## Setup in Cursor
+
+<Steps>
+    <Step title="Get Your API Key">
+        Get your Greptile API key from [app.greptile.com](https://app.greptile.com/login).
+    </Step>
+    <Step title="Open Cursor Settings">
+        Go to **Settings** → **Features** → **Model Context Protocol**.
+    </Step>
+    <Step title="Add New Server Configuration">
+        Click **"Add Server"** and configure:
+        - **Name**: `greptile`
+        - **Type**: Select **"HTTP"**
+        - **URL**: `https://api.greptile.com/mcp`
+        - **Headers**: Add header with key `Authorization` and value `Bearer YOUR_GREPTILE_API_KEY`
+    </Step>
+    <Step title="Replace API Key">
+        Replace `YOUR_GREPTILE_API_KEY` with your actual Greptile API key from step 1.
+    </Step>
+    <Step title="Save and Restart">
+        Click **"Save"** and restart Cursor to activate the MCP server connection.
+    </Step>
+</Steps>
+
+### Alternative: Project-Level Configuration
+
+You can also configure MCP servers per-project by creating a `.mcp.json` file in your project root:
+
+```json
+{
+  "greptile": {
+    "type": "http",
+    "url": "https://api.greptile.com/mcp",
+    "headers": {
+      "Authorization": "Bearer YOUR_GREPTILE_API_KEY"
+    }
+  }
+}
+```
+
+Replace `YOUR_GREPTILE_API_KEY` with your actual Greptile API key, then restart Cursor.
+
+## Verification
+
+Once configured, test the connection:
+
+<Steps>
+    <Step title="Check Connection Status">
+        In Claude Code, run `claude mcp list` to confirm:
+        ```bash
+        greptile: https://api.greptile.com/mcp (HTTP) - ✓ Connected
+        ```
+    </Step>
+    <Step title="Test Basic Functionality">
+        Ask your IDE:
+        - "What custom context does my organization have?"
+        - "List recent merge requests"
+        - "Show me any security-related comments"
+    </Step>
+    <Step title="Verify Data Access">
+        Confirm the tools return your organization's actual data, not authentication errors.
+    </Step>
+</Steps>
+
+## Troubleshooting
+
+### Connection Issues
+
+**Server shows as disconnected:**
+- Verify API key is correct and hasn't expired
+- Check internet connection
+- Ensure the endpoint URL is exactly `https://api.greptile.com/mcp`
+
+**Authentication errors:**
+- Confirm API key has organization access
+- Check that the bearer token format is correct
+- Verify your account has access to the repositories you're querying
+
+**No tools available:**
+- Restart your IDE after adding the server
+- Check that the server shows as "Connected" in the status
+- Verify the MCP client is properly configured
+
+### Common Fixes
+
+<Steps>
+    <Step title="Restart IDE">
+        Close and reopen Claude Code or Cursor after configuration changes.
+    </Step>
+    <Step title="Check API Key">
+        Test your API key with curl:
+        ```bash
+        curl -H "Authorization: Bearer YOUR_GREPTILE_API_KEY" https://api.greptile.com/mcp
+        ```
+    </Step>
+    <Step title="Verify Configuration">
+        Double-check server URLs and authentication headers in your configuration.
+    </Step>
+</Steps>
+
+## Next Steps
+
+Once configured, you can:
+
+- [Resolve review comments](/mcp/comment-resolution) automatically
+- [Access custom context](/mcp/custom-context) for consistent coding patterns
+- [Explore advanced use cases](/mcp/use-cases) for automation workflows

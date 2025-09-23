@@ -1,302 +1,267 @@
 ---
-title: Get Greptile's Custom Context in your IDE
-description: 'Supply organization-specific patterns to Cursor, Claude Code, and other coding assistants'
-keywords: 'custom context, coding patterns, Cursor, Claude Code, AI coding assistance'
+title: Access Custom Context in your IDE
+description: 'Use organization coding patterns with AI assistants through Greptile MCP server'
+keywords: 'custom context, coding patterns, organization standards, AI coding assistance'
 ---
 
-Supply organization-specific coding patterns and instructions to Cursor, Claude Code, and other AI coding assistants through the MCP server.
+Greptile learns your team's coding standards and best practices by reading human engineer's comments in PRs.
+
+In this guide, we'll use the Greptile MCP server to allow your coding agent or IDE to access these learnings and use them during code generation.
+
+<Note>
+**Prerequisites**: First [set up the MCP server in your IDE](/mcp/setup-ides), then follow the workflows below.
+</Note>
 
 ## Overview
 
-Custom context provides AI coding assistants with your organization's specific coding patterns, style guides, and best practices. This ensures consistent code generation that follows your team's conventions.
+Once configured, you will be able to:
+- Browse your organization's coding patterns and standards
+- Get specific guidance for the type of code being written
+- Apply consistent patterns during code generation
+- Create new patterns from review feedback
 
-## Retrieving Patterns
+...inside your IDE or coding agent.
 
-### List All Patterns
 
-Get all organization patterns for broad context:
+## Discovering Patterns
 
-```javascript
-list_custom_context({
-  type: "CUSTOM_INSTRUCTION",
-  limit: 50
-})
+### Get Organization Patterns
+
+<Steps>
+    <Step title="Browse All Patterns">
+        Ask Claude: "What custom context does my organization have?"
+
+        Claude will show you all available patterns with details like:
+        - Pattern type (custom instruction vs pattern)
+        - Scope where it applies (file types, directories)
+        - Usage statistics and related comments
+    </Step>
+    <Step title="Search by Topic">
+        Use natural language to find specific patterns:
+        - "Find coding patterns related to error handling"
+        - "Show me security-related coding standards"
+        - "What React patterns does my organization use?"
+    </Step>
+    <Step title="Get Pattern Details">
+        For detailed information about a specific pattern:
+        - "Tell me more about the async/await pattern"
+        - "Show me examples of the input validation standard"
+        - "Why do we have this authentication pattern?"
+    </Step>
+</Steps>
+
+### Find Relevant Context
+
+**Context by File Type:**
+- "What patterns apply to TypeScript files?"
+- "Show me Python-specific coding standards"
+- "Are there any React component guidelines?"
+
+**Context by Domain:**
+- "What security patterns should I follow for authentication?"
+- "Show me database-related coding standards"
+- "Are there API design patterns I should use?"
+
+## Using Patterns in Code
+
+### Apply Context During Development
+
+<Steps>
+    <Step title="Load Patterns Before Coding">
+        Before starting work on a new feature or file:
+        - "Load all patterns relevant to authentication code"
+        - "What coding standards should I follow for this React component?"
+        - "Show me organization patterns for error handling"
+    </Step>
+    <Step title="Get Context-Specific Guidance">
+        When writing specific types of code:
+        - "I'm writing a REST API endpoint, what patterns should I follow?"
+        - "What security patterns apply to user input validation?"
+        - "How should I handle database connections based on our patterns?"
+    </Step>
+    <Step title="Validate Against Standards">
+        Before committing code:
+        - "Does this code follow our organization's patterns?"
+        - "Are there any style violations in this component?"
+        - "Check if my error handling matches our standards"
+    </Step>
+</Steps>
+
+### Pattern-Guided Code Generation
+
+**Start New Features:**
+```
+You: "I need to create a user authentication endpoint following our organization patterns"
+
+Claude: Based on your organization's custom context, I can see you follow these patterns:
+- Always validate input parameters using Joi schemas
+- Use Result<T, E> for error handling
+- Include rate limiting on authentication endpoints
+- Log authentication attempts for security auditing
+
+Let me create an endpoint that follows these standards...
 ```
 
-**Use case:** Provide comprehensive coding guidelines to new AI sessions.
+**Refactor Existing Code:**
+```
+You: "Refactor this function to match our coding patterns"
 
-### Search Relevant Patterns
+Claude: I can see your organization emphasizes:
+- Async/await over Promise.then()
+- Functional programming patterns
+- Comprehensive error handling
 
-Find patterns relevant to current development context:
-
-```javascript
-search_custom_context({
-  query: "error handling patterns",
-  limit: 10
-})
+Here's the refactored version following your standards...
 ```
 
-**Use case:** Get specific guidance for the type of code being written.
+## Practical Examples
 
-### Get Pattern Details
+### Security Pattern Application
 
-Retrieve full pattern information including evidence and usage:
+**Organization Pattern:**
+> "All API endpoints must validate input using Joi schemas before processing"
 
-```javascript
-get_custom_context({
-  customContextId: "ctx_abc123"
-})
+**In Claude Code:**
+```
+You: "Create a user registration endpoint following our security patterns"
+
+Claude Code: I can see your organization requires Joi validation for all API endpoints. Here's an implementation that follows that pattern:
+
+[Shows code with proper Joi schema validation]
+
+This follows your security pattern by validating all input parameters before processing. Should I also add rate limiting as per your other security patterns?
 ```
 
-**Use case:** Understand why a pattern exists and see examples of its application.
+### Style Guide Enforcement
 
-## Integration Workflows
+**Organization Pattern:**
+> "Use async/await instead of Promise.then() for better readability"
 
-### Cursor Integration
+**In Cursor:**
+```
+You: "Help me refactor this Promise-based code"
 
-**Project Setup:**
-1. Configure MCP server in Cursor settings
-2. Create workspace rules that query custom context
-3. Apply patterns automatically during code completion
+Cursor: Based on your organization's coding patterns, I'll convert this to use async/await for better readability:
 
-**Example Workflow:**
-```javascript
-// When working on authentication code
-const patterns = await search_custom_context({
-  query: "authentication security",
-  limit: 5
-});
+[Shows before/after comparison following the pattern]
 
-// Use patterns to guide code generation
-patterns.customContexts.forEach(pattern => {
-  // Apply pattern.body as coding instruction
-});
+This change aligns with your organization's preference for async/await syntax.
 ```
 
-### Claude Code Integration
+### Architecture Pattern Guidance
 
-**Session Initialization:**
-```javascript
-// Load organization patterns at session start
-const orgPatterns = await list_custom_context({
-  type: "CUSTOM_INSTRUCTION",
-  greptileGenerated: false, // Human-created patterns
-  limit: 30
-});
+**Organization Pattern:**
+> "Always use React hooks instead of class components"
 
-// Context: "Follow these organization patterns when writing code..."
+**Resolution Workflow:**
 ```
+You: "I need to create a component that manages form state"
 
-**Context-Aware Assistance:**
-```javascript
-// Before generating code, check for relevant patterns
-const relevantPatterns = await search_custom_context({
-  query: getCurrentFileContext(), // Function, language, domain
-  limit: 8
-});
-```
+IDE: Your organization prefers React hooks over class components. Here's a functional component using useState and useEffect:
 
-## Pattern Categories
+[Shows hook-based component implementation]
 
-### Code Style Patterns
-
-**Language-Specific Conventions:**
-```javascript
-create_custom_context({
-  type: "CUSTOM_INSTRUCTION",
-  body: "Use camelCase for JavaScript variables and functions",
-  scopes: {
-    "AND": [{
-      "operator": "MATCHES",
-      "field": "filepath",
-      "value": "**/*.js"
-    }]
-  }
-})
-```
-
-### Architecture Patterns
-
-**Framework Usage Guidelines:**
-```javascript
-create_custom_context({
-  type: "PATTERN",
-  body: "Always use React hooks instead of class components",
-  scopes: {
-    "AND": [{
-      "operator": "MATCHES",
-      "field": "filepath",
-      "value": "**/components/**/*.jsx"
-    }]
-  }
-})
-```
-
-### Security Patterns
-
-**Security Requirements:**
-```javascript
-create_custom_context({
-  type: "CUSTOM_INSTRUCTION",
-  body: "All API endpoints must validate input using Joi schemas",
-  scopes: {
-    "AND": [{
-      "operator": "MATCHES",
-      "field": "filepath",
-      "value": "**/routes/**/*.js"
-    }]
-  }
-})
+This follows your architectural pattern for React development.
 ```
 
 ## Advanced Workflows
 
-### Dynamic Pattern Loading
+<Note>
+The following sections cover advanced automation. For basic pattern usage, the steps above are sufficient.
+</Note>
 
-**Context-Aware Pattern Retrieval:**
-```javascript
-async function getRelevantPatterns(currentFile, codeContext) {
-  // Get patterns for current file type
-  const filePatterns = await search_custom_context({
-    query: getFileTypeKeywords(currentFile),
-    limit: 10
-  });
+### Creating New Patterns
 
-  // Get patterns for code domain
-  const domainPatterns = await search_custom_context({
-    query: codeContext.domain, // e.g., "authentication", "database"
-    limit: 5
-  });
+**From Code Review Feedback:**
+```
+You: "Create a new coding pattern based on this recent review feedback: 'Always use TypeScript strict mode for new services'"
 
-  return [...filePatterns.customContexts, ...domainPatterns.customContexts];
-}
+Claude: I'll create a new custom context pattern for you:
+
+Pattern Type: CUSTOM_INSTRUCTION
+Body: "Always use TypeScript strict mode for new services to catch potential errors at compile time"
+Scope: Apply to **/services/**/*.ts files
+
+This pattern will help ensure consistent TypeScript configuration across your service layer. Should I create this pattern?
 ```
 
-### Pattern Validation
+**From Common Code Issues:**
+```
+You: "We keep having issues with database connection leaks. Create a pattern to prevent this"
 
-**Check Pattern Compliance:**
-```javascript
-async function validateCodeAgainstPatterns(code, filePath) {
-  // Get applicable patterns
-  const patterns = await list_custom_context({
-    type: "PATTERN",
-    limit: 100
-  });
+Claude: Based on common database patterns, I'll create a custom context entry:
 
-  // Filter patterns by scope
-  const applicablePatterns = patterns.customContexts.filter(pattern => {
-    return pattern.scopes && matchesScope(filePath, pattern.scopes);
-  });
+Pattern: "Always use connection.close() or connection.end() in finally blocks when working with database connections"
+Scope: Database-related files (**/db/**/*.js, **/models/**/*.js)
 
-  // Validate code against each pattern
-  return applicablePatterns.map(pattern => ({
-    pattern: pattern.id,
-    compliant: validateCompliance(code, pattern.body)
-  }));
-}
+This pattern will remind developers to properly clean up database connections.
 ```
 
-### Learning from Code Reviews
+### Team Onboarding
 
-**Extract Patterns from Reviews:**
-```javascript
-async function extractPatternsFromReviews() {
-  // Get recent review comments
-  const comments = await search_greptile_comments({
-    query: "pattern OR convention OR style",
-    limit: 50,
-    includeAddressed: true
-  });
-
-  // Analyze comments for new patterns
-  const suggestedPatterns = comments.comments
-    .filter(comment => comment.linkedMemory)
-    .map(comment => ({
-      body: extractPatternFromComment(comment.body),
-      filePath: comment.filePath,
-      evidence: comment.linkedMemory
-    }));
-
-  // Create new patterns
-  for (const suggestion of suggestedPatterns) {
-    await create_custom_context({
-      type: "PATTERN",
-      body: suggestion.body,
-      status: "SUGGESTED", // For human review
-      scopes: inferScopeFromFilePath(suggestion.filePath)
-    });
-  }
-}
+**New Developer Setup:**
 ```
+You: "Show a new team member all our coding patterns and explain why we use them"
+
+Claude: Here are your organization's key coding patterns:
+
+1. **Security Pattern**: "Validate all API inputs using Joi schemas"
+   - Why: Prevents injection attacks and ensures data integrity
+   - Applied to: All API route files
+
+2. **Style Pattern**: "Use async/await instead of Promise.then()"
+   - Why: Better readability and error handling
+   - Applied to: All JavaScript/TypeScript files
+
+3. **Architecture Pattern**: "Prefer composition over inheritance"
+   - Why: More flexible and testable code
+   - Applied to: Class-based components
+
+[Continues with all patterns and explanations]
+```
+
+### Pattern Evolution
+
+**Update Patterns Based on Usage:**
+```
+You: "How effective is our async/await pattern? Should we update it?"
+
+Claude: Analyzing your async/await pattern usage:
+
+- Pattern triggered in 45 code reviews
+- 89% compliance rate
+- Most violations in legacy files (**/legacy/**/*.js)
+- Recent trend shows improving adoption
+
+Recommendation: Pattern is effective. Consider updating scope to exclude legacy files where migration isn't planned.
+```
+
+---
 
 ## Best Practices
 
-### Pattern Organization
+<Accordion title="Quick Reference: When to Use Different Pattern Types">
 
-**Hierarchical Patterns:**
-- General organization conventions
-- Language-specific patterns
-- Framework-specific patterns
-- Project-specific patterns
+### When to Use Custom Instructions
+- Coding style preferences ("Use camelCase for variables")
+- Framework usage guidelines ("Prefer hooks over class components")
+- Security requirements ("Always validate user input")
 
-**Scope Specificity:**
-```javascript
-// Too broad - applies everywhere
-{ "AND": [] }
+### When to Use Patterns
+- Architecture decisions ("Use microservices for new features")
+- Design principles ("Favor composition over inheritance")
+- Code organization rules ("Group related functions in modules")
 
-// Better - specific to file types
-{ "AND": [{"operator": "MATCHES", "field": "filepath", "value": "**/*.py"}] }
+### Pattern Effectiveness Tips
+- **Be specific**: "Use Joi for API validation" vs "Validate inputs"
+- **Include context**: Explain why the pattern exists
+- **Scope appropriately**: Apply patterns to relevant file types only
+- **Keep current**: Update patterns as practices evolve
 
-// Best - specific to functionality
-{ "AND": [
-  {"operator": "MATCHES", "field": "filepath", "value": "**/auth/**/*.py"},
-  {"operator": "MATCHES", "field": "repository", "value": "backend-services"}
-]}
-```
+### Human Oversight
+- **Review auto-suggestions**: Verify AI-generated code follows patterns correctly
+- **Update regularly**: Keep patterns current with evolving best practices
+- **Monitor usage**: Track which patterns are most/least effective
+- **Team alignment**: Ensure all team members understand pattern reasoning
 
-### Pattern Quality
-
-**Effective Pattern Content:**
-- Clear, actionable instructions
-- Specific examples when helpful
-- Explanation of reasoning
-- Edge case considerations
-
-**Example Good Pattern:**
-```
-Use Result<T, E> for error handling in Rust functions that can fail.
-Return Err(CustomError::InvalidInput) for invalid parameters.
-Always include context in error messages.
-Example: Result<User, AuthError> for authentication functions.
-```
-
-### Performance Considerations
-
-**Efficient Pattern Loading:**
-```javascript
-// Cache frequently used patterns
-const patternCache = new Map();
-
-async function getCachedPatterns(query, ttl = 300000) {
-  if (patternCache.has(query)) {
-    const { data, timestamp } = patternCache.get(query);
-    if (Date.now() - timestamp < ttl) {
-      return data;
-    }
-  }
-
-  const patterns = await search_custom_context({ query, limit: 10 });
-  patternCache.set(query, { data: patterns, timestamp: Date.now() });
-  return patterns;
-}
-```
-
-**Batch Pattern Requests:**
-```javascript
-// Load multiple pattern types at once
-const [stylePatterns, securityPatterns, archPatterns] = await Promise.all([
-  search_custom_context({ query: "style guide", limit: 10 }),
-  search_custom_context({ query: "security", limit: 10 }),
-  search_custom_context({ query: "architecture", limit: 10 })
-]);
-```
+</Accordion>

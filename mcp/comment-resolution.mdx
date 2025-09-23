@@ -1,409 +1,233 @@
 ---
-title: Resolve Greptile comments in your IDE
+title: Resolve Comments in your IDE
 description: 'Retrieve and resolve Greptile review comments automatically with coding agents'
 keywords: 'comment resolution, automated fixes, code review, AI assistance'
 ---
 
-Enable coding agents to automatically retrieve and resolve Greptile review comments, reducing manual review follow-up work.
+Use Greptile's MCP server to automatically retrieve and resolve code review comments directly in your IDE.
+
+<Note>
+**Prerequisites**: First [set up the MCP server in your IDE](/mcp/setup-ides), then follow the workflows below.
+</Note>
 
 ## Overview
 
-Coding agents can access Greptile review comments through the MCP server to understand issues and apply fixes automatically. This creates a feedback loop where review insights improve code quality in real-time.
+Once you have set up the Greptile MCP server in your IDE, you will be able to:
+- Retrieve unaddressed review comments
+- Search for specific types of issues
+- Get context about why issues were flagged
+- Apply fixes based on Greptile's suggestions
+
+...all from within your IDE.
 
 ## Retrieving Comments
 
-### Get PR Comments
-
-Retrieve all comments for a specific pull request:
-
-```javascript
-list_merge_request_comments({
-  name: "owner/repo",
-  remote: "github",
-  defaultBranch: "main",
-  prNumber: 123,
-  greptileGenerated: true,
-  addressed: false
-})
-```
-
-**Response includes:**
-- Comment text and location (file, line numbers)
-- Addressed status
-- Linked custom context (patterns that triggered the comment)
-- Creation timestamp
-
-### Search Issue-Specific Comments
-
-Find comments about specific code issues across repositories:
-
-```javascript
-search_greptile_comments({
-  query: "memory leak",
-  limit: 10,
-  includeAddressed: false
-})
-```
-
-**Use cases:**
-- Find all instances of a specific issue type
-- Learn from past review feedback
-- Identify recurring problems across codebases
-
-## Automated Resolution Workflows
-
-### Basic Resolution Flow
+### Get Comments for Current PR
 
 <Steps>
-    <Step title="Retrieve Comments">
-        Coding agent gets unaddressed comments for current PR or file.
+    <Step title="Identify Current PR">
+        When working on a branch, your IDE will automatically detect the associated PR.
     </Step>
-    <Step title="Analyze Context">
-        Agent reads comment details, linked patterns, and surrounding code.
+    <Step title="Ask for Comments">
+        Use these proven prompts with Claude:
+        - "Show me all unaddressed Greptile comments for this PR"
+        - "What security issues has Greptile found recently?"
+        - "Search for Greptile comments about error handling"
     </Step>
-    <Step title="Apply Fixes">
-        Agent generates and applies code changes to address the issue.
-    </Step>
-    <Step title="Verify Resolution">
-        Agent checks that the fix addresses the original concern.
+    <Step title="Review Comment Details">
+        Claude will show you:
+        - Complete comment text with context
+        - File paths and specific line numbers
+        - Whether comments are addressed or still open
+        - Related custom context patterns that were violated
+        - PR information and repository details
     </Step>
 </Steps>
 
-### Comment Analysis
+### Search for Specific Issues
 
-**Extract Actionable Information:**
-```javascript
-function analyzeComment(comment) {
-  return {
-    issueType: categorizeIssue(comment.body),
-    location: {
-      file: comment.filePath,
-      startLine: comment.lineStart,
-      endLine: comment.lineEnd
-    },
-    severity: assessSeverity(comment.body),
-    suggestedFix: extractSuggestion(comment.body),
-    relatedPattern: comment.linkedMemory?.body
-  };
-}
+**Find Comments by Type:**
+- *"Find all security-related Greptile comments in this repository"*
+- *"Show me performance issues flagged by Greptile"*
+- *"Get error handling comments from recent reviews"*
+
+**Find Comments by File:**
+- *"Show Greptile comments for the current file"*
+- *"Are there any unaddressed reviews for src/auth.js?"*
+- *"What issues has Greptile found in this component?"*
+
+These searches work across your entire organization's repositories and return real comment data with file locations and context.
+
+## Resolving Comments Step-by-Step
+
+### Automated Resolution
+
+<Steps>
+    <Step title="Select Comment to Fix">
+        In your IDE, click on a Greptile comment or use:
+        "Fix this Greptile comment: [paste comment text]"
+    </Step>
+    <Step title="Analyze the Issue">
+        The IDE will:
+        - Read the comment and understand the problem
+        - Examine the code context
+        - Check related custom context patterns
+        - Determine the appropriate fix strategy
+    </Step>
+    <Step title="Generate Fix">
+        The coding agent will:
+        - Propose a specific code change
+        - Explain why this fix addresses the issue
+        - Show before/after code comparison
+    </Step>
+    <Step title="Apply Fix">
+        Review and apply the suggested changes:
+        - "Apply this fix"
+        - "Show me the diff first"
+        - "Explain why this fixes the issue"
+    </Step>
+    <Step title="Verify Resolution">
+        Confirm the fix addresses the original concern:
+        - Run relevant tests
+        - Check for syntax errors
+        - Validate the solution makes sense
+    </Step>
+</Steps>
+
+### Manual Resolution with AI Guidance
+
+**Get Detailed Explanation:**
+- *"Explain this Greptile comment in detail and suggest how to fix it"*
+- *"Why is this flagged as a security issue?"*
+- *"What's the best way to resolve this performance concern?"*
+
+**Get Fix Suggestions:**
+- *"How should I fix this memory leak issue?"*
+- *"Suggest 2-3 ways to address this code duplication"*
+- *"What's the proper error handling pattern here?"*
+
+## Practical Examples
+
+### Security Issue Resolution
+
+**Greptile Comment:**
+> "Consider adding input validation to prevent potential security vulnerabilities. The user input should be sanitized before processing."
+
+**In Claude Code:**
+```
+You: "Fix this security issue: Missing input validation for user ID parameter"
+
+Claude Code: I'll help you add proper input validation. Looking at your code, I can see the getUserData function is missing validation. Here's the fix:
+
+[Shows before/after code with input validation added]
+
+Would you like me to apply this fix and also check for similar issues in other functions?
 ```
 
-**Issue Categorization:**
-- **Logic errors:** Incorrect behavior, edge cases
-- **Performance issues:** Inefficient algorithms, memory leaks
-- **Security vulnerabilities:** Input validation, authentication
-- **Style violations:** Formatting, naming conventions
-- **Architecture concerns:** Design patterns, coupling
+### Performance Issue Resolution
 
-### Fix Application Strategies
+**Greptile Comment:**
+> "N+1 query problem detected - consider using joins or batch loading"
 
-**Direct Code Replacement:**
-```javascript
-async function applyDirectFix(comment, codeContent) {
-  const analysis = analyzeComment(comment);
+**In Cursor:**
+```
+You: "How do I fix this N+1 query problem?"
 
-  if (analysis.suggestedFix && analysis.location) {
-    // Apply suggested fix to specified lines
-    const fixedCode = replaceLines(
-      codeContent,
-      analysis.location.startLine,
-      analysis.location.endLine,
-      analysis.suggestedFix
-    );
+Cursor: I can see the issue in your code. You're making individual database queries in a loop. Here's how to fix it with a join:
 
-    return {
-      success: true,
-      changes: fixedCode,
-      method: 'direct_replacement'
-    };
-  }
+[Shows optimized query with proper joins]
 
-  return { success: false, reason: 'no_direct_suggestion' };
-}
+This will reduce your database calls from N+1 to just 1. Should I apply this change?
 ```
 
-**Pattern-Based Fixes:**
-```javascript
-async function applyPatternFix(comment, codeContent) {
-  if (!comment.linkedMemory) return { success: false };
+### Code Style Violation
 
-  const pattern = comment.linkedMemory.body;
-  const violation = identifyPatternViolation(codeContent, pattern);
+**Greptile Comment:**
+> "Use camelCase for variable names according to team guidelines"
 
-  if (violation) {
-    const fixedCode = applyPattern(codeContent, pattern, violation);
-    return {
-      success: true,
-      changes: fixedCode,
-      method: 'pattern_application',
-      pattern: pattern
-    };
-  }
+**Resolution Workflow:**
+```
+You: "Fix the naming convention issues in this file"
 
-  return { success: false, reason: 'pattern_not_applicable' };
-}
+IDE: I found 3 variables that need to be converted to camelCase:
+- user_data → userData
+- is_valid → isValid
+- api_response → apiResponse
+
+I'll update these and any references. Applying changes now...
 ```
 
-**AI-Generated Fixes:**
-```javascript
-async function generateFix(comment, codeContent, context) {
-  const prompt = `
-Fix this code issue:
-Issue: ${comment.body}
-File: ${comment.filePath}
-Lines ${comment.lineStart}-${comment.lineEnd}:
-${extractLines(codeContent, comment.lineStart, comment.lineEnd)}
+## Advanced Workflows
 
-Related pattern: ${comment.linkedMemory?.body || 'None'}
-Context: ${context}
-`;
+<Note>
+The following sections cover advanced automation. For basic comment resolution, the steps above are sufficient.
+</Note>
 
-  const fix = await aiCodeGeneration(prompt);
-  return {
-    success: true,
-    changes: fix,
-    method: 'ai_generated'
-  };
-}
+### Batch Comment Resolution
+
+**Resolve Multiple Comments:**
 ```
+You: "Show me all unaddressed Greptile comments for this PR and fix the ones you can automatically"
 
-## Integration Examples
+IDE: I found 8 unaddressed comments:
+✅ Fixed: 3 naming convention issues
+✅ Fixed: 2 missing error handling cases
+⚠️  Needs review: 1 architecture concern
+⚠️  Needs review: 2 complex logic issues
 
-### VS Code Extension
-
-```javascript
-// Extension activation
-async function resolveGreptileComments(workspaceFolder) {
-  const currentBranch = await git.getCurrentBranch();
-  const prNumber = await git.getPRNumber(currentBranch);
-
-  if (!prNumber) return;
-
-  // Get unaddressed comments
-  const comments = await mcpClient.call('list_merge_request_comments', {
-    name: workspaceFolder.name,
-    remote: 'github',
-    defaultBranch: 'main',
-    prNumber: prNumber,
-    greptileGenerated: true,
-    addressed: false
-  });
-
-  // Process each comment
-  for (const comment of comments.comments) {
-    const success = await attemptAutoFix(comment);
-
-    if (success) {
-      vscode.window.showInformationMessage(
-        `Auto-fixed: ${comment.body.substring(0, 50)}...`
-      );
-    } else {
-      // Show as code action for manual review
-      registerCodeAction(comment);
-    }
-  }
-}
+I've applied the automatic fixes. The remaining 3 comments need your input because they involve design decisions.
 ```
-
-### Pre-commit Hook
-
-```javascript
-#!/usr/bin/env node
-// pre-commit-review-check.js
-
-async function checkForUnaddressedComments() {
-  const changedFiles = await git.getChangedFiles();
-
-  // Get comments for changed files
-  const allComments = await mcpClient.call('search_greptile_comments', {
-    query: changedFiles.join(' OR '),
-    limit: 50,
-    includeAddressed: false
-  });
-
-  const relevantComments = allComments.comments.filter(comment =>
-    changedFiles.includes(comment.filePath)
-  );
-
-  if (relevantComments.length > 0) {
-    console.log('Unaddressed review comments found:');
-    relevantComments.forEach(comment => {
-      console.log(`- ${comment.filePath}:${comment.lineStart}: ${comment.body}`);
-    });
-
-    // Attempt auto-fixes
-    const fixResults = await Promise.all(
-      relevantComments.map(comment => attemptAutoFix(comment))
-    );
-
-    const unfixedComments = relevantComments.filter((_, index) =>
-      !fixResults[index].success
-    );
-
-    if (unfixedComments.length > 0) {
-      console.log(`${unfixedComments.length} comments require manual attention`);
-      process.exit(1);
-    }
-  }
-}
-
-checkForUnaddressedComments().catch(console.error);
-```
-
-### CI/CD Integration
-
-```yaml
-# .github/workflows/auto-fix-reviews.yml
-name: Auto-fix Review Comments
-
-on:
-  pull_request:
-    types: [opened, synchronize]
-
-jobs:
-  auto-fix:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Auto-fix Review Comments
-        env:
-          GREPTILE_API_KEY: ${{ secrets.GREPTILE_API_KEY }}
-        run: |
-          # Get PR comments
-          node -e "
-          const { execSync } = require('child_process');
-          const prNumber = process.env.GITHUB_REF.split('/')[2];
-
-          // Run auto-fix script
-          execSync('node scripts/auto-fix-comments.js ' + prNumber, {stdio: 'inherit'});
-          "
-
-      - name: Commit fixes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git diff --staged --quiet || git commit -m "Auto-fix review comments"
-          git push
-```
-
-## Comment Resolution Patterns
-
-### Security Issues
-
-**Input Validation:**
-```javascript
-// Comment: "Missing input validation for user ID"
-// Before:
-function getUserData(userId) {
-  return database.users.find(userId);
-}
-
-// Auto-fix:
-function getUserData(userId) {
-  if (!userId || typeof userId !== 'string') {
-    throw new Error('Invalid user ID');
-  }
-  return database.users.find(userId);
-}
-```
-
-### Performance Issues
-
-**Inefficient Queries:**
-```javascript
-// Comment: "N+1 query problem - use joins or batch loading"
-// Before:
-const users = await User.findAll();
-const profiles = await Promise.all(
-  users.map(user => Profile.findByUserId(user.id))
-);
-
-// Auto-fix:
-const users = await User.findAll({
-  include: [Profile]
-});
-```
-
-### Style Violations
-
-**Naming Conventions:**
-```javascript
-// Comment: "Use camelCase for variable names"
-// Before:
-const user_data = fetchUserInfo();
-const is_valid_user = checkUser(user_data);
-
-// Auto-fix:
-const userData = fetchUserInfo();
-const isValidUser = checkUser(userData);
-```
-
-## Advanced Features
 
 ### Context-Aware Fixes
 
-```javascript
-async function getFixContext(comment) {
-  // Get PR context
-  const pr = await mcpClient.call('get_merge_request', {
-    name: comment.mergeRequest.repository.name,
-    remote: 'github',
-    defaultBranch: 'main',
-    prNumber: comment.mergeRequest.prNumber
-  });
+**Using Custom Context:**
+```
+You: "Fix this error handling according to our team patterns"
 
-  // Get related patterns
-  const patterns = await mcpClient.call('search_custom_context', {
-    query: extractKeywords(comment.body),
-    limit: 5
-  });
+IDE: Based on your organization's custom context, I see you use Result<T, E> for error handling. I'll update this function to follow that pattern:
 
-  // Get similar resolved comments
-  const similarComments = await mcpClient.call('search_greptile_comments', {
-    query: comment.body.substring(0, 50),
-    limit: 10,
-    includeAddressed: true
-  });
+[Shows conversion from try/catch to Result pattern]
 
-  return {
-    prContext: pr.mergeRequest,
-    relatedPatterns: patterns.customContexts,
-    similarResolutions: similarComments.comments.filter(c => c.addressed)
-  };
-}
+This matches the pattern used in 15 other functions in your codebase.
 ```
 
-### Learning from Resolutions
+### Integration with Development Workflow
 
-```javascript
-async function trackResolutionSuccess(comment, fix, outcome) {
-  // Store resolution data for learning
-  const resolutionData = {
-    commentId: comment.id,
-    issueType: categorizeIssue(comment.body),
-    fixMethod: fix.method,
-    success: outcome.success,
-    timeToFix: outcome.timeToFix,
-    humanReviewRequired: outcome.needsReview
-  };
-
-  // Use data to improve future auto-fixes
-  await updateFixStrategies(resolutionData);
-}
+**Pre-commit Resolution:**
 ```
+You: "Before I commit, check if there are any unaddressed Greptile comments in my changes"
+
+IDE: I found 2 unaddressed comments in your staged files:
+1. Missing null check in user.service.js:45
+2. Inconsistent error message format in auth.controller.js:23
+
+Would you like me to fix these before you commit?
+```
+
+---
 
 ## Best Practices
 
-### Fix Verification
+<Accordion title="Quick Reference: When to Use Auto-Fix vs Manual Review">
 
-- **Syntax checking:** Ensure fixes don't break code syntax
-- **Test execution:** Run relevant tests after applying fixes
+### When to Use Auto-Fix
+
+**Safe for Auto-Fix:**
+- Code style and formatting issues
+- Simple null checks and validation
+- Naming convention corrections
+- Basic error handling additions
+
+**Requires Review:**
+- Architecture and design changes
+- Complex logic modifications
+- Performance optimizations with tradeoffs
+- Security fixes affecting business logic
+
+### Verification Steps
+
+- **Code Review**: Always review auto-generated fixes before applying them to ensure they make sense in context
+- **Test execution:** Run relevant tests after applying fixes to catch any regressions
 - **Review integration:** Mark comments as addressed only after verification
 - **Rollback capability:** Provide undo functionality for problematic fixes
 
@@ -413,3 +237,5 @@ async function trackResolutionSuccess(comment, fix, outcome) {
 - **Review queuing:** Queue uncertain fixes for human review
 - **Explanation logging:** Document what changes were made and why
 - **Approval workflows:** Require human approval for critical file changes
+
+</Accordion>
