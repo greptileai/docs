@@ -170,3 +170,36 @@ You can apply different rules to specific directories using glob patterns:
 - **Test files** - Focus only on serious issues
 - **Documentation** - Primarily style and formatting checks
 - **Legacy code** - Reduced noise during refactoring
+
+
+## Custom Context Explained
+
+The `customContext` field allows you to provide additional context to help Greptile make more informed
+code review decisions. It supports three types of context, each with optional scope targeting:
+
+### Custom Context Types
+
+**`other`** - General instructions or context
+- Provide additional background information about your codebase, team practices, or specific
+requirements
+- Use for high-level guidance that doesn't fit into rules or file references
+
+**`rules`** - Specific coding rules to enforce
+- Define custom coding standards, best practices, or project-specific requirements
+- More specific than general instructions, focused on enforceable coding practices
+
+**`files`** - Reference existing documentation files
+- Point Greptile to existing documentation, style guides, or reference files in your repository
+- Includes a `path` field to specify the file location and optional `description` for context
+
+### Scope Targeting
+
+Each context item supports an optional `scope` array that uses glob patterns to target specific files:
+
+```json
+"scope": ["*.ts", "*.js"]        // Apply to TypeScript and JavaScript files
+"scope": ["src/**/*.py"]         // Apply to Python files in src directory
+"scope": ["tests/**/*"]          // Apply to all files in tests directory
+"scope": ["*.md", "docs/**/*"]   // Apply to markdown files and docs folder
+```
+If no scope is specified, the context applies to all files in the review.
