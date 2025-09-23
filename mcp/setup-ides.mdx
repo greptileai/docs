@@ -69,10 +69,10 @@ export GREPTILE_API_KEY=your-api-key-here
         - **Name**: `greptile`
         - **Type**: Select **"HTTP"**
         - **URL**: `https://api.greptile.com/mcp`
-        - **Headers**: Add header with key `Authorization` and value `Bearer YOUR_API_KEY`
+        - **Headers**: Add header with key `Authorization` and value `Bearer YOUR_GREPTILE_API_KEY`
     </Step>
     <Step title="Replace API Key">
-        Replace `YOUR_API_KEY` with your actual Greptile API key from step 1.
+        Replace `YOUR_GREPTILE_API_KEY` with your actual Greptile API key from step 1.
     </Step>
     <Step title="Save and Restart">
         Click **"Save"** and restart Cursor to activate the MCP server connection.
@@ -89,13 +89,13 @@ You can also configure MCP servers per-project by creating a `.mcp.json` file in
     "type": "http",
     "url": "https://api.greptile.com/mcp",
     "headers": {
-      "Authorization": "Bearer YOUR_API_KEY"
+      "Authorization": "Bearer YOUR_GREPTILE_API_KEY"
     }
   }
 }
 ```
 
-Replace `YOUR_API_KEY` with your actual Greptile API key, then restart Cursor.
+Replace `YOUR_GREPTILE_API_KEY` with your actual Greptile API key, then restart Cursor.
 
 ## Verification
 
@@ -147,7 +147,7 @@ Once configured, test the connection:
     <Step title="Check API Key">
         Test your API key with curl:
         ```bash
-        curl -H "Authorization: Bearer YOUR_API_KEY" https://api.greptile.com/mcp
+        curl -H "Authorization: Bearer YOUR_GREPTILE_API_KEY" https://api.greptile.com/mcp
         ```
     </Step>
     <Step title="Verify Configuration">
