@@ -1,14 +1,19 @@
 ---
 title: Configure with greptile.json
 description: "Configure Greptile settings and patterns per repository"
-keywords: "AI code reviews, codebase analysis, natural language queries, GitHub integration, Slack integration, PR review agent"
+keywords: "AI code reviews, codebase analysis, natural language queries, GitHub integration, Slack
+integration, PR review agent"
 metaTitle: "Greptile Docs: Repository-Level Configuration with greptile.json"
-metaDescription: "Learn how to customize Greptile settings and patterns for individual repositories using greptile.json configuration."
+metaDescription: "Learn how to customize Greptile settings and patterns for individual repositories
+using greptile.json configuration."
 ---
 
-You can have custom settings at the repo level by adding a `greptile.json` file to the root of the repo. Settings will be read from the source branch of the PR.
+You can have custom settings at the repo level by adding a `greptile.json` file to the root of the
+repo. Settings will be read from the source branch of the PR.
 
-You can grab your global settings in the correct format [here](https://app.greptile.com/review/github?tab=config) by clicking on the `copy` or `download` icons on the top right of the Settings panel.
+You can grab your global settings in the correct format
+[here](https://app.greptile.com/review/github?tab=config) by clicking on the `copy` or `download` icons
+  on the top right of the Settings panel.
 
 ### Configuration Hierarchy
 
@@ -30,7 +35,7 @@ This allows you to set organization-wide defaults in the dashboard while customi
   "commentTypes": ["logic", "syntax"],
   "instructions": "Ensure style_guide.md is enforced.",
   "ignoreKeywords": "rename\nlinter\nprettier\ngreptile-ignor",
-  "ignorePatterns": "testing/**/*.py\n*.md\n*.txt\n*.json",
+  "ignorePatterns": "greptile.json\ntesting/**/*.py\n*.md\n*.txt\n*.json",
   "patternRepositories": ["acme/backend"],
   "triggerOnUpdates": true,
   "shouldUpdateDescription": false,
@@ -38,18 +43,54 @@ This allows you to set organization-wide defaults in the dashboard while customi
   "includeAuthors": ["dakshgup", "schoi"],
   "excludeAuthors": ["cool-dev"],
   "strictness": 2,
-  "directoryRules": {
-    "src/critical/**": {
-      "strictness": 1,
-      "commentTypes": ["logic", "syntax"]
-    },
-    "tests/**": {
-      "strictness": 3
-    }
+  "fixWithAI": false,
+  "includeKeywords": "bug\nfeature",
+  "includeBranches": ["main", "develop"],
+  "excludeBranches": ["draft", "wip"],
+  "statusCheck": true,
+  "summarySection": {
+    "included": true,
+    "collapsible": false,
+    "defaultOpen": false
+  },
+  "issuesTableSection": {
+    "included": true,
+    "collapsible": false,
+    "defaultOpen": false
+  },
+  "confidenceScoreSection": {
+    "included": true,
+    "collapsible": false,
+    "defaultOpen": false
+  },
+  "sequenceDiagramSection": {
+    "included": true,
+    "collapsible": false,
+    "defaultOpen": false
+  },
+  "customContext": {
+    "rules": [
+      {
+        "scope": ["src/**/*.py"],
+        "rule": "Specific coding rule to enforce"
+      }
+    ],
+    "files": [
+      {
+        "scope": ["*.md"],
+        "path": "docs/style-guide.md",
+        "description": "Style guide reference"
+      }
+    ],
+    "other": [
+      {
+        "scope": ["*.ts", "*.js"],
+        "content": "Custom instruction or context"
+      }
+    ]
   }
 }
 ```
-
 ### Configuration Parameters
 
 | Parameter                 | Type    | Description                                                                                                                                  |
@@ -67,7 +108,17 @@ This allows you to set organization-wide defaults in the dashboard while customi
 | `includeAuthors`          | array   | Only PRs from these authors will be reviewed. If empty, reviews PRs from all authors (except excluded ones).                                 |
 | `excludeAuthors`          | array   | PRs from these authors will not be reviewed, even if other trigger conditions are met.                                                       |
 | `strictness`              | number  | Severity threshold for Greptile comments (1-3). 1 = comment on all issues, 2 = moderate filtering, 3 = only most critical issues.            |
-| `directoryRules`          | object  | Apply specific rules to certain directories using glob patterns. See directory-specific rules section below.                                     |
+| `fixWithAI`               | boolean | If true, adds AI fix prompts to code review comments to help AI tools understand how to fix the issues.                                      |
+| `includeKeywords`         | string  | Newline-separated list of keywords. Only PRs containing these keywords in their title or description will be reviewed.                       |
+| `includeBranches`         | array   | Only PRs targeting these branches will be reviewed. If empty, reviews PRs to all branches (except excluded ones).                            |
+| `excludeBranches`         | array   | PRs targeting these branches will not be reviewed, even if other trigger conditions are met.                                                 |
+| `statusCheck`             | boolean | If true, creates a GitHub status check for each PR review. GitHub only.                                                                      |
+| `summarySection`          | object  | Controls PR summary section. Properties: included (boolean), collapsible (boolean), defaultOpen (boolean).                                   |
+| `issuesTableSection`      | object  | Controls issues table section. Properties: included (boolean), collapsible (boolean), defaultOpen (boolean).                                 |
+| `confidenceScoreSection`  | object  | Controls confidence score section. Properties: included (boolean), collapsible (boolean), defaultOpen (boolean).                             |
+| `sequenceDiagramSection`  | object  | Controls sequence diagram section. Properties: included (boolean), collapsible (boolean), defaultOpen (boolean).                             |
+| `customContext`           | object  | Advanced context configuration with three arrays: other, rules, and files. Each supports optional scope and file pattern matching.           |
+
 
 ## Comment Types Explained
 
@@ -119,3 +170,37 @@ You can apply different rules to specific directories using glob patterns:
 - **Test files** - Focus only on serious issues
 - **Documentation** - Primarily style and formatting checks
 - **Legacy code** - Reduced noise during refactoring
+
+
+## Custom Context Explained
+
+The `customContext` field allows you to provide additional context to help Greptile make more informed
+code review decisions. It supports three types of context, each with optional scope targeting:
+
+### Custom Context Types
+
+**`rules`** - Specific coding rules to enforce
+- Define custom coding standards, best practices, or project-specific requirements
+- More specific than general instructions, focused on enforceable coding practices
+
+**`files`** - Reference existing documentation files
+- Point Greptile to existing documentation, style guides, or reference files in your repository
+- Includes a `path` field to specify the file location and optional `description` for context
+
+**`other`** - General instructions or context
+- Provide additional background information about your codebase, team practices, or specific
+requirements
+- Use for high-level guidance that doesn't fit into rules or file references
+
+
+### Scope Targeting
+
+Each context item supports an optional `scope` array that uses glob patterns to target specific files:
+
+```json
+"scope": ["*.ts", "*.js"]        // Apply to TypeScript and JavaScript files
+"scope": ["src/**/*.py"]         // Apply to Python files in src directory
+"scope": ["tests/**/*"]          // Apply to all files in tests directory
+"scope": ["*.md", "docs/**/*"]   // Apply to markdown files and docs folder
+```
+If no scope is specified, the context applies to all files in the review.
