@@ -1,0 +1,108 @@
+---
+title: Authentication
+description: 'Setting up Greptile MCP server authentication and client configuration'
+keywords: 'MCP authentication, API key setup, client configuration, Claude Desktop'
+---
+
+## API Key Setup
+
+<Steps>
+    <Step title="Get API Key">
+        Obtain your API key from [app.greptile.com](https://app.greptile.com/login).
+    </Step>
+    <Step title="Verify Organization Access">
+        Ensure your API key has access to the repositories and organization data you need.
+    </Step>
+</Steps>
+
+## MCP Client Configuration
+
+### Claude Desktop
+
+Location: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
+
+```json
+{
+  "mcpServers": {
+    "greptile": {
+      "command": "node",
+      "args": ["/path/to/greptile-mcp-server.js"],
+      "env": {
+        "GREPTILE_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+### Custom Applications
+
+**Direct HTTP Integration:**
+```javascript
+const response = await fetch('https://api.greptile.com/v2/mcp', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${API_KEY}`
+  },
+  body: JSON.stringify({
+    jsonrpc: '2.0',
+    id: Date.now(),
+    method: 'tools/call',
+    params: { name: 'list_custom_context', arguments: {} }
+  })
+});
+```
+
+**Environment Variables:**
+```bash
+export GREPTILE_API_KEY="your-api-key-here"
+```
+
+## Authentication Verification
+
+<Steps>
+    <Step title="Test Connection">
+        Use `list_custom_context` with no parameters to verify connectivity.
+    </Step>
+    <Step title="Check Organization Access">
+        Verify the API returns organization-specific data.
+    </Step>
+    <Step title="Validate Repository Access">
+        Test `list_merge_requests` to ensure repository permissions.
+    </Step>
+</Steps>
+
+## Common Authentication Errors
+
+**Invalid API Key:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32603,
+    "message": "Authentication failed"
+  }
+}
+```
+
+**Insufficient Permissions:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32000,
+    "message": "Repository does not belong to your organization"
+  }
+}
+```
+
+## Security Best Practices
+
+- Store API keys in environment variables, not code
+- Use separate API keys for different environments
+- Rotate API keys regularly
+- Monitor API key usage in Greptile dashboard
+- Restrict API key permissions to minimum required scope

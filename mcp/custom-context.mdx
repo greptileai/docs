@@ -1,0 +1,302 @@
+---
+title: Get Greptile's Custom Context in your IDE
+description: 'Supply organization-specific patterns to Cursor, Claude Code, and other coding assistants'
+keywords: 'custom context, coding patterns, Cursor, Claude Code, AI coding assistance'
+---
+
+Supply organization-specific coding patterns and instructions to Cursor, Claude Code, and other AI coding assistants through the MCP server.
+
+## Overview
+
+Custom context provides AI coding assistants with your organization's specific coding patterns, style guides, and best practices. This ensures consistent code generation that follows your team's conventions.
+
+## Retrieving Patterns
+
+### List All Patterns
+
+Get all organization patterns for broad context:
+
+```javascript
+list_custom_context({
+  type: "CUSTOM_INSTRUCTION",
+  limit: 50
+})
+```
+
+**Use case:** Provide comprehensive coding guidelines to new AI sessions.
+
+### Search Relevant Patterns
+
+Find patterns relevant to current development context:
+
+```javascript
+search_custom_context({
+  query: "error handling patterns",
+  limit: 10
+})
+```
+
+**Use case:** Get specific guidance for the type of code being written.
+
+### Get Pattern Details
+
+Retrieve full pattern information including evidence and usage:
+
+```javascript
+get_custom_context({
+  customContextId: "ctx_abc123"
+})
+```
+
+**Use case:** Understand why a pattern exists and see examples of its application.
+
+## Integration Workflows
+
+### Cursor Integration
+
+**Project Setup:**
+1. Configure MCP server in Cursor settings
+2. Create workspace rules that query custom context
+3. Apply patterns automatically during code completion
+
+**Example Workflow:**
+```javascript
+// When working on authentication code
+const patterns = await search_custom_context({
+  query: "authentication security",
+  limit: 5
+});
+
+// Use patterns to guide code generation
+patterns.customContexts.forEach(pattern => {
+  // Apply pattern.body as coding instruction
+});
+```
+
+### Claude Code Integration
+
+**Session Initialization:**
+```javascript
+// Load organization patterns at session start
+const orgPatterns = await list_custom_context({
+  type: "CUSTOM_INSTRUCTION",
+  greptileGenerated: false, // Human-created patterns
+  limit: 30
+});
+
+// Context: "Follow these organization patterns when writing code..."
+```
+
+**Context-Aware Assistance:**
+```javascript
+// Before generating code, check for relevant patterns
+const relevantPatterns = await search_custom_context({
+  query: getCurrentFileContext(), // Function, language, domain
+  limit: 8
+});
+```
+
+## Pattern Categories
+
+### Code Style Patterns
+
+**Language-Specific Conventions:**
+```javascript
+create_custom_context({
+  type: "CUSTOM_INSTRUCTION",
+  body: "Use camelCase for JavaScript variables and functions",
+  scopes: {
+    "AND": [{
+      "operator": "MATCHES",
+      "field": "filepath",
+      "value": "**/*.js"
+    }]
+  }
+})
+```
+
+### Architecture Patterns
+
+**Framework Usage Guidelines:**
+```javascript
+create_custom_context({
+  type: "PATTERN",
+  body: "Always use React hooks instead of class components",
+  scopes: {
+    "AND": [{
+      "operator": "MATCHES",
+      "field": "filepath",
+      "value": "**/components/**/*.jsx"
+    }]
+  }
+})
+```
+
+### Security Patterns
+
+**Security Requirements:**
+```javascript
+create_custom_context({
+  type: "CUSTOM_INSTRUCTION",
+  body: "All API endpoints must validate input using Joi schemas",
+  scopes: {
+    "AND": [{
+      "operator": "MATCHES",
+      "field": "filepath",
+      "value": "**/routes/**/*.js"
+    }]
+  }
+})
+```
+
+## Advanced Workflows
+
+### Dynamic Pattern Loading
+
+**Context-Aware Pattern Retrieval:**
+```javascript
+async function getRelevantPatterns(currentFile, codeContext) {
+  // Get patterns for current file type
+  const filePatterns = await search_custom_context({
+    query: getFileTypeKeywords(currentFile),
+    limit: 10
+  });
+
+  // Get patterns for code domain
+  const domainPatterns = await search_custom_context({
+    query: codeContext.domain, // e.g., "authentication", "database"
+    limit: 5
+  });
+
+  return [...filePatterns.customContexts, ...domainPatterns.customContexts];
+}
+```
+
+### Pattern Validation
+
+**Check Pattern Compliance:**
+```javascript
+async function validateCodeAgainstPatterns(code, filePath) {
+  // Get applicable patterns
+  const patterns = await list_custom_context({
+    type: "PATTERN",
+    limit: 100
+  });
+
+  // Filter patterns by scope
+  const applicablePatterns = patterns.customContexts.filter(pattern => {
+    return pattern.scopes && matchesScope(filePath, pattern.scopes);
+  });
+
+  // Validate code against each pattern
+  return applicablePatterns.map(pattern => ({
+    pattern: pattern.id,
+    compliant: validateCompliance(code, pattern.body)
+  }));
+}
+```
+
+### Learning from Code Reviews
+
+**Extract Patterns from Reviews:**
+```javascript
+async function extractPatternsFromReviews() {
+  // Get recent review comments
+  const comments = await search_greptile_comments({
+    query: "pattern OR convention OR style",
+    limit: 50,
+    includeAddressed: true
+  });
+
+  // Analyze comments for new patterns
+  const suggestedPatterns = comments.comments
+    .filter(comment => comment.linkedMemory)
+    .map(comment => ({
+      body: extractPatternFromComment(comment.body),
+      filePath: comment.filePath,
+      evidence: comment.linkedMemory
+    }));
+
+  // Create new patterns
+  for (const suggestion of suggestedPatterns) {
+    await create_custom_context({
+      type: "PATTERN",
+      body: suggestion.body,
+      status: "SUGGESTED", // For human review
+      scopes: inferScopeFromFilePath(suggestion.filePath)
+    });
+  }
+}
+```
+
+## Best Practices
+
+### Pattern Organization
+
+**Hierarchical Patterns:**
+- General organization conventions
+- Language-specific patterns
+- Framework-specific patterns
+- Project-specific patterns
+
+**Scope Specificity:**
+```javascript
+// Too broad - applies everywhere
+{ "AND": [] }
+
+// Better - specific to file types
+{ "AND": [{"operator": "MATCHES", "field": "filepath", "value": "**/*.py"}] }
+
+// Best - specific to functionality
+{ "AND": [
+  {"operator": "MATCHES", "field": "filepath", "value": "**/auth/**/*.py"},
+  {"operator": "MATCHES", "field": "repository", "value": "backend-services"}
+]}
+```
+
+### Pattern Quality
+
+**Effective Pattern Content:**
+- Clear, actionable instructions
+- Specific examples when helpful
+- Explanation of reasoning
+- Edge case considerations
+
+**Example Good Pattern:**
+```
+Use Result<T, E> for error handling in Rust functions that can fail.
+Return Err(CustomError::InvalidInput) for invalid parameters.
+Always include context in error messages.
+Example: Result<User, AuthError> for authentication functions.
+```
+
+### Performance Considerations
+
+**Efficient Pattern Loading:**
+```javascript
+// Cache frequently used patterns
+const patternCache = new Map();
+
+async function getCachedPatterns(query, ttl = 300000) {
+  if (patternCache.has(query)) {
+    const { data, timestamp } = patternCache.get(query);
+    if (Date.now() - timestamp < ttl) {
+      return data;
+    }
+  }
+
+  const patterns = await search_custom_context({ query, limit: 10 });
+  patternCache.set(query, { data: patterns, timestamp: Date.now() });
+  return patterns;
+}
+```
+
+**Batch Pattern Requests:**
+```javascript
+// Load multiple pattern types at once
+const [stylePatterns, securityPatterns, archPatterns] = await Promise.all([
+  search_custom_context({ query: "style guide", limit: 10 }),
+  search_custom_context({ query: "security", limit: 10 }),
+  search_custom_context({ query: "architecture", limit: 10 })
+]);
+```
