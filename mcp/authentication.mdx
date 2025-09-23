@@ -4,9 +4,6 @@ description: 'Setting up Greptile MCP server authentication and client configura
 keywords: 'MCP authentication, API key setup, client configuration, Claude Desktop'
 ---
 
-<Note>
-The MCP server is currently in development. The authentication methods below describe the planned implementation.
-</Note>
 
 ## API Key Setup
 
@@ -43,7 +40,7 @@ Location: `~/Library/Application Support/Claude/claude_desktop_config.json` (mac
 
 **Direct HTTP Integration:**
 ```javascript
-const response = await fetch('https://api.greptile.com/v2/mcp', {
+const response = await fetch('https://api.greptile.com/mcp', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

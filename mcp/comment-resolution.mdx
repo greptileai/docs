@@ -6,10 +6,6 @@ keywords: 'comment resolution, automated fixes, code review, AI assistance'
 
 Enable coding agents to automatically retrieve and resolve Greptile review comments, reducing manual review follow-up work.
 
-<Note>
-The MCP server is currently in development. The setup instructions below describe the planned integration process.
-</Note>
-
 ## Setup in Claude Code
 
 <Steps>
@@ -19,7 +15,7 @@ The MCP server is currently in development. The setup instructions below describ
     <Step title="Add Greptile MCP Server">
         In your terminal, run the command to add the Greptile MCP server:
         ```bash
-        claude mcp add --transport http greptile https://api.greptile.com/v2/mcp \
+        claude mcp add --transport http greptile https://api.greptile.com/mcp \
           --header "Authorization: Bearer YOUR_GREPTILE_API_KEY"
         ```
         Replace `YOUR_GREPTILE_API_KEY` with your actual API key.
@@ -45,7 +41,7 @@ For team-shared configuration, create a `.mcp.json` file in your project root:
   "servers": {
     "greptile": {
       "transport": "http",
-      "url": "https://api.greptile.com/v2/mcp",
+      "url": "https://api.greptile.com/mcp",
       "headers": {
         "Authorization": "Bearer ${GREPTILE_API_KEY}"
       }
@@ -73,7 +69,7 @@ export GREPTILE_API_KEY=your-api-key-here
         {
           "greptile": {
             "type": "http",
-            "url": "https://api.greptile.com/v2/mcp",
+            "url": "https://api.greptile.com/mcp",
             "headers": {
               "Authorization": "Bearer YOUR_API_KEY"
             }
