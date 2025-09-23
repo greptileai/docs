@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "aspen",
+  "theme": "maple",
   "name": "Greptile",
   "colors": {
     "primary": "#107A4D"
@@ -25,6 +25,17 @@
               "code-review-bot/greptile-json",
               "code-review-bot/emoji-reactions",
               "code-review-bot/auto-resolve-with-mcp"
+            ]
+          },
+          {
+            "group": "Greptile MCP Server",
+            "pages": [
+              "mcp/overview",
+              "mcp/authentication",
+              "mcp/tool-reference",
+              "mcp/comment-resolution",
+              "mcp/custom-context",
+              "mcp/use-cases"
             ]
           },
           {
