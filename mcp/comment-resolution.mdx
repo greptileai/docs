@@ -6,9 +6,307 @@ keywords: 'comment resolution, automated fixes, code review, AI assistance'
 
 Enable coding agents to automatically retrieve and resolve Greptile review comments, reducing manual review follow-up work.
 
-## Overview
+<Note>
+The MCP server is currently in development. The setup instructions below describe the planned integration process.
+</Note>
 
-Coding agents can access Greptile review comments through the MCP server to understand issues and apply fixes automatically. This creates a feedback loop where review insights improve code quality in real-time.
+## Setup in Claude Code
+
+<Steps>
+    <Step title="Get Your Greptile API Key">
+        Obtain your API key from [app.greptile.com](https://app.greptile.com/login).
+    </Step>
+    <Step title="Add Greptile MCP Server">
+        In your terminal, run the command to add the Greptile MCP server:
+        ```bash
+        claude mcp add --transport http greptile https://api.greptile.com/v2/mcp \
+          --header "Authorization: Bearer YOUR_GREPTILE_API_KEY"
+        ```
+        Replace `YOUR_GREPTILE_API_KEY` with your actual API key.
+    </Step>
+    <Step title="Verify Server Installation">
+        Check that the server was added successfully:
+        ```bash
+        claude mcp list
+        ```
+        You should see `greptile` in the list of configured servers.
+    </Step>
+    <Step title="Start Claude Code Session">
+        Open Claude Code and start a new session. The Greptile MCP server tools will be available automatically.
+    </Step>
+</Steps>
+
+### Alternative: Project-Level Configuration
+
+For team-shared configuration, create a `.mcp.json` file in your project root:
+
+```json
+{
+  "servers": {
+    "greptile": {
+      "transport": "http",
+      "url": "https://api.greptile.com/v2/mcp",
+      "headers": {
+        "Authorization": "Bearer ${GREPTILE_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+Set the environment variable:
+```bash
+export GREPTILE_API_KEY=your-api-key-here
+```
+
+## Setup in Cursor
+
+### Quick Setup
+
+<Steps>
+    <Step title="Get Your API Key">
+        Get your Greptile API key from [app.greptile.com](https://app.greptile.com/login).
+    </Step>
+    <Step title="Create MCP Configuration">
+        Create or edit your `mcp.json` file in your project root:
+        ```json
+        {
+          "greptile": {
+            "type": "http",
+            "url": "https://api.greptile.com/v2/mcp",
+            "headers": {
+              "Authorization": "Bearer YOUR_API_KEY"
+            }
+          }
+        }
+        ```
+        Replace `YOUR_API_KEY` with your actual Greptile API key.
+    </Step>
+    <Step title="Restart Cursor">
+        Restart Cursor to load the MCP server configuration.
+    </Step>
+    <Step title="Verify Connection">
+        In Cursor, you should now see Greptile tools available in the MCP context.
+    </Step>
+</Steps>
+
+## Retrieving Comments in Your IDE
+
+### Get Comments for Current PR
+
+<Steps>
+    <Step title="Identify Current PR">
+        When working on a branch, Claude Code/Cursor will automatically detect the associated PR.
+    </Step>
+    <Step title="Ask for Comments">
+        Use these prompts to retrieve comments:
+        - "Show me all unaddressed Greptile comments for this PR"
+        - "What review issues need to be fixed in this file?"
+        - "Get Greptile feedback for the current pull request"
+    </Step>
+    <Step title="Review Comment Details">
+        The IDE will display:
+        - Comment text and suggested fixes
+        - File location and line numbers
+        - Related custom context patterns
+        - Issue severity and type
+    </Step>
+</Steps>
+
+### Search for Specific Issues
+
+**Find Comments by Type:**
+```
+"Find all security-related Greptile comments in this repository"
+"Show me performance issues flagged by Greptile"
+"Get error handling comments from recent reviews"
+```
+
+**Find Comments by File:**
+```
+"Show Greptile comments for the current file"
+"Are there any unaddressed reviews for src/auth.js?"
+"What issues has Greptile found in this component?"
+```
+
+## Resolving Comments Step-by-Step
+
+### Automated Resolution
+
+<Steps>
+    <Step title="Select Comment to Fix">
+        In Claude Code/Cursor, click on a Greptile comment or use:
+        "Fix this Greptile comment: [paste comment text]"
+    </Step>
+    <Step title="Analyze the Issue">
+        The IDE will:
+        - Read the comment and understand the problem
+        - Examine the code context
+        - Check related custom context patterns
+        - Determine the appropriate fix strategy
+    </Step>
+    <Step title="Generate Fix">
+        The coding agent will:
+        - Propose a specific code change
+        - Explain why this fix addresses the issue
+        - Show before/after code comparison
+    </Step>
+    <Step title="Apply Fix">
+        Review and apply the suggested changes:
+        - "Apply this fix"
+        - "Show me the diff first"
+        - "Explain why this fixes the issue"
+    </Step>
+    <Step title="Verify Resolution">
+        Confirm the fix addresses the original concern:
+        - Run relevant tests
+        - Check for syntax errors
+        - Validate the solution makes sense
+    </Step>
+</Steps>
+
+### Manual Resolution with AI Guidance
+
+**Get Detailed Explanation:**
+```
+"Explain this Greptile comment in detail and suggest how to fix it"
+"Why is this flagged as a security issue?"
+"What's the best way to resolve this performance concern?"
+```
+
+**Get Fix Suggestions:**
+```
+"How should I fix this memory leak issue?"
+"Suggest 2-3 ways to address this code duplication"
+"What's the proper error handling pattern here?"
+```
+
+## Practical Examples
+
+### Security Issue Resolution
+
+**Greptile Comment:**
+> "Missing input validation for user ID parameter - potential injection vulnerability"
+
+**In Claude Code:**
+```
+You: "Fix this security issue: Missing input validation for user ID parameter"
+
+Claude Code: I'll help you add proper input validation. Looking at your code, I can see the getUserData function is missing validation. Here's the fix:
+
+[Shows before/after code with input validation added]
+
+Would you like me to apply this fix and also check for similar issues in other functions?
+```
+
+### Performance Issue Resolution
+
+**Greptile Comment:**
+> "N+1 query problem detected - consider using joins or batch loading"
+
+**In Cursor:**
+```
+You: "How do I fix this N+1 query problem?"
+
+Cursor: I can see the issue in your code. You're making individual database queries in a loop. Here's how to fix it with a join:
+
+[Shows optimized query with proper joins]
+
+This will reduce your database calls from N+1 to just 1. Should I apply this change?
+```
+
+### Code Style Violation
+
+**Greptile Comment:**
+> "Use camelCase for variable names according to team guidelines"
+
+**Resolution Workflow:**
+```
+You: "Fix the naming convention issues in this file"
+
+IDE: I found 3 variables that need to be converted to camelCase:
+- user_data → userData
+- is_valid → isValid
+- api_response → apiResponse
+
+I'll update these and any references. Applying changes now...
+```
+
+## Advanced Workflows
+
+### Batch Comment Resolution
+
+**Resolve Multiple Comments:**
+```
+You: "Show me all unaddressed Greptile comments for this PR and fix the ones you can automatically"
+
+IDE: I found 8 unaddressed comments:
+✅ Fixed: 3 naming convention issues
+✅ Fixed: 2 missing error handling cases
+⚠️  Needs review: 1 architecture concern
+⚠️  Needs review: 2 complex logic issues
+
+I've applied the automatic fixes. The remaining 3 comments need your input because they involve design decisions.
+```
+
+### Context-Aware Fixes
+
+**Using Custom Context:**
+```
+You: "Fix this error handling according to our team patterns"
+
+IDE: Based on your organization's custom context, I see you use Result<T, E> for error handling. I'll update this function to follow that pattern:
+
+[Shows conversion from try/catch to Result pattern]
+
+This matches the pattern used in 15 other functions in your codebase.
+```
+
+### Integration with Development Workflow
+
+**Pre-commit Resolution:**
+```
+You: "Before I commit, check if there are any unaddressed Greptile comments in my changes"
+
+IDE: I found 2 unaddressed comments in your staged files:
+1. Missing null check in user.service.js:45
+2. Inconsistent error message format in auth.controller.js:23
+
+Would you like me to fix these before you commit?
+```
+
+## Best Practices
+
+### When to Use Auto-Fix
+
+**Safe for Auto-Fix:**
+- Code style and formatting issues
+- Simple null checks and validation
+- Naming convention corrections
+- Basic error handling additions
+
+**Requires Review:**
+- Architecture and design changes
+- Complex logic modifications
+- Performance optimizations with tradeoffs
+- Security fixes affecting business logic
+
+### Verification Steps
+
+<Steps>
+    <Step title="Code Review">
+        Always review auto-generated fixes before applying them to ensure they make sense in context.
+    </Step>
+    <Step title="Test Execution">
+        Run relevant tests after applying fixes to catch any regressions.
+    </Step>
+    <Step title="Comment Validation">
+        Verify that the fix actually addresses the original Greptile concern.
+    </Step>
+    <Step title="Documentation">
+        Update comments or documentation if the fix changes behavior.
+    </Step>
+</Steps>
 
 ## Retrieving Comments
 
