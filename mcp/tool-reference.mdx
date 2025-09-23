@@ -22,16 +22,29 @@ List organization custom context entries.
 {
   "customContexts": [
     {
-      "id": "ctx_123",
+      "id": "memory_9a7fe8b3-4cc6-4c1a-9c4c-8b7f3d2e1a6c",
       "type": "CUSTOM_INSTRUCTION",
-      "body": "Always use proper error handling",
+      "body": "Use async/await instead of Promise.then() for better readability",
       "status": "ACTIVE",
-      "evidenceCount": 5,
+      "scopes": {"AND": [{"operator": "MATCHES", "field": "filepath", "value": "**/*.js"}]},
+      "metadata": {},
+      "evidenceCount": 15,
+      "commentsCount": 8,
+      "createdAt": "2024-12-15T10:30:00Z"
+    },
+    {
+      "id": "memory_1b2c3d4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q",
+      "type": "PATTERN",
+      "body": "Always validate input parameters in API endpoints",
+      "status": "ACTIVE",
+      "scopes": {"AND": [{"operator": "MATCHES", "field": "filepath", "value": "**/api/**"}]},
+      "metadata": {"priority": "high"},
+      "evidenceCount": 23,
       "commentsCount": 12,
-      "createdAt": "2024-01-01T00:00:00Z"
+      "createdAt": "2024-12-10T14:22:00Z"
     }
   ],
-  "total": 25
+  "total": 20
 }
 ```
 
@@ -365,33 +378,33 @@ Search Greptile review comments.
 {
   "comments": [
     {
-      "id": "comment_123",
-      "commentId": "github_comment_456",
-      "body": "Memory leak detected in this function",
+      "id": "34567890",
+      "commentId": "github_comment_987654321",
+      "body": "Consider adding input validation to prevent potential security vulnerabilities. The user input should be sanitized before processing.",
       "authorLogin": "greptile-bot",
-      "filePath": "src/memory.c",
-      "lineStart": 67,
-      "lineEnd": 72,
+      "filePath": "src/auth/login.js",
+      "lineStart": 45,
+      "lineEnd": 47,
       "addressed": false,
-      "createdAt": "2024-01-01T00:00:00Z",
+      "createdAt": "2024-12-14T09:15:00Z",
       "mergeRequest": {
-        "id": "mr_789",
-        "prNumber": 23,
-        "title": "Optimize memory usage",
-        "sourceRepoUrl": "https://github.com/owner/repo",
+        "id": "12345",
+        "prNumber": 156,
+        "title": "Add user authentication endpoint",
+        "sourceRepoUrl": "https://github.com/myorg/backend",
         "repository": {
-          "name": "owner/repo"
+          "name": "myorg/backend"
         }
       },
       "linkedMemory": {
-        "id": "memory_456",
+        "id": "memory_security_001",
         "type": "PATTERN",
-        "body": "Always free allocated memory"
+        "body": "Always validate and sanitize user inputs to prevent security vulnerabilities"
       }
     }
   ],
-  "query": "memory leak",
-  "total": 4
+  "query": "security",
+  "total": 8
 }
 ```
 

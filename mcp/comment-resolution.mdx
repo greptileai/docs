@@ -95,35 +95,34 @@ export GREPTILE_API_KEY=your-api-key-here
         When working on a branch, Claude Code/Cursor will automatically detect the associated PR.
     </Step>
     <Step title="Ask for Comments">
-        Use these prompts to retrieve comments:
+        Use these proven prompts with Claude:
         - "Show me all unaddressed Greptile comments for this PR"
-        - "What review issues need to be fixed in this file?"
-        - "Get Greptile feedback for the current pull request"
+        - "What security issues has Greptile found recently?"
+        - "Search for Greptile comments about error handling"
     </Step>
     <Step title="Review Comment Details">
-        The IDE will display:
-        - Comment text and suggested fixes
-        - File location and line numbers
-        - Related custom context patterns
-        - Issue severity and type
+        Claude will show you:
+        - Complete comment text with context
+        - File paths and specific line numbers
+        - Whether comments are addressed or still open
+        - Related custom context patterns that were violated
+        - PR information and repository details
     </Step>
 </Steps>
 
 ### Search for Specific Issues
 
 **Find Comments by Type:**
-```
-"Find all security-related Greptile comments in this repository"
-"Show me performance issues flagged by Greptile"
-"Get error handling comments from recent reviews"
-```
+- *"Find all security-related Greptile comments in this repository"*
+- *"Show me performance issues flagged by Greptile"*
+- *"Get error handling comments from recent reviews"*
 
 **Find Comments by File:**
-```
-"Show Greptile comments for the current file"
-"Are there any unaddressed reviews for src/auth.js?"
-"What issues has Greptile found in this component?"
-```
+- *"Show Greptile comments for the current file"*
+- *"Are there any unaddressed reviews for src/auth.js?"*
+- *"What issues has Greptile found in this component?"*
+
+These searches work across your entire organization's repositories and return real comment data with file locations and context.
 
 ## Resolving Comments Step-by-Step
 

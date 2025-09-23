@@ -14,39 +14,32 @@ Custom context provides AI coding assistants with your organization's specific c
 
 ### List All Patterns
 
-Get all organization patterns for broad context:
+Ask Claude: *"What custom context does my organization have?"*
 
-```javascript
-list_custom_context({
-  type: "CUSTOM_INSTRUCTION",
-  limit: 50
-})
-```
+Claude will retrieve patterns like:
+- "Use async/await instead of Promise.then() for better readability"
+- "Always validate input parameters in API endpoints"
+- "Prefer functional components over class components in React"
 
 **Use case:** Provide comprehensive coding guidelines to new AI sessions.
 
 ### Search Relevant Patterns
 
-Find patterns relevant to current development context:
+Ask Claude: *"Find coding patterns related to error handling"* or *"Show me security-related coding standards"*
 
-```javascript
-search_custom_context({
-  query: "error handling patterns",
-  limit: 10
-})
-```
+Claude will return targeted patterns matching your query.
 
 **Use case:** Get specific guidance for the type of code being written.
 
 ### Get Pattern Details
 
-Retrieve full pattern information including evidence and usage:
+Ask Claude: *"Tell me more about the async/await pattern"* or *"Show me details for the input validation pattern"*
 
-```javascript
-get_custom_context({
-  customContextId: "ctx_abc123"
-})
-```
+Claude will provide:
+- Full pattern description
+- Usage statistics (evidence count, comments count)
+- Scope where pattern applies
+- Related review comments
 
 **Use case:** Understand why a pattern exists and see examples of its application.
 

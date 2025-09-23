@@ -9,10 +9,14 @@ keywords: 'MCP authentication, API key setup, client configuration, Claude Deskt
 
 <Steps>
     <Step title="Get API Key">
-        Obtain your API key from [app.greptile.com](https://app.greptile.com/login).
+        Sign up or log in at [app.greptile.com](https://app.greptile.com/login) and copy your API key.
     </Step>
-    <Step title="Verify Organization Access">
-        Ensure your API key has access to the repositories and organization data you need.
+    <Step title="Test API Access">
+        Verify your key works by testing with curl:
+        ```bash
+        curl -H "Authorization: Bearer YOUR_API_KEY" https://api.greptile.com/mcp
+        ```
+        You should receive a JSON-RPC response indicating the server is available.
     </Step>
 </Steps>
 
@@ -63,14 +67,20 @@ export GREPTILE_API_KEY="your-api-key-here"
 ## Authentication Verification
 
 <Steps>
-    <Step title="Test Connection">
-        Use `list_custom_context` with no parameters to verify connectivity.
+    <Step title="Check MCP Connection">
+        Run `claude mcp list` to confirm the server shows as connected:
+        ```bash
+        greptile: https://api.greptile.com/mcp (HTTP) - ✓ Connected
+        ```
     </Step>
-    <Step title="Check Organization Access">
-        Verify the API returns organization-specific data.
+    <Step title="Test Tools">
+        Ask Claude to use Greptile tools:
+        - "What custom context does my organization have?"
+        - "List recent merge requests"
+        - "Search for security-related comments"
     </Step>
-    <Step title="Validate Repository Access">
-        Test `list_merge_requests` to ensure repository permissions.
+    <Step title="Verify Data Access">
+        Confirm the tools return your organization's actual data, not errors.
     </Step>
 </Steps>
 

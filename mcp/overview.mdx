@@ -6,7 +6,55 @@ metaTitle: 'Greptile MCP Server - AI Tool Integration'
 metaDescription: 'Integrate Greptile code analysis capabilities into AI assistants using the Model Context Protocol server'
 ---
 
-The Greptile MCP Server provides AI assistants and applications with direct access to Greptile's comments and context.
+The Greptile MCP Server provides AI assistants and applications with direct access to Greptile's comments and context through 13 tools across 4 categories.
+
+## Available Tools
+
+<CardGroup cols={2}>
+    <Card title="Custom Context (4 tools)" icon="gear">
+        **list_custom_context** - Browse organization patterns
+
+        **get_custom_context** - Get detailed context with usage stats
+
+        **search_custom_context** - Find relevant patterns by keywords
+
+        **create_custom_context** - Add new coding standards
+    </Card>
+    <Card title="Pull Requests (3 tools)" icon="code-pull-request">
+        **list_merge_requests** - List PRs across repositories
+
+        **get_merge_request** - Get detailed PR information
+
+        **list_merge_request_comments** - Get all PR comments
+    </Card>
+    <Card title="Code Reviews (3 tools)" icon="magnifying-glass">
+        **list_code_reviews** - Browse review history
+
+        **get_code_review** - Get detailed review results
+
+        **trigger_code_review** - Start new reviews
+    </Card>
+    <Card title="Comments (1 tool)" icon="message">
+        **search_greptile_comments** - Find comments across repositories
+    </Card>
+</CardGroup>
+
+## Quick Start
+
+<Steps>
+    <Step title="Get API Key">
+        Sign up at [app.greptile.com](https://app.greptile.com/signup) and get your API key.
+    </Step>
+    <Step title="Add to Claude Code">
+        ```bash
+        claude mcp add --transport http greptile https://api.greptile.com/mcp \
+          --header "Authorization: Bearer YOUR_API_KEY"
+        ```
+    </Step>
+    <Step title="Test Connection">
+        Ask Claude: "What custom context does my organization have?"
+    </Step>
+</Steps>
 
 ## Quick Links
 
