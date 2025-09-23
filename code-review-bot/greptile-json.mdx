@@ -118,3 +118,55 @@ This allows you to set organization-wide defaults in the dashboard while customi
 | `confidenceScoreSection`  | object  | Controls confidence score section. Properties: included (boolean), collapsible (boolean), defaultOpen (boolean).                             |
 | `sequenceDiagramSection`  | object  | Controls sequence diagram section. Properties: included (boolean), collapsible (boolean), defaultOpen (boolean).                             |
 | `customContext`           | object  | Advanced context configuration with three arrays: other, rules, and files. Each supports optional scope and file pattern matching.           |
+
+
+## Comment Types Explained
+
+### Available Comment Types
+- **`logic`** - Business logic issues, algorithmic problems, potential bugs
+- **`syntax`** - Language-specific best practices, proper usage patterns
+- **`style`** - Code formatting, naming conventions, structural consistency
+
+All comment types are **enabled by default**. You can restrict reviews to specific types by setting `commentTypes` to a subset.
+
+### Example Configurations
+```json
+// Only check for logic issues (most critical)
+{
+  "commentTypes": ["logic"]
+}
+
+// Focus on code quality without style nitpicks
+{
+  "commentTypes": ["logic", "syntax"]
+}
+```
+
+## Directory-Specific Rules
+
+You can apply different rules to specific directories using glob patterns:
+
+```json
+{
+  "directoryRules": {
+    "src/critical/**": {
+      "strictness": 1,
+      "commentTypes": ["logic", "syntax"]
+    },
+    "tests/**": {
+      "strictness": 3,
+      "commentTypes": ["logic"]
+    },
+    "docs/**": {
+      "strictness": 2,
+      "commentTypes": ["style"]
+    }
+  }
+}
+```
+
+### Use Cases
+- **Critical paths** - Maximum scrutiny on core business logic
+- **Test files** - Focus only on serious issues
+- **Documentation** - Primarily style and formatting checks
+- **Legacy code** - Reduced noise during refactoring
