@@ -1,20 +1,22 @@
 ---
 title: Developer Quick Reference
-description: 'Essential guide for developers using Greptile AI code reviews'
-keywords: 'developer guide, code review bot, manual triggers, dashboard, inline chat'
-metaTitle: 'Greptile Developer Guide: Quick Reference for Individual Contributors'
-metaDescription: 'Practical guide for developers on how to effectively use Greptile AI code reviews, including manual triggers, inline chat, and dashboard features.'
+description: "Essential guide for developers using Greptile AI code reviews"
+keywords: "developer guide, code review bot, manual triggers, dashboard, inline chat"
+metaTitle: "Greptile Developer Guide: Quick Reference for Individual Contributors"
+metaDescription: "Practical guide for developers on how to effectively use Greptile AI code reviews, including manual triggers, inline chat, and dashboard features."
 ---
 
 ## Overview
 
 **What does Greptile do?**
+
 - AI code review agent that analyzes your pull requests
 - Reviews code with full context of your entire codebase
 - Provides three types of feedback: summary, inline comments, and suggested fixes
 - Learns from your team's preferences and feedback over time
 
 **How is it different from other tools?**
+
 - Understands your specific codebase patterns and architecture
 - References related code across your entire repository when making suggestions
 - Learns what your team cares about through reactions and feedback
@@ -23,6 +25,7 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 ## Capabilities
 
 **What types of issues does it catch?**
+
 - Logic errors and potential bugs in your code
 - Security vulnerabilities like unvalidated inputs or SQL injection risks
 - Performance issues and inefficient patterns
@@ -30,6 +33,7 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 - Missing error handling or edge cases
 
 **What feedback does it provide?**
+
 - Summary of changes in your PR
 - Inline comments on specific lines with issues
 - Suggested code fixes you can click-to-accept
@@ -37,6 +41,7 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 - Explanations of why something might be problematic
 
 **Can I ask it questions?**
+
 - Reply to any comment with `@greptileai <your question>` and Greptile will respond
 - Ask for clarification on why something is flagged
 - Request alternative approaches to solve problems
@@ -45,18 +50,21 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 ## When does it run?
 
 **When does Greptile automatically review?**
+
 - Your team configures trigger rules (labels, authors, branches, keywords)
 - Usually runs when PRs are first opened
 - May run on every commit push depending on team settings
 - Skips PRs that match ignore patterns (certain files, branches, etc.)
 
 **How do I manually trigger a review?**
+
 - Comment `@greptileai` on any PR to force an immediate review
 - Works on old PRs, even from before Greptile was enabled
 - Can re-trigger after making changes to get updated feedback
 - No rate limits - use as often as needed
 
 **Why isn't it reviewing my PR?**
+
 - Check if your PR matches your team's trigger rules
 - Your changes might be in excluded files or directories
 - Try manual trigger with `@greptileai` comment
@@ -66,18 +74,21 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 ## How do I give it more context?
 
 **What is custom context?**
+
 - Files your team uploads to help Greptile understand your standards
 - Style guides, architecture docs, security requirements, API standards
 - Greptile references these when reviewing your code
 - Ask your team admin what context files have been uploaded
 
 **How does Greptile use uploaded files?**
+
 - Searches context files when making suggestions
 - Enforces standards documented in uploaded guides
 - References architecture patterns from your docs
 - Ensures consistency with your team's documented practices
 
 **What should my team upload?**
+
 - Coding style guides and conventions
 - Architecture decision records and system design docs
 - Security policies and compliance requirements
@@ -87,24 +98,29 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 ## About memory and learning
 
 **How does Greptile learn?**
+
 - From thumbs up/down reactions on its comments
 - By reading other developers' comments on PRs
 - By analyzing which suggestions get implemented vs ignored
 - From team discussions about code patterns and preferences
 
 **What does it remember about my team?**
+
 - Code patterns you prefer (async/await vs Promises)
 - Architecture preferences (thin controllers, service layers)
 - Security standards (input validation requirements)
 - Style preferences (what matters vs what doesn't)
 
 **How do I train it effectively?**
+
 - Use thumbs up on helpful comments
 - Use thumbs down on unhelpful or wrong suggestions
 - React consistently - regular feedback helps it learn faster
 - Explain in comments why you're dismissing suggestions
+- Tag the bot in a thread and ask it to create a rule
 
 **How long does learning take?**
+
 - 2-3 weeks of consistent feedback for noticeable improvement
 - Early weeks may have more noise as it learns preferences
 - Gets better at filtering suggestions to what your team values
@@ -113,18 +129,21 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 ## About codebase context
 
 **How does Greptile understand my codebase?**
+
 - Builds a detailed graph of functions, classes, files, and their relationships
 - Analyzes dependencies and how different parts of code connect
 - Understands data flow and usage patterns across your repository
 - Maps out your architecture and common patterns
 
 **What context does it use when reviewing?**
+
 - Code affected by your changes and its dependencies
 - Related code that follows similar patterns
 - Files that import or are imported by your changes
 - Similar functions or components elsewhere in the codebase
 
 **Does it see my entire repository?**
+
 - Yes, Greptile analyzes your full codebase to build context
 - Uses this understanding to make more accurate suggestions
 - Can reference patterns from anywhere in your repository
@@ -133,11 +152,13 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 ## Chatting with the agent with follow-up questions
 
 **How do I ask follow-up questions?**
+
 - Reply to any Greptile comment with `@greptileai <your question>`
 - Ask on any line of your PR, even without an existing comment
 - Questions can be about the specific code or general patterns
 
 **What kinds of questions can I ask?**
+
 - "Can you explain why this is a security issue?"
 - "What's a better way to handle this error case?"
 - "How should I test this function?"
@@ -145,6 +166,7 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 - "What are the performance implications of this approach?"
 
 **What responses can I expect?**
+
 - Explanations tailored to your specific code and codebase
 - Alternative approaches with code examples
 - References to similar patterns in your repository
@@ -152,11 +174,13 @@ metaDescription: 'Practical guide for developers on how to effectively use Grept
 - Suggestions for testing, error handling, or optimization
 
 **Tips for effective conversations:**
+
 - Be specific in your questions
 - Reference the exact code or pattern you're asking about
 - Ask about alternatives if you disagree with a suggestion
 - Use conversations to learn about best practices for your codebase
 
 **Greptile is making too many comments, what should I do?**
+
 - You can go to `Settings` in the dashboard and use the `Severity Threshold` slider
 - You can turn off `style` or `syntax` comments in the same settings window
